@@ -2,8 +2,12 @@ challenge_id: "infinite_loop_termination"
 location: "infinite_loop_swamp"
 name: "終止無窮迴圈"
 expected_ast:
-  type: "Loop"
-  has_break: 1
+  matcher: "rule_based"
+  rules:
+    - path: "$.type"
+      value: "Loop"
+    - path: "$.has_break"
+      value: 1
 required_factor: "loop_termination"
 success_msg: "🎉 很棒！你成功用 [中斷] 積木修復了無窮迴圈，挽救了即將崩潰的記憶體！執行成功！\n"
 failure_consequence:

@@ -2,9 +2,14 @@ challenge_id: "count_to_100"
 location: "counter_valley"
 name: "數到一百的迴響"
 expected_ast:
-  type: "Loop"
-  condition: "count < 100"
-  act: "count++"
+  matcher: "rule_based"
+  rules:
+    - path: "$.type"
+      value: "Loop"
+    - path: "$.condition"
+      value: "count < 100"
+    - path: "$.act"
+      value: "count++"
 success_msg: "🎉 完美！你成功組裝了計數器迴圈，程式精確循環了 100 次後退出！\n"
 failure_consequence:
   error_warning: "🔥 [語意錯誤] 計數器邏輯未對齊預期條件！\n⚡ 提示：請確保迴圈終止條件為 [count < 100]，且每次循環執行 [count++] 累加！\n"
