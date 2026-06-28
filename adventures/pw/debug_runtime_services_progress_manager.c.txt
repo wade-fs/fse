@@ -1,12 +1,81 @@
-// /runtime/services/progress_manager.c
-// FSE 通用核心進度管理器 (Progress Manager)
-// 支援「多線並行進度」 (Parallel Tracks)
-#include "/include/ansi.h"
 
-// active_tracks 結構： ([ "track_name" : ([ "stage_id": "xxx", "progress": 0 ]) ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 mapping active_tracks;
 private nosave mapping global_events;
-private nosave string progression_path;  // 由 Adventure 注入
+private nosave string progression_path;  
 
 void save_state() {
     if (file_size("/data/state/system/") < 0) {
@@ -28,7 +97,7 @@ void create() {
     progression_path = "";
     restore_state();
 
-    // 訂閱 Discovery 事件以驅動進度
+    
     call_out("subscribe_events", 1);
 }
 
@@ -37,13 +106,13 @@ void subscribe_events() {
     load_object("/runtime/services/event_bus.c")->subscribe("DiscoveryCompleted", "on_discovery_completed");
 }
 
-// Adventure 注冊 progression YAML 目錄 (Adventure-injected)
+
 void register_progression_path(string path) {
     progression_path = path;
 }
 
-// 初始化進階軌道 (預設 track 為 "main")
-varargs void set_initial_stage(string stage_id, string track) {
+
+void set_initial_stage(string stage_id, varargs string track) {
     if (!track) track = "main";
     if (!active_tracks[track] || active_tracks[track]["stage_id"] == "") {
         active_tracks[track] = ([ "stage_id": stage_id, "progress": 0 ]);
@@ -51,22 +120,22 @@ varargs void set_initial_stage(string stage_id, string track) {
     }
 }
 
-// 取得特定軌道目前的階段 (預設 main)
-varargs string query_current_stage(string track) {
+
+string query_current_stage(varargs string track) {
     if (!track) track = "main";
     if (!active_tracks[track]) return 0;
     return active_tracks[track]["stage_id"];
 }
 
-// 取得特定軌道目前的進度數值
-varargs int query_world_progress(string track) {
+
+int query_world_progress(varargs string track) {
     if (!track) track = "main";
     if (!active_tracks[track]) return 0;
     return active_tracks[track]["progress"];
 }
 
-// 判定特定階段是否完成 (若不指定軌道，則搜尋所有啟動中的軌道)
-varargs int stage_completed(string stage, string track) {
+
+int stage_completed(string stage, varargs string track) {
     if (!stage) return 0;
     if (track) {
         return active_tracks[track] && active_tracks[track]["stage_id"] == stage;
@@ -77,7 +146,7 @@ varargs int stage_completed(string stage, string track) {
     return 0;
 }
 
-// 從注冊路徑讀取軌道當前階段的 YAML 設定
+
 mapping query_current_stage_data(string track) {
     if (!progression_path || !active_tracks[track]) return 0;
     string sid = active_tracks[track]["stage_id"];
@@ -88,11 +157,11 @@ mapping query_current_stage_data(string track) {
     return yaml_decode(raw);
 }
 
-// 軌道進階
+
 void next_stage(string track) {
     mapping stage_data = query_current_stage_data(track);
     string next = stage_data ? stage_data["next"] : 0;
-    if (!next) return;  // 已是最後階段
+    if (!next) return;  
 
     string old_stage = active_tracks[track]["stage_id"];
     active_tracks[track]["stage_id"] = next;
@@ -103,7 +172,7 @@ void next_stage(string track) {
     string name = next_data ? next_data["name"] : next;
 
     string track_display = (track == "main") ? "" : " [" + track + "軌道]";
-    shout(HIW "\n【世界邏輯共振完成】\n即將進入邏輯階段" + track_display + "：" HIG + name + " (" + next + ")" + NOR "\n\n");
+    shout("$HIW$" "\n【世界邏輯共振完成】\n即將進入邏輯階段" + track_display + "：" "$HIG$" + name + " (" + next + ")" + "$NOR$" "\n\n");
 
     load_object("/runtime/services/event_bus.c")->publish("StageShifted", ([
         "track"       : track,
@@ -113,15 +182,15 @@ void next_stage(string track) {
     ]));
 }
 
-// 增加特定軌道的進度並檢查進階
-varargs void add_world_progress(int val, string track) {
+
+void add_world_progress(int val, varargs string track) {
     if (!track) track = "main";
     if (!active_tracks[track]) return;
 
     active_tracks[track]["progress"] += val;
     save_state();
 
-    int threshold = 50;  // 預設進階閾值
+    int threshold = 50;  
     mapping stage_data = query_current_stage_data(track);
     if (stage_data && intp(stage_data["min_progress"]))
         threshold = stage_data["min_progress"];
@@ -131,21 +200,21 @@ varargs void add_world_progress(int val, string track) {
     }
 }
 
-// 完成 Challenge/Quest (通用)
-varargs void complete_quest(object player, string qid, string track) {
+
+void complete_quest(object player, string qid, varargs string track) {
     if (!player) return;
     if (!track) track = "main";
 
-    tell_object(player, HIG "🏆 [挑戰完成] 恭喜你完成了任務/挑戰：[" + qid + "]！\n" NOR);
+    tell_object(player, "$HIG$" "🏆 [挑戰完成] 恭喜你完成了任務/挑戰：[" + qid + "]！\n" "$NOR$");
 
     log_file("progress.log", sprintf("[%s] 玩家 %s 完成了任務 %s (Track: %s)\n",
         ctime(time()), player->query_entity_id(), qid, track));
 
-    // 任務完成預設加 10 進度
+    
     add_world_progress(10, track);
 }
 
-// Factor 事件連鎖處理
+
 void on_factor_discovered(mapping event) {
     mapping data = event["data"];
     if (!data) return;
@@ -157,11 +226,11 @@ void on_factor_discovered(mapping event) {
 
     if (!progress_val) progress_val = 50;
 
-    // 若 factor 指定了所屬 track，則進度加在該 track，否則預設 main
+    
     string target_track = "main";
     if (factor_data && factor_data["track"]) {
         target_track = factor_data["track"];
-        // 如果這個 track 還沒啟動，自動初始化 (可選邏輯)
+        
         if (!active_tracks[target_track]) {
             set_initial_stage(fid, target_track);
         }
@@ -199,7 +268,7 @@ void on_discovery_completed(mapping event) {
     ]));
 }
 
-varargs void set_stage(object player, string new_stage, string track) {
+void set_stage(object player, string new_stage, varargs string track) {
     if (!track) track = "main";
     if (!active_tracks[track]) active_tracks[track] = ([]);
     
@@ -207,13 +276,13 @@ varargs void set_stage(object player, string new_stage, string track) {
     save_state();
 
     if (player) {
-        tell_object(player, HIC "🚀 [世界階段前進] 你的程式功力大增，(" + track + ") 階段已推進至 [" + new_stage + "]！\n" NOR);
+        tell_object(player, "$HIC$" "🚀 [世界階段前進] 你的程式功力大增，(" + track + ") 階段已推進至 [" + new_stage + "]！\n" "$NOR$");
     }
 
     log_file("progress.log", sprintf("[%s] 世界階段 (%s) 推進至 %s\n", ctime(time()), track, new_stage));
 }
 
-// 供測試或重置使用的強制初始化函數
+
 void reset_stage() {
     active_tracks = ([]);
     save_state();
