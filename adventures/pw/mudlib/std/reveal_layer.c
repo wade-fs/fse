@@ -16,7 +16,7 @@ private int check_single(object player, mapping chk) {
     string type = chk["type"];
 
     if (type == "stage_completed")
-        return load_object("/runtime/services/progress_service.c")->stage_completed(chk["stage"]);
+        return load_object("/runtime/services/progress_manager.c")->stage_completed(chk["stage"]);
 
     if (type == "discovery_completed")
         return load_object("/runtime/services/discovery_service.c")->discovery_completed(player, chk["discovery_id"]);

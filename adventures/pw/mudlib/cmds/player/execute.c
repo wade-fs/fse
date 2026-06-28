@@ -31,9 +31,9 @@ int main(object me, string arg, string extra) {
     if (!env) {
         string test_site = me->query_temp("current_site");
         if (test_site) {
-            env = load_object("/nodes/" + test_site + "/node.c");
+            env = load_object("/nodes/" + test_site + "/node");
         } else {
-            env = load_object("/nodes/infinite_loop_swamp/node.c");
+            env = load_object("/nodes/infinite_loop_swamp/node");
         }
     }
 

@@ -9,7 +9,7 @@
 #define FORMOSA_H
 
 // ── Daemon 路徑 ────────────────────────────────────────
-#define EVENT_D       load_object("/secure/event_d.c")
+#define EVENT_D       load_object("/runtime/services/event_bus.c")
 #define SETTLEMENT_D  load_object("/daemon/settlement_d.c")
 #define REVEAL_D      load_object("/daemon/reveal_d.c")
 #define FOOTPRINT_D   load_object("/daemon/footprint_d.c")

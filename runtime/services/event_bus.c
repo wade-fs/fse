@@ -1,11 +1,10 @@
-// /secure/event_d.c
-// FSE 通用 EventBus (事件總線)
-inherit "/std/object";
+// /runtime/services/event_bus.c
+// FSE 通用核心事件總線 (EventBus)
+// 不包含任何特定冒險的業務邏輯
 
 private nosave mapping listeners;
 
 void create() {
-    ::create();
     listeners = ([]);
 }
 
@@ -14,7 +13,7 @@ void subscribe(string event_name, string callback_func) {
     if (!listeners) listeners = ([]);
     if (!listeners[event_name]) listeners[event_name] = ({});
 
-    // 儲存呼叫者的物件與對應的回呼函式
+    // 儲存呼叫者物件與對應的回呼函式
     listeners[event_name] += ({ ({ previous_object(), callback_func }) });
 }
 

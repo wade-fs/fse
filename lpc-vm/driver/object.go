@@ -62,10 +62,11 @@ func (d *Driver) loadObjectInternal(filename string) (*object.LPCObject, bool, e
 				&object.String{Value: virtualPath},
 			})
 			if virtualObj, ok := res.(*object.LPCObject); ok && virtualObj != nil {
+				virtualObj.Filename = filename
 				d.mu.Lock()
 				d.ObjectTable[filename] = virtualObj
 				d.mu.Unlock()
-				return virtualObj, false, nil
+				return virtualObj, true, nil
 			}
 		}
 		return nil, false, err

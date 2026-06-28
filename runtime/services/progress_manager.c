@@ -1,5 +1,5 @@
-// /runtime/services/progress_service.c
-// FSE 通用核心進度與解鎖管理器 (Progress Service)
+// /runtime/services/progress_manager.c
+// FSE 通用核心進度管理器 (Progress Manager)
 // 零冒險認知 (Adventure-Agnostic)：不含任何冒險特定階段名稱或因素 ID
 #include "/include/ansi.h"
 
@@ -32,8 +32,8 @@ void create() {
 }
 
 void subscribe_events() {
-    load_object("/runtime/services/event_service.c")->subscribe("FactorDiscovered", "on_factor_discovered");
-    load_object("/runtime/services/event_service.c")->subscribe("DiscoveryCompleted", "on_discovery_completed");
+    load_object("/runtime/services/event_bus.c")->subscribe("FactorDiscovered", "on_factor_discovered");
+    load_object("/runtime/services/event_bus.c")->subscribe("DiscoveryCompleted", "on_discovery_completed");
 }
 
 // Adventure 注冊 progression YAML 目錄 (Adventure-injected)
@@ -91,7 +91,7 @@ void next_stage() {
 
     shout(HIW "\n【世界邏輯共振完成】\n即將進入邏輯階段：" HIG + name + " (" + current_stage_id + ")" + NOR "\n\n");
 
-    load_object("/runtime/services/event_service.c")->publish("StageShifted", ([
+    load_object("/runtime/services/event_bus.c")->publish("StageShifted", ([
         "from_stage"  : old_stage,
         "to_stage"    : current_stage_id,
         "timestamp"   : time()

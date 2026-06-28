@@ -79,12 +79,20 @@ func (d *Driver) ReadFile(filename string) ([]byte, error) {
 		relPath := strings.TrimPrefix(f, "/")
 
 		// 1. 優先從實體磁碟讀取
-		// 🚀 關鍵：確保路徑不會逃脫 MudLibPath (Virtual Chroot)
-		fullPath := filepath.Join(d.Config.MudLibPath, relPath)
-		cleanMudLib := filepath.Clean(d.Config.MudLibPath)
-		cleanFull := filepath.Clean(fullPath)
-		if !strings.HasPrefix(cleanFull, cleanMudLib) {
-			return nil, fmt.Errorf("chroot violation: %s", f)
+		// 🚀 關鍵：確保路徑不會逃脫 MudLibPath (Virtual Chroot)，但特別允許通用核心服務 /runtime/ 對應到專案根目錄的實體 /runtime
+		var fullPath string
+		isCoreRuntime := strings.HasPrefix(f, "/runtime/")
+		if isCoreRuntime {
+			// filename "/runtime/services/factor_service.c" -> "../../../runtime/services/factor_service.c"
+			// 由於 MudLibPath 是 "adventures/pw/mudlib"，將其往上三層後與 runtime 拼合
+			fullPath = filepath.Join(d.Config.MudLibPath, "../../..", relPath)
+		} else {
+			fullPath = filepath.Join(d.Config.MudLibPath, relPath)
+			cleanMudLib := filepath.Clean(d.Config.MudLibPath)
+			cleanFull := filepath.Clean(fullPath)
+			if !strings.HasPrefix(cleanFull, cleanMudLib) {
+				return nil, fmt.Errorf("chroot violation: %s", f)
+			}
 		}
 
 		if _, err := os.Stat(fullPath); err == nil {

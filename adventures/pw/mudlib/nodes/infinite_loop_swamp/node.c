@@ -1,1 +1,0 @@
-../../../content/nodes/infinite_loop_swamp/node.c

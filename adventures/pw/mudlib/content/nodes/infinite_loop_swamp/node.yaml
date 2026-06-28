@@ -5,3 +5,11 @@ mentor: "sys_monitor"
 description: "這裡堆滿了永遠停不下來的廢棄進程，周圍飄散著發熱的記憶體碎屑。"
 exits:
   go_valley: "counter_valley"
+reveal_layers:
+  - reveal_block: "break_block"
+    checks:
+      - type: "factor_discovered"
+        factor_id: "loop_termination"
+challenges:
+  - id: "infinite_loop_termination"
+    executor: "ast_matcher"

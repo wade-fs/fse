@@ -1,1 +1,0 @@
-../../../content/nodes/counter_valley/node.c

@@ -13,9 +13,9 @@ int run_tests() {
 
     // 1. 初始化物件與地標
     player = clone_object("/std/user.c");
-    site_swamp = load_object("/nodes/infinite_loop_swamp/node.c");
-    site_valley = load_object("/nodes/counter_valley/node.c");
-    progress_d = load_object("/runtime/services/progress_service.c");
+    site_swamp = load_object("/nodes/infinite_loop_swamp/node");
+    site_valley = load_object("/nodes/counter_valley/node");
+    progress_d = load_object("/runtime/services/progress_manager.c");
     factor_d = load_object("/runtime/services/factor_service.c");
 
     if (!player || !site_swamp || !site_valley || !progress_d || !factor_d) {

@@ -1,9 +1,3 @@
-// /runtime/core/node.c
-// FSE 核心通用節點基底 (Node Base)
-inherit "/std/entity";
-inherit "/std/reveal_layer.c";
-
-void create() {
-    ::create();
-    set_entity_type("node");
-}
+// /std/node.c
+// PW 通用節點繼承
+inherit "/runtime/core/node";
