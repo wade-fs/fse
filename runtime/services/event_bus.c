@@ -26,7 +26,7 @@ void publish(string event_name, mapping event_data) {
         object ob = listener[0];
         string func = listener[1];
         if (ob) {
-            catch(call_other(ob, func, ([ "name": event_name, "data": event_data ])));
+            safe_call(ob, func, ([ "name": event_name, "data": event_data ]));
         }
     }
 }

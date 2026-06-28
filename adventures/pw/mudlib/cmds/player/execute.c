@@ -20,7 +20,10 @@ int main(object me, string arg, string extra) {
     }
 
     // 1. 解析來自前端的 JSON AST 字串 (JSON 是 YAML 子集，直接用 yaml_decode)
-    catch(ast = yaml_decode(arg));
+    mixed err = catch(ast = yaml_decode(arg));
+    if (err) {
+        log_file("sys_error.log", sprintf("[%s] execute.c yaml_decode error: %s\n", ctime(time()), err));
+    }
     if (!ast || !mapp(ast)) {
         write("❌ 執行失敗：積木語意解析失敗。\n");
         return 1;

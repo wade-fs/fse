@@ -23,7 +23,10 @@ void create() {
         // 載入該節點的 YAML 設定
         string node_yaml = read_file(node_dir + "node.yaml");
         if (node_yaml) {
-            catch(node_config = yaml_decode(node_yaml));
+            mixed err = catch(node_config = yaml_decode(node_yaml));
+            if (err) {
+                log_file("sys_error.log", sprintf("[%s] node.c yaml_decode error (%s): %s\n", ctime(time()), node_dir, err));
+            }
         }
         
         if (node_config) {

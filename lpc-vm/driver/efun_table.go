@@ -150,37 +150,33 @@ func (d *Driver) registerDataStructures(obj *object.LPCObject) {
 	obj.Vars.Set("yaml_decode", &object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) < 1 {
-				return &object.Nil{}
+				return object.NewError("yaml_decode() 需要 1 個參數")
 			}
 			yamlStr, ok := args[0].(*object.String)
 			if !ok {
-				return &object.Nil{}
+				return object.NewError("yaml_decode() 參數必須是字串")
 			}
 
 			var raw interface{}
 			err := yaml.Unmarshal([]byte(yamlStr.Value), &raw)
 			if err != nil {
-				// 顯示前部內容預覽以利 debug
 				preview := yamlStr.Value
 				if len(preview) > 200 {
 					preview = preview[:200] + "..."
 				}
-				fmt.Printf("⚠️ yaml_decode error: %v\n--- YAML Content Preview ---\n%s\n---------------------------\n", err, preview)
-				return &object.Nil{}
+				return object.NewError(fmt.Sprintf("yaml_decode error: %v\nPreview: %s", err, preview))
 			}
 
 			// 透過 JSON 正規化類型，避免 Go map[interface{}]interface{} 類型與整數類型不相容問題
 			jsonBytes, err := json.Marshal(raw)
 			if err != nil {
-				fmt.Printf("⚠️ yaml_decode json marshal error: %v\n", err)
-				return &object.Nil{}
+				return object.NewError(fmt.Sprintf("yaml_decode json marshal error: %v", err))
 			}
 
 			var jsonRaw interface{}
 			err = json.Unmarshal(jsonBytes, &jsonRaw)
 			if err != nil {
-				fmt.Printf("⚠️ yaml_decode json unmarshal error: %v\n", err)
-				return &object.Nil{}
+				return object.NewError(fmt.Sprintf("yaml_decode json unmarshal error: %v", err))
 			}
 
 			return goToLPCValue(jsonRaw)
