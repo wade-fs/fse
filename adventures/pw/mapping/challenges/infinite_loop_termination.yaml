@@ -1,0 +1,7 @@
+challenge_id: "infinite_loop_termination"
+location: "infinite_loop_swamp"
+name: "終止無窮迴圈"
+expected_ast:
+  type: "Loop"
+  has_break: 1
+description: "控制流的修復：寫一段能夠在無條件重複執行中安全中斷的積木邏輯，以跳出無窮沼澤。"

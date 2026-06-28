@@ -1,0 +1,11 @@
+services:
+  fsmud:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: formosasaga_fsmud
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./mudlib:/app/mudlib # 便於本地開發時熱載入修改
+    restart: unless-stopped

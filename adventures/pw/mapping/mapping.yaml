@@ -1,0 +1,8 @@
+# adventures/pw/mapping/mapping.yaml
+# FSE Core Concept to PW (Programming World) Domain Terminology Mapping
+
+term_mapping:
+  node: "lesson"            # 節點 ➔ 課堂 / 關卡地標
+  progress: "course_completion"   # 進度 ➔ 課程完修度
+  discovery: "concept_insight"   # 領悟 ➔ 概念領悟
+  challenge: "quest"        # 挑戰 ➔ 挑戰任務

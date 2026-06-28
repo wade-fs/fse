@@ -1,0 +1,8 @@
+challenge_id: "count_to_100"
+location: "counter_valley"
+name: "數到一百的迴響"
+expected_ast:
+  type: "Loop"
+  condition: "count < 100"
+  act: "count++"
+description: "精確循環的建立：組裝一個帶有變數計數器、且在累加到一百時安全終止的條件迴圈。"
