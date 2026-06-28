@@ -52,8 +52,37 @@ int discover_factor(object player, string fid) {
         return 0;
     }
 
-    // 儲存至玩家狀態中
-    player->discover_factor(fid);
+    // 檢查前置條件
+    mixed prereqs = factor["prerequisites"];
+    if (prereqs) {
+        string *missing = ({});
+        if (stringp(prereqs)) prereqs = ({ prereqs });
+        
+        if (arrayp(prereqs)) {
+            foreach (string pre in prereqs) {
+                if (!factor_discovered(player, pre)) {
+                    mapping pre_data = load_factor_data(pre);
+                    missing += ({ pre_data ? (pre_data["name"] || pre) : pre });
+                }
+            }
+        }
+        
+        if (sizeof(missing) > 0) {
+            object i18n = load_object("/runtime/services/i18n_service.c");
+            if (i18n) {
+                write(i18n->translate("core.factor.missing_prerequisite", ([ "pre_names": implode(missing, ", ") ])));
+            } else {
+                write(HIR "❌ 因素探索失敗：你必須先解鎖前置概念 [" + implode(missing, ", ") + "]！\n" NOR);
+            }
+            return 0;
+        }
+    }
+
+    // 儲存至玩家狀態中，支援額外的解鎖 metadata (如解鎖時間)
+    player->discover_factor(fid, ([
+        "unlocked_at": time(),
+        "source": "factor_service"
+    ]));
 
     // 印出通用因素發現視覺提示
     write("\n" HIY "【 💡 因素探索發現 (Factor Discovery) 】" NOR "\n");

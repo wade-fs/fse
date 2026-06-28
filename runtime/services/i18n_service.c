@@ -42,14 +42,54 @@ void load_locale_file(string file_path) {
 // 重新載入所有已註冊目錄的語系檔
 void reload_language() {
     dictionary = ([]);
+    
+    // 1. 先載入英文 (en_US) 作為預設 fallback
     foreach (string path in locale_paths) {
-        load_locale_file(path + "/" + current_lang + ".yaml");
+        // 模式 A：單一檔案
+        load_locale_file(path + "/en_US.yaml");
+        
+        // 模式 B：多檔案合併 (如 locales/en_US/core.yaml)
+        string *files = get_dir(path + "/en_US/*.yaml");
+        if (arrayp(files) && sizeof(files) > 0) {
+            foreach (string file in files) {
+                load_locale_file(path + "/en_US/" + file);
+            }
+        }
+    }
+    
+    // 2. 載入目前設定的語系覆蓋 fallback
+    if (current_lang != "en_US") {
+        foreach (string path in locale_paths) {
+            // 模式 A
+            load_locale_file(path + "/" + current_lang + ".yaml");
+            
+            // 模式 B
+            string *files = get_dir(path + "/" + current_lang + "/*.yaml");
+            if (arrayp(files) && sizeof(files) > 0) {
+                foreach (string file in files) {
+                    load_locale_file(path + "/" + current_lang + "/" + file);
+                }
+            }
+        }
     }
 }
 
 void set_language(string lang) {
     current_lang = lang;
     reload_language();
+}
+
+// 獨立的 ANSI 色碼替換函式
+string apply_color(string text) {
+    if (!text || !stringp(text)) return text;
+    text = replace_string(text, "$HIG$", HIG);
+    text = replace_string(text, "$HIW$", HIW);
+    text = replace_string(text, "$HIR$", HIR);
+    text = replace_string(text, "$HIC$", HIC);
+    text = replace_string(text, "$HIY$", HIY);
+    text = replace_string(text, "$NOR$", NOR);
+    text = replace_string(text, "$RED$", RED);
+    return text;
 }
 
 // 取得翻譯字串 (支援基礎變數替換，例如 {name})
@@ -63,14 +103,5 @@ varargs string translate(string key, mapping vars) {
         }
     }
     
-    // 支援直接解析 ANSI 色碼替換 (方便在 YAML 寫 $HIG$ 之類的)
-    text = replace_string(text, "$HIG$", HIG);
-    text = replace_string(text, "$HIW$", HIW);
-    text = replace_string(text, "$HIR$", HIR);
-    text = replace_string(text, "$HIC$", HIC);
-    text = replace_string(text, "$HIY$", HIY);
-    text = replace_string(text, "$NOR$", NOR);
-    text = replace_string(text, "$RED$", RED);
-    
-    return text;
+    return apply_color(text);
 }

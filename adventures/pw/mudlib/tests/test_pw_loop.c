@@ -15,23 +15,38 @@ int test_unit_factor_unlock() {
     }
 
     // 1. 確保初始無 factor
-    if (factor_d->factor_discovered(player, "loop_termination")) {
-        write(HIR "❌ 單元測試失敗: 玩家不應預設擁有 loop_termination" NOR "\n");
+    if (factor_d->factor_discovered(player, "factor_b")) {
+        write(HIR "❌ 單元測試失敗: 玩家不應預設擁有 factor_b" NOR "\n");
         return 1;
     }
     
-    // 2. 執行解鎖
-    factor_d->discover_factor(player, "loop_termination");
-    if (!factor_d->factor_discovered(player, "loop_termination")) {
-        write(HIR "❌ 單元測試失敗: 解鎖 loop_termination 失敗" NOR "\n");
+    // 2. 嘗試解鎖 factor_b (應因缺少 factor_a 前置而失敗)
+    if (factor_d->discover_factor(player, "factor_b") != 0) {
+        write(HIR "❌ 單元測試失敗: 缺少前置的因素應該無法被解鎖" NOR "\n");
         return 1;
     }
 
-    // 3. 重複解鎖不應產生錯誤
-    factor_d->discover_factor(player, "loop_termination");
+    // 3. 解鎖 factor_a (應成功)
+    if (factor_d->discover_factor(player, "factor_a") != 1) {
+        write(HIR "❌ 單元測試失敗: 解鎖 factor_a 失敗" NOR "\n");
+        return 1;
+    }
+
+    // 4. 再次嘗試解鎖 factor_b (前置已足夠，應成功)
+    if (factor_d->discover_factor(player, "factor_b") != 1) {
+        write(HIR "❌ 單元測試失敗: 前置條件滿足後依然解鎖 factor_b 失敗" NOR "\n");
+        return 1;
+    }
+
+    // 5. 驗證 Player 的 metadata 儲存
+    mapping meta = player->query_discovered_factors_metadata();
+    if (!mappingp(meta) || undefinedp(meta["factor_a"]) || !intp(meta["factor_a"]["unlocked_at"])) {
+        write(HIR "❌ 單元測試失敗: 解鎖因素並未正確寫入解鎖時間等 metadata" NOR "\n");
+        return 1;
+    }
 
     destruct(player);
-    write(HIG "  ✓ 單元測試: 【Factor 解鎖與狀態檢查】驗證通過。" NOR "\n");
+    write(HIG "  ✓ 單元測試: 【Factor 解鎖與狀態檢查、前置條件驗證】驗證通過。" NOR "\n");
     return 0;
 }
 
@@ -75,6 +90,37 @@ int test_property_ast_matcher() {
     // 5. 帶有無關屬性的巢狀結構 (應通過，容錯性)
     if (!executor->match_ast(([ "type": "Loop", "has_break": 1, "body": "some_code", "nested": ([ "x": 1 ]) ]), expected_rule)) {
         write(HIR "❌ 屬性測試失敗: 帶無關屬性的合法 AST 未能匹配" NOR "\n");
+        return 1;
+    }
+
+    // 6. 測試全新的巢狀 JSONPath 查詢以及 in/contains 運算子
+    mapping nested_ast = ([
+        "type": "Loop",
+        "body": ({
+            ([ "type": "Break", "value": 1 ]),
+            ([ "type": "Print", "text": "hello" ])
+        }),
+        "loop_type": "while"
+    ]);
+
+    mapping advanced_expected = ([
+        "matcher": "rule_based",
+        "rules": ({
+            ([ "path": "$.body[0].type", "operator": "eq", "value": "Break" ]),
+            ([ "path": "$.body[1].text", "operator": "contains", "value": "ell" ]),
+            ([ "path": "$.loop_type", "operator": "in", "value": ({ "while", "for" }) ])
+        })
+    ]);
+
+    if (!executor->match_ast(nested_ast, advanced_expected)) {
+        write(HIR "❌ 屬性測試失敗: 進階巢狀 JSONPath 與運算子匹配失敗" NOR "\n");
+        return 1;
+    }
+
+    // 7. 測試 in 運算子不匹配的情況 (應攔截不通過)
+    mapping mismatch_ast = nested_ast + ([ "loop_type": "do_while" ]);
+    if (executor->match_ast(mismatch_ast, advanced_expected)) {
+        write(HIR "❌ 屬性測試失敗: 運算子 in 比對失敗卻意外通過" NOR "\n");
         return 1;
     }
 

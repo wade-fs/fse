@@ -2,31 +2,42 @@
 inherit "/std/entity";
 
 private string id;
-private string *discovered_factors;
+private mapping discovered_factors;
 private mapping physical_state;
 
 void create() {
     ::create();
     set_entity_id("user:tester");
     set_entity_type("user");
-    discovered_factors = ({});
+    discovered_factors = ([]);
     physical_state = ([ "memory": 100 ]);
 }
 
 void set_id(string new_id) { id = new_id; }
 string get_id() { return id; }
 
-string *query_discovered_factors() { return discovered_factors; }
+string *query_discovered_factors() { 
+    return keys(discovered_factors); 
+}
 
-void discover_factor(string fid) {
-    if (member_array(fid, discovered_factors) == -1) {
-        discovered_factors += ({ fid });
+mapping query_discovered_factors_metadata() {
+    return discovered_factors;
+}
+
+varargs void discover_factor(string fid, mapping metadata) {
+    if (!discovered_factors) discovered_factors = ([]);
+    if (!discovered_factors[fid]) {
+        if (!metadata) metadata = ([]);
+        if (undefinedp(metadata["unlocked_at"])) {
+            metadata["unlocked_at"] = time();
+        }
+        discovered_factors[fid] = metadata;
     }
 }
 
 int has_factor(string fid) {
     if (!discovered_factors) return 0;
-    return member_array(fid, discovered_factors) != -1;
+    return !undefinedp(discovered_factors[fid]);
 }
 
 // 兼容舊架構接口

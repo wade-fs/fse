@@ -1,0 +1,6 @@
+factor_id: "factor_b"
+name: "進階概念 B"
+description: "這是進階概念 B"
+prerequisites:
+  - factor_a
+progress: 20

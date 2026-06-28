@@ -5,13 +5,35 @@
 //   - 依據定義的 executor（例如 ast_matcher）對輸入積木進行校驗與執行效果處理。
 #include "/include/ansi.h"
 
-// 輔助函式：根據 JSONPath 風格（簡單支援 $.key）取得值
+// 輔助函式：根據 JSONPath 風格（簡單支援 $.key 與 $.key[idx].subkey）取得值
 mixed get_ast_value(mapping ast, string path) {
     if (!ast || !path) return 0;
-    if (path[0..1] == "$.") {
-        return ast[path[2..]];
+    if (path[0..1] != "$.") {
+        return ast[path];
     }
-    return ast[path];
+    
+    string clean_path = path[2..];
+    string *parts = explode(clean_path, ".");
+    mixed cur = ast;
+    
+    foreach (string part in parts) {
+        if (!part || part == "") continue;
+        
+        string key;
+        int idx;
+        
+        // 支援包含陣列索引的語法，例如 body[0]
+        if (sscanf(part, "%s[%d]", key, idx) == 2) {
+            if (!mappingp(cur)) return 0;
+            cur = cur[key];
+            if (!arrayp(cur) || idx < 0 || idx >= sizeof(cur)) return 0;
+            cur = cur[idx];
+        } else {
+            if (!mappingp(cur)) return 0;
+            cur = cur[part];
+        }
+    }
+    return cur;
 }
 
 // 彈性 AST 匹配器
@@ -35,13 +57,39 @@ int match_ast(mapping ast, mapping expected) {
         foreach(mapping rule in rules) {
             string path = rule["path"];
             mixed actual_val = get_ast_value(ast, path);
+            string op = rule["operator"];
+            mixed val = rule["value"];
             
-            if (!undefinedp(rule["value"])) {
-                if (actual_val != rule["value"]) return 0;
+            // 相容無 operator 舊格式
+            if (!op) {
+                if (!undefinedp(val)) {
+                    if (actual_val != val) return 0;
+                }
+                if (!undefinedp(rule["contains"])) {
+                    mixed c_val = rule["contains"];
+                    if (stringp(actual_val) && strsrch(actual_val, c_val) == -1) return 0;
+                    if (arrayp(actual_val) && member_array(c_val, actual_val) == -1) return 0;
+                }
+                continue;
             }
-            if (!undefinedp(rule["contains"])) {
-                if (stringp(actual_val) && strsrch(actual_val, rule["contains"]) == -1) return 0;
-                if (arrayp(actual_val) && member_array(rule["contains"], actual_val) == -1) return 0;
+            
+            switch (op) {
+                case "eq":
+                    if (actual_val != val) return 0;
+                    break;
+                case "ne":
+                case "neq":
+                    if (actual_val == val) return 0;
+                    break;
+                case "contains":
+                    if (stringp(actual_val) && strsrch(actual_val, val) == -1) return 0;
+                    if (arrayp(actual_val) && member_array(val, actual_val) == -1) return 0;
+                    break;
+                case "in":
+                    if (!arrayp(val) || member_array(actual_val, val) == -1) return 0;
+                    break;
+                default:
+                    return 0; // 未知運算子直接拒絕
             }
         }
         return 1;
