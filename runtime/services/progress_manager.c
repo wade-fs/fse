@@ -140,6 +140,19 @@ varargs void add_world_progress(int val, string track) {
 varargs void complete_quest(object player, string qid, string track) {
     if (!player) return;
     if (!track) track = "main";
+    if (!active_tracks[track]) return;
+
+    if (!active_tracks[track]["completed_quests"]) {
+        active_tracks[track]["completed_quests"] = ({});
+    }
+
+    // 避免重複完成同一個任務並重複加進度
+    if (member_array(qid, active_tracks[track]["completed_quests"]) != -1) {
+        return;
+    }
+
+    active_tracks[track]["completed_quests"] += ({ qid });
+    save_state();
 
     object i18n = load_object("/runtime/services/i18n_service.c");
     if (i18n) {

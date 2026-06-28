@@ -2,5 +2,5 @@ version: "1.0"
 stage_id: "stage_2_loop"
 name: "迴圈篇"
 description: "深入理解重複執行的控制結構，征服無窮迴圈的沼澤。"
-min_progress: 100
-# 無 next 欄位 = 此為最終階段
+min_progress: 20
+next: "stage_3_variable"

@@ -1,0 +1,21 @@
+version: "1.0"
+challenge_id: "variable_assignment"
+location: "variable_forest"
+name: "變數的誕生與賦值"
+expected_ast:
+  matcher: "rule_based"
+  rules:
+    - path: "$.type"
+      operator: "eq"
+      value: "Assignment"
+    - path: "$.var_name"
+      operator: "eq"
+      value: "x"
+    - path: "$.value"
+      operator: "eq"
+      value: 42
+success_msg: "🎉 太棒了！你成功宣告了變數 x 並賦予其數值 42，點亮了變數森林中的符文！\n"
+failure_consequence:
+  memory_cost: 10
+  error_warning: "🔥 [語意錯誤] 你拖曳的積木似乎沒有成功將變數 x 設為 42。\n"
+description: "使用變數賦值積木，將變數 x 的值設定為 42。"

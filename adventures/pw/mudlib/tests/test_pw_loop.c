@@ -129,17 +129,18 @@ int test_property_ast_matcher() {
 }
 
 int test_integration_progression() {
-    object player, site_swamp, site_valley, progress_d, factor_d;
+    object player, site_swamp, site_valley, site_var, progress_d, factor_d;
     mapping ast;
     int res;
 
     player = clone_object("/std/user.c");
     site_swamp = load_object("/nodes/infinite_loop_swamp/node");
     site_valley = load_object("/nodes/counter_valley/node");
+    site_var = load_object("/nodes/variable_forest/node");
     progress_d = load_object("/runtime/services/progress_manager.c");
     factor_d = load_object("/runtime/services/factor_service.c");
 
-    if (!player || !site_swamp || !site_valley || !progress_d || !factor_d) {
+    if (!player || !site_swamp || !site_valley || !site_var || !progress_d || !factor_d) {
         write(HIR "❌ 整合測試失敗: 物件初始化失敗" NOR "\n");
         return 1;
     }
@@ -159,7 +160,7 @@ int test_integration_progression() {
         write(HIR "❌ 整合測試失敗: 作弊輸入不應解鎖 loop_termination" NOR "\n");
         return 1;
     }
-    write(HIG "  ✓ 整合測試 (1/4): 【防作弊攔截】驗證通過。" NOR "\n");
+    write(HIG "  ✓ 整合測試 (1/5): 【防作弊攔截】驗證通過。" NOR "\n");
 
     // ==========================================================
     // 互動二：【合法的犯錯輸入】
@@ -175,7 +176,7 @@ int test_integration_progression() {
         write(HIR "❌ 整合測試失敗: 崩潰後未解鎖 loop_termination 因素" NOR "\n");
         return 1;
     }
-    write(HIG "  ✓ 整合測試 (2/4): 【犯錯崩潰與領悟】驗證通過。" NOR "\n");
+    write(HIG "  ✓ 整合測試 (2/5): 【犯錯崩潰與領悟】驗證通過。" NOR "\n");
 
     // ==========================================================
     // 互動三：【合法的成功輸入】
@@ -187,7 +188,7 @@ int test_integration_progression() {
         write(HIR "❌ 整合測試失敗: 第一關破關後，世界階段未推進至 stage_2_loop" NOR "\n");
         return 1;
     }
-    write(HIG "  ✓ 整合測試 (3/4): 【第一關破關與階段推進】驗證通過。" NOR "\n");
+    write(HIG "  ✓ 整合測試 (3/5): 【第一關破關與階段推進】驗證通過。" NOR "\n");
 
     // ==========================================================
     // 互動四：【資料驅動計數器迴圈】
@@ -200,14 +201,35 @@ int test_integration_progression() {
     int old_progress = progress_d->query_world_progress("main");
 
     // B. 正確的計數器
+    string old_stage_id = progress_d->query_current_stage("main");
     ast = ([ "type": "Loop", "condition": "count < 100", "act": "count++" ]);
     player->process_input("execute " + yaml_encode(ast));
 
-    if (progress_d->query_world_progress("main") <= old_progress) {
+    if (progress_d->query_world_progress("main") <= old_progress && progress_d->query_current_stage("main") == old_stage_id) {
         write(HIR "❌ 整合測試失敗: 第二關成功破關後，任務未被標記完成" NOR "\n");
         return 1;
     }
-    write(HIG "  ✓ 整合測試 (4/4): 【資料驅動計數器驗證與破關】驗證通過。" NOR "\n");
+    write(HIG "  ✓ 整合測試 (4/5): 【資料驅動計數器驗證與破關】驗證通過。" NOR "\n");
+
+    // ==========================================================
+    // 互動五：【變數與賦值關卡】
+    // ==========================================================
+    player->set_temp("current_site", "variable_forest");
+    
+    // A. 錯誤的變數賦值 (數值不符)
+    ast = ([ "type": "Assignment", "var_name": "x", "value": 99 ]);
+    player->process_input("execute " + yaml_encode(ast));
+    int mid_progress = progress_d->query_world_progress("main");
+
+    // B. 正確的變數賦值 (應能完成挑戰並晉升 stage_3_variable)
+    ast = ([ "type": "Assignment", "var_name": "x", "value": 42 ]);
+    player->process_input("execute " + yaml_encode(ast));
+
+    if (progress_d->query_current_stage("main") != "stage_3_variable") {
+        write(HIR "❌ 整合測試失敗: 變數森林關卡過關後，世界階段未推進至 stage_3_variable" NOR "\n");
+        return 1;
+    }
+    write(HIG "  ✓ 整合測試 (5/5): 【變數與賦值過關驗證】驗證通過。" NOR "\n");
 
     destruct(player);
     return 0;

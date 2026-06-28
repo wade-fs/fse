@@ -1,0 +1,11 @@
+version: "1.0"
+node_id: "variable_forest"
+name: "變數森林"
+type: "lesson"
+mentor: "mentor_var"
+description: "這片森林裡的樹木都貼著標籤，各自承載著神祕的數值。"
+exits:
+  go_valley: "counter_valley"
+challenges:
+  - id: "variable_assignment"
+    executor: "ast_matcher"

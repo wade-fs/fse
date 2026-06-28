@@ -131,6 +131,103 @@
         }
         .btn-run:hover { background: #94e2d5; transform: scale(1.05); }
         .btn-run:active { transform: scale(0.95); }
+
+        /* Blockly 工具區/飛出面板對比度特化 override */
+        .blocklyToolboxDiv {
+            background-color: #11111b !important; /* 卡布奇諾極暗色，與主背景區分 */
+            border-right: 3px solid #313244 !important;
+            padding: 12px 8px !important;
+        }
+        .blocklyTreeLabel {
+            font-size: 15px !important;
+            font-weight: 800 !important; /* 最粗字體 */
+            letter-spacing: 0.8px;
+        }
+        /* 所有分類行與內部元素（支援舊版 .blocklyTreeRow 與新版 .blocklyToolboxCategory） */
+        .blocklyToolboxCategory,
+        .blocklyToolboxCategory *,
+        .blocklyTreeRow,
+        .blocklyTreeRow * {
+            opacity: 1.0 !important; /* 強制關閉任何透明度，不與背景融合 */
+        }
+        
+        .blocklyToolboxCategory,
+        .blocklyTreeRow {
+            margin-bottom: 12px !important;
+            padding: 8px 12px !important;
+            border-radius: 6px !important;
+            box-shadow: none !important; /* 徹底拔除陰影/立體感，使用純扁平化設計 */
+            transition: all 0.2s ease-in-out;
+            border: 2px solid #313244 !important; /* 預設深色扁平邊框 */
+            height: auto !important; /* 強制高度自動，完美包裹文字 */
+            min-height: 40px !important; /* 保證充足的按鈕高度 */
+            display: flex !important;
+            align-items: center !important; /* 垂直居中對齊內部文字 */
+        }
+        
+        /* 1. 未選取狀態：純扁平深卡片色，高對比亮金色文字與金邊框 */
+        .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected),
+        .blocklyTreeRow:not(.blocklyTreeSelected) {
+            background-color: #1e1e2e !important; 
+            border-color: #ffd54f !important; /* 亮金色邊框強化輪廓 */
+        }
+        .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected) .blocklyTreeLabel,
+        .blocklyTreeRow:not(.blocklyTreeSelected) .blocklyTreeLabel {
+            color: #ffd54f !important; /* 強制使用高對比金色文字 */
+        }
+        
+        /* 滑鼠移入 */
+        .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected):hover,
+        .blocklyTreeRow:not(.blocklyTreeSelected):hover {
+            background-color: #252538 !important;
+            border-color: #89b4fa !important;
+        }
+        
+        /* 2. 已選取狀態：純扁平明亮天藍色，深黑藍色文字 */
+        .blocklyToolboxCategorySelected,
+        .blocklyTreeSelected {
+            background-color: #89b4fa !important; 
+            border-color: #89b4fa !important;
+            box-shadow: none !important; /* 拔除發光立體感 */
+        }
+        .blocklyToolboxCategorySelected .blocklyTreeLabel,
+        .blocklyTreeSelected .blocklyTreeLabel {
+            color: #11111b !important; /* 深黑字 */
+        }
+        /* 飛出展開面板 (Flyout) 的背景與文字 */
+        .blocklyFlyoutBackground {
+            fill: #16161e !important; /* 極深背景，襯托明亮積木 */
+            fill-opacity: 0.98 !important;
+        }
+        .blocklyFlyoutLabelText {
+            fill: #ffffff !important;
+            font-weight: bold !important;
+            font-size: 15px !important;
+        }
+        
+        /* 視覺特化：強制積木上的標籤文字使用高對比純白，並加粗與放大，防止在深色背景下看不清 */
+        .blocklyText {
+            fill: #ffffff !important; 
+            font-weight: 800 !important; /* 超粗體 */
+            font-size: 14px !important;
+            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9); /* 文字陰影，進一步提升對比度 */
+        }
+        
+        /* 針對積木內的文字輸入框與下拉選單 */
+        .blocklyHtmlInput {
+            background-color: #1e1e2e !important;
+            color: #ffffff !important;
+            border: 2px solid #7aa2f7 !important;
+            font-weight: bold !important;
+        }
+        .blocklyDropdownText {
+            fill: #ffffff !important;
+            font-weight: bold !important;
+        }
+        .blocklyNonEditableText>text {
+            fill: #ffffff !important;
+            font-weight: bold !important;
+        }
     </style>
 </head>
 <body>
@@ -236,6 +333,19 @@
             }
         };
 
+        Blockly.Blocks['action_assignment'] = {
+            init: function() {
+                this.appendDummyInput().appendField("設定")
+                    .appendField(new Blockly.FieldTextInput("x"), "VAR")
+                    .appendField("為")
+                    .appendField(new Blockly.FieldNumber(42), "VALUE");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(290);
+                this.setTooltip("將值賦予變數");
+            }
+        };
+
         var defaultToolbox = '<xml id="toolbox" style="display: none">' +
             '  <category name="控制流" colour="#5b80a5">' +
             '    <block type="controls_loop"></block>' +
@@ -244,6 +354,7 @@
             '    <block type="variables_count"></block>' +
             '    <block type="compare_less_100"></block>' +
             '    <block type="action_increment"></block>' +
+            '    <block type="action_assignment"></block>' +
             '  </category>' +
             '</xml>';
 
@@ -294,6 +405,12 @@
                 return leftVal + " < 100";
             } else if (block.type === 'action_increment') {
                 return "count++";
+            } else if (block.type === 'action_assignment') {
+                return {
+                    type: "Assignment",
+                    var_name: block.getFieldValue('VAR'),
+                    value: parseInt(block.getFieldValue('VALUE'), 10)
+                };
             }
             return null;
         }
@@ -322,6 +439,8 @@
                 }
             } else if (ast.type === "Break") {
                 res += indent + "break\n";
+            } else if (ast.type === "Assignment") {
+                res += indent + ast.var_name + " = " + ast.value + "\n";
             }
             return res;
         }
@@ -375,13 +494,7 @@
                     try {
                         var packet = JSON.parse(payload.substring(5));
                         if (packet.type === "toolbox") {
-                            var revealLayers = packet.data ? packet.data.reveal_layers : null;
-                            var unlockBreak = false;
-                            if (revealLayers) {
-                                revealLayers.forEach(function(l) {
-                                    if (l.reveal_block === "break_block") unlockBreak = true;
-                                });
-                            }
+                            var unlockBreak = packet.data && packet.data.break_block === 1;
                             if (unlockBreak && !hasBreakUnlocked) {
                                 hasBreakUnlocked = true;
                                 triggerUnlockEffect();
@@ -396,6 +509,7 @@
                                     '    <block type="variables_count"></block>' +
                                     '    <block type="compare_less_100"></block>' +
                                     '    <block type="action_increment"></block>' +
+                                    '    <block type="action_assignment"></block>' +
                                     '  </category>' +
                                     '</xml>';
                                 workspace.updateToolbox(upgradedToolbox);
@@ -463,12 +577,7 @@
             logToTerminal("▶ 正在傳送積木邏輯至虛擬機執行...", "blue-txt");
             socket.send(JSON.stringify({
                 type: "cmd",
-                payload: "execute " + JSON.stringify({
-                    type: ast.type,
-                    condition: ast.condition,
-                    act: ast.act,
-                    has_break: ast.has_break ? 1 : 0
-                })
+                payload: "execute " + JSON.stringify(ast)
             }));
         });
     </script>

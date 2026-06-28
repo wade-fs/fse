@@ -1,0 +1,6 @@
+version: "1.0"
+stage_id: "stage_3_variable"
+name: "變數與賦值篇"
+description: "掌握變數的宣告與賦值，儲存並操縱記憶體中的資料。"
+min_progress: 150
+# 此為最終階段
