@@ -68,9 +68,12 @@ int execute_challenges(object node_obj, object player, mapping ast) {
     string node_dir = node_obj->query_node_dir();
     if (!config || !node_dir) return 0;
 
+    object i18n = load_object("/runtime/services/i18n_service.c");
+    if (!i18n) return 0; // 若無法載入翻譯服務則中斷
+
     mixed *challenges = config["challenges"];
     if (!challenges || !sizeof(challenges)) {
-        write("ℹ️ 此地標目前沒有需要執行的挑戰。\n");
+        write(i18n->translate("core.executor.no_challenges"));
         return 1;
     }
 
@@ -89,11 +92,11 @@ int execute_challenges(object node_obj, object player, mapping ast) {
             mapping chal_data = yaml_decode(raw);
             if (!chal_data) continue;
 
-            write("💡 虛擬機正在分析積木結構...\n");
+            write(i18n->translate("core.executor.analyzing"));
 
             mapping expected = chal_data["expected_ast"];
             if (!expected) {
-                write("❌ 執行失敗：挑戰設定檔中缺少預期 AST 欄位。\n");
+                write(i18n->translate("core.executor.missing_expected"));
                 return 0;
             }
 
@@ -102,7 +105,7 @@ int execute_challenges(object node_obj, object player, mapping ast) {
             if (req_factor && ast["has_break"] == 1) {
                 int has_factor = load_object("/runtime/services/factor_service.c")->factor_discovered(player, req_factor);
                 if (!has_factor) {
-                    write("❌ 執行失敗：你目前的工具箱中並不存在 [中斷] 積木！請勿越級組裝。\n");
+                    write(i18n->translate("core.executor.missing_factor", ([ "factor_name": req_factor ])));
                     return 0;
                 }
             }
@@ -138,12 +141,12 @@ int execute_challenges(object node_obj, object player, mapping ast) {
                     write(RED + consequence["error_warning"] + NOR);
                 }
             } else {
-                write(RED "🔥 [語意錯誤] 積木邏輯未對齊預期條件！\n" NOR);
-                write("⚡ 提示：請重新檢查你的迴圈條件與更新陳述！\n");
+                write(i18n->translate("core.executor.semantic_error"));
+                write(i18n->translate("core.executor.semantic_hint"));
             }
             return 0;
         } else {
-            write("❌ 未知的執行器類型：" + executor + "\n");
+            write(i18n->translate("core.executor.unknown_type", ([ "executor": executor ])));
             return 0;
         }
     }

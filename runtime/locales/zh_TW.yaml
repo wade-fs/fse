@@ -1,0 +1,12 @@
+# /runtime/locales/zh_TW.yaml
+# FSE 核心系統通用翻譯檔
+core.progress.stage_shifted: "\n$HIW$【世界邏輯共振完成】\n即將進入邏輯階段{track_display}：$HIG${name} ({next})$NOR$\n\n"
+core.progress.quest_completed: "$HIG$🏆 [挑戰完成] 恭喜你完成了任務/挑戰：[{qid}]！\n$NOR$"
+core.progress.stage_advanced: "$HIC$🚀 [世界階段前進] 你的程式功力大增，({track}) 階段已推進至 [{new_stage}]！\n$NOR$"
+core.executor.no_challenges: "ℹ️ 此地標目前沒有需要執行的挑戰。\n"
+core.executor.analyzing: "💡 虛擬機正在分析積木結構...\n"
+core.executor.missing_expected: "❌ 執行失敗：挑戰設定檔中缺少預期 AST 欄位。\n"
+core.executor.missing_factor: "❌ 執行失敗：你目前的工具箱中並不存在 [{factor_name}] 積木！請勿越級組裝。\n"
+core.executor.unknown_type: "❌ 未知的執行器類型：{executor}\n"
+core.executor.semantic_error: "$RED$🔥 [語意錯誤] 積木邏輯未對齊預期條件！\n$NOR$"
+core.executor.semantic_hint: "⚡ 提示：請重新檢查你的迴圈條件與更新陳述！\n"

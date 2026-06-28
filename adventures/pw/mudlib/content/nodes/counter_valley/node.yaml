@@ -1,3 +1,4 @@
+version: "1.0"
 node_id: "counter_valley"
 name: "計數山谷"
 type: "lesson"

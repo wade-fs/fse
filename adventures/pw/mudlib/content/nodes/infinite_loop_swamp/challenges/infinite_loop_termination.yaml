@@ -1,3 +1,4 @@
+version: "1.0"
 challenge_id: "infinite_loop_termination"
 location: "infinite_loop_swamp"
 name: "終止無窮迴圈"

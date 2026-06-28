@@ -103,7 +103,12 @@ void next_stage(string track) {
     string name = next_data ? next_data["name"] : next;
 
     string track_display = (track == "main") ? "" : " [" + track + "軌道]";
-    shout(HIW "\n【世界邏輯共振完成】\n即將進入邏輯階段" + track_display + "：" HIG + name + " (" + next + ")" + NOR "\n\n");
+    
+    object i18n = load_object("/runtime/services/i18n_service.c");
+    if (i18n) {
+        string msg = i18n->translate("core.progress.stage_shifted", ([ "track_display": track_display, "name": name, "next": next ]));
+        shout(msg);
+    }
 
     load_object("/runtime/services/event_bus.c")->publish("StageShifted", ([
         "track"       : track,
@@ -136,7 +141,10 @@ varargs void complete_quest(object player, string qid, string track) {
     if (!player) return;
     if (!track) track = "main";
 
-    tell_object(player, HIG "🏆 [挑戰完成] 恭喜你完成了任務/挑戰：[" + qid + "]！\n" NOR);
+    object i18n = load_object("/runtime/services/i18n_service.c");
+    if (i18n) {
+        tell_object(player, i18n->translate("core.progress.quest_completed", ([ "qid": qid ])));
+    }
 
     log_file("progress.log", sprintf("[%s] 玩家 %s 完成了任務 %s (Track: %s)\n",
         ctime(time()), player->query_entity_id(), qid, track));
@@ -207,7 +215,10 @@ varargs void set_stage(object player, string new_stage, string track) {
     save_state();
 
     if (player) {
-        tell_object(player, HIC "🚀 [世界階段前進] 你的程式功力大增，(" + track + ") 階段已推進至 [" + new_stage + "]！\n" NOR);
+        object i18n = load_object("/runtime/services/i18n_service.c");
+        if (i18n) {
+            tell_object(player, i18n->translate("core.progress.stage_advanced", ([ "track": track, "new_stage": new_stage ])));
+        }
     }
 
     log_file("progress.log", sprintf("[%s] 世界階段 (%s) 推進至 %s\n", ctime(time()), track, new_stage));
