@@ -55,7 +55,7 @@ int main(object me, string arg, string extra) {
 
     // 🚀 無論成功或失敗，都同步將當前最新狀態的工具箱發送給前端 (解題/失敗解鎖即時更新)
     mapping toolbox = env->resolve_toolbox(me);
-    tell_object(me, "__TOOLBOX__" + yaml_encode(toolbox));
+    tell_object(me, "JSON:" + json_encode(([ "type": "toolbox", "data": toolbox ])));
 
     return 1;
 }

@@ -176,12 +176,23 @@
             <!-- 隱藏的中斷積木 -->
             <block type="controls_break" id="break_block_xml" style="display: none;"></block>
         </category>
+        <category name="變數與運算" colour="#a55b80">
+            <block type="variables_count"></block>
+            <block type="compare_less_100"></block>
+            <block type="action_increment"></block>
+        </category>
     </xml>
 
     <script>
         Blockly.Blocks['controls_loop'] = {
             init: function() {
                 this.appendDummyInput().appendField("重複執行 (Loop)");
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("條件");
+                this.appendValueInput("ACT")
+                    .setCheck("Action")
+                    .appendField("每步執行");
                 this.appendStatementInput("DO").appendField("執行");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -199,9 +210,40 @@
             }
         };
 
+        Blockly.Blocks['variables_count'] = {
+            init: function() {
+                this.appendDummyInput().appendField("變數 count");
+                this.setOutput(true, "Number");
+                this.setColour(230);
+            }
+        };
+
+        Blockly.Blocks['compare_less_100'] = {
+            init: function() {
+                this.appendValueInput("LEFT")
+                    .setCheck("Number");
+                this.appendDummyInput().appendField("< 100");
+                this.setOutput(true, "Boolean");
+                this.setColour(210);
+            }
+        };
+
+        Blockly.Blocks['action_increment'] = {
+            init: function() {
+                this.appendDummyInput().appendField("count 累加 (count++)");
+                this.setOutput(true, "Action");
+                this.setColour(65);
+            }
+        };
+
         var defaultToolbox = '<xml id="toolbox" style="display: none">' +
             '  <category name="控制流" colour="#5b80a5">' +
             '    <block type="controls_loop"></block>' +
+            '  </category>' +
+            '  <category name="變數與運算" colour="#a55b80">' +
+            '    <block type="variables_count"></block>' +
+            '    <block type="compare_less_100"></block>' +
+            '    <block type="action_increment"></block>' +
             '  </category>' +
             '</xml>';
 
@@ -212,31 +254,89 @@
             theme: Blockly.Themes.Dark
         });
 
-        // 產生偽碼
-        function updatePseudoCode() {
-            var blocks = workspace.getTopBlocks(true);
-            var code = "";
-            function traverse(block, indent) {
-                if (block.type === 'controls_loop') {
-                    code += indent + "while (true) {\n";
-                    var child = block.getInputTargetBlock('DO');
-                    while (child) {
-                        traverse(child, indent + "    ");
-                        child = child.getNextBlock();
+        // 遞迴將 Blockly Blocks 轉成 FSE 標準 AST
+        function blockToAST(block) {
+            if (!block) return null;
+            
+            if (block.type === 'controls_loop') {
+                var condBlock = block.getInputTargetBlock('CONDITION');
+                var actBlock = block.getInputTargetBlock('ACT');
+                var doBlock = block.getInputTargetBlock('DO');
+                
+                var ast = {
+                    type: "Loop",
+                    condition: condBlock ? blockToAST(condBlock) : null,
+                    act: actBlock ? blockToAST(actBlock) : null,
+                    body: []
+                };
+                
+                var current = doBlock;
+                var hasBreak = 0;
+                while (current) {
+                    var childAST = blockToAST(current);
+                    if (childAST) {
+                        ast.body.push(childAST);
+                        if (childAST.type === "Break" || childAST.has_break === 1) {
+                            hasBreak = 1;
+                        }
                     }
-                    code += indent + "}\n";
-                } else if (block.type === 'controls_break') {
-                    code += indent + "break;\n";
+                    current = current.getNextBlock();
+                }
+                ast.has_break = hasBreak;
+                return ast;
+            } else if (block.type === 'controls_break') {
+                return { type: "Break" };
+            } else if (block.type === 'variables_count') {
+                return "count";
+            } else if (block.type === 'compare_less_100') {
+                var leftBlock = block.getInputTargetBlock('LEFT');
+                var leftVal = leftBlock ? blockToAST(leftBlock) : "?";
+                return leftVal + " < 100";
+            } else if (block.type === 'action_increment') {
+                return "count++";
+            }
+            return null;
+        }
+
+        // 將 AST 轉成 Python-like 偽碼
+        function astToPython(ast, indent) {
+            if (!ast) return "";
+            var res = "";
+            if (ast.type === "Loop") {
+                var cond = ast.condition || "True";
+                res += indent + "while " + cond + ":\n";
+                
+                var hasStatements = false;
+                if (ast.body && ast.body.length > 0) {
+                    ast.body.forEach(function(child) {
+                        res += astToPython(child, indent + "    ");
+                        hasStatements = true;
+                    });
+                }
+                if (ast.act) {
+                    res += indent + "    " + ast.act + "\n";
+                    hasStatements = true;
+                }
+                if (!hasStatements) {
+                    res += indent + "    pass\n";
+                }
+            } else if (ast.type === "Break") {
+                res += indent + "break\n";
+            }
+            return res;
+        }
+
+        // 產生偽碼並渲染
+        function updatePseudoCode() {
+            var topBlocks = workspace.getTopBlocks(true);
+            var code = "";
+            for(var i=0; i<topBlocks.length; i++) {
+                var ast = blockToAST(topBlocks[i]);
+                if (ast) {
+                    code += astToPython(ast, "") + "\n";
                 }
             }
-            for(var i=0; i<blocks.length; i++) {
-                var b = blocks[i];
-                while(b) {
-                    traverse(b, "");
-                    b = b.getNextBlock();
-                }
-            }
-            if(code === "") code = "// 拖曳積木來產生程式碼...";
+            if(code.trim() === "") code = "// 拖曳積木來產生程式碼...";
             document.getElementById('code-output').innerText = code;
         }
 
@@ -253,11 +353,11 @@
             var bar = document.getElementById('memory-bar');
             bar.style.width = memoryLevel + "%";
             if (memoryLevel < 30) {
-                bar.style.background = "#e57373"; // Red
+                bar.style.background = "#e57373"; 
             } else if (memoryLevel < 60) {
-                bar.style.background = "#f9e2af"; // Yellow
+                bar.style.background = "#f9e2af"; 
             } else {
-                bar.style.background = "#a6e3a1"; // Green
+                bar.style.background = "#a6e3a1"; 
             }
         }
 
@@ -270,22 +370,44 @@
             if (msg.type === "mud_text" || msg.type === "output" || msg.type === "welcome") {
                 var payload = msg.payload || "";
                 
-                if (payload.indexOf("__TOOLBOX__") === 0) {
-                    var yamlStr = payload.substring(11);
-                    if (yamlStr.indexOf("break_block") !== -1 && !hasBreakUnlocked) {
-                        hasBreakUnlocked = true;
-                        triggerUnlockEffect();
-                        logToTerminal("✨ [成就解鎖] 你領悟了「迴圈的盡頭」！", "yellow-txt");
-                        logToTerminal("🛠️ [工具箱更新] 已新增 [中斷 (Break)] 積木！", "green-txt");
-                        var upgradedToolbox = '<xml>' +
-                            '  <category name="控制流" colour="#5b80a5">' +
-                            '    <block type="controls_loop"></block>' +
-                            '    <block type="controls_break"></block>' +
-                            '  </category>' +
-                            '</xml>';
-                        workspace.updateToolbox(upgradedToolbox);
+                // 結構化 JSON 協定處理
+                if (payload.indexOf("JSON:") === 0) {
+                    try {
+                        var packet = JSON.parse(payload.substring(5));
+                        if (packet.type === "toolbox") {
+                            var revealLayers = packet.data ? packet.data.reveal_layers : null;
+                            var unlockBreak = false;
+                            if (revealLayers) {
+                                revealLayers.forEach(function(l) {
+                                    if (l.reveal_block === "break_block") unlockBreak = true;
+                                });
+                            }
+                            if (unlockBreak && !hasBreakUnlocked) {
+                                hasBreakUnlocked = true;
+                                triggerUnlockEffect();
+                                logToTerminal("✨ [成就解鎖] 你領悟了「迴圈的盡頭」！", "yellow-txt");
+                                logToTerminal("🛠️ [工具箱更新] 已新增 [中斷 (Break)] 積木！", "green-txt");
+                                var upgradedToolbox = '<xml>' +
+                                    '  <category name="控制流" colour="#5b80a5">' +
+                                    '    <block type="controls_loop"></block>' +
+                                    '    <block type="controls_break"></block>' +
+                                    '  </category>' +
+                                    '  <category name="變數與運算" colour="#a55b80">' +
+                                    '    <block type="variables_count"></block>' +
+                                    '    <block type="compare_less_100"></block>' +
+                                    '    <block type="action_increment"></block>' +
+                                    '  </category>' +
+                                    '</xml>';
+                                workspace.updateToolbox(upgradedToolbox);
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse JSON protocol", e);
                     }
-                } else if (payload !== "") {
+                    return;
+                }
+
+                if (payload !== "") {
                     var cleanText = payload.replace(/\u001b\[\d+m/g, "");
                     cleanText = cleanText.replace(/\$\w+\$/g, ""); 
                     
@@ -296,7 +418,7 @@
                     } else if (cleanText.indexOf("💥") !== -1 || cleanText.indexOf("無窮迴圈") !== -1) {
                         logToTerminal(cleanText, "red-txt");
                         shakeScreen();
-                        updateMemoryBar(memoryLevel - 40); // 扣除記憶體
+                        updateMemoryBar(memoryLevel - 40); 
                     } else {
                         logToTerminal(cleanText, "blue-txt");
                     }
@@ -329,26 +451,23 @@
         }
 
         document.getElementById("btn-run").addEventListener("click", function() {
-            var blocks = workspace.getAllBlocks(false);
-            var ast = { type: "Unknown" };
-            var hasBreak = false;
-            for (var i = 0; i < blocks.length; i++) {
-                if (blocks[i].type === "controls_loop") {
-                    ast.type = "Loop";
-                    ast.condition = "count < 100";
-                    ast.act = "count++";
-                }
-                if (blocks[i].type === "controls_break") hasBreak = true;
+            var topBlocks = workspace.getTopBlocks(true);
+            if (topBlocks.length === 0) {
+                logToTerminal("⚠️ 請先拖曳積木到工作區！", "yellow-txt");
+                return;
             }
-            ast.has_break = hasBreak;
             
+            var ast = blockToAST(topBlocks[0]);
+            if (!ast) return;
+            
+            logToTerminal("▶ 正在傳送積木邏輯至虛擬機執行...", "blue-txt");
             socket.send(JSON.stringify({
                 type: "cmd",
                 payload: "execute " + JSON.stringify({
                     type: ast.type,
                     condition: ast.condition,
                     act: ast.act,
-                    has_break: hasBreak ? 1 : 0
+                    has_break: ast.has_break ? 1 : 0
                 })
             }));
         });
