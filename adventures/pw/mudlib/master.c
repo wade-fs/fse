@@ -9,10 +9,10 @@ void create() {
     write("    FSE PW (編程世界) 啟動成功     \n");
     write("===================================\n");
 
-    // 啟動 FSE 通用核心守護進程
-    load_object("/fse/engine/progress_d.c");
-    load_object("/fse/engine/factor_d.c");
-    load_object("/fse/engine/discovery_d.c");
+    // 啟動 FSE 通用核心服務
+    load_object("/runtime/services/progress_service.c");
+    load_object("/runtime/services/factor_service.c");
+    load_object("/runtime/services/discovery_service.c");
 
     // 如果是測試模式，自動在一秒後執行測試
     if (getenv("MUD_TEST_MODE")) {

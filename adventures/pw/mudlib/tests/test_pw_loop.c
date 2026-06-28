@@ -15,8 +15,8 @@ int run_tests() {
     player = clone_object("/std/user.c");
     site_swamp = load_object("/nodes/infinite_loop_swamp/node.c");
     site_valley = load_object("/nodes/counter_valley/node.c");
-    progress_d = load_object("/fse/engine/progress_d.c");
-    factor_d = load_object("/fse/engine/factor_d.c");
+    progress_d = load_object("/runtime/services/progress_service.c");
+    factor_d = load_object("/runtime/services/factor_service.c");
 
     if (!player || !site_swamp || !site_valley || !progress_d || !factor_d) {
         write(HIR "❌ 測試失敗: 物件初始化失敗" NOR "\n");

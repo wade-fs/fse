@@ -1,5 +1,5 @@
-// /std/entity.c
-// FSE 實體基底
+// /runtime/core/entity.c
+// FSE 核心最基本實體基底
 inherit "/std/object";
 
 private string entity_id;

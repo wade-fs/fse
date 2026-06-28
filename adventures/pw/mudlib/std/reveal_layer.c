@@ -16,13 +16,13 @@ private int check_single(object player, mapping chk) {
     string type = chk["type"];
 
     if (type == "stage_completed")
-        return load_object("/fse/engine/progress_d.c")->stage_completed(chk["stage"]);
+        return load_object("/runtime/services/progress_service.c")->stage_completed(chk["stage"]);
 
     if (type == "discovery_completed")
-        return load_object("/fse/engine/discovery_d.c")->discovery_completed(player, chk["discovery_id"]);
+        return load_object("/runtime/services/discovery_service.c")->discovery_completed(player, chk["discovery_id"]);
 
     if (type == "factor_discovered")
-        return load_object("/fse/engine/factor_d.c")->factor_discovered(player, chk["factor_id"]);
+        return load_object("/runtime/services/factor_service.c")->factor_discovered(player, chk["factor_id"]);
 
     return 0;
 }

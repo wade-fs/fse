@@ -1,0 +1,6 @@
+bin/
+fse.zip
+*.o
+*~
+.*swp
+.*swo

@@ -1,5 +1,5 @@
-// /std/object.c
-// FSE 通用最基本屬性容器
+// /runtime/core/object.c
+// FSE 核心最基本變數屬性容器
 private mapping temp_data;
 private mapping dbase;
 

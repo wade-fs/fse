@@ -1,0 +1,7 @@
+node_id: "infinite_loop_swamp"
+name: "無窮迴圈沼澤"
+type: "lesson"
+mentor: "sys_monitor"
+description: "這裡堆滿了永遠停不下來的廢棄進程，周圍飄散著發熱的記憶體碎屑。"
+exits:
+  go_valley: "counter_valley"
