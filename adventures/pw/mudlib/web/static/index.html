@@ -5,6 +5,7 @@
     <title>FSE: Programming World (編程冒險)</title>
     <!-- 載入 Google Blockly CDN -->
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -34,7 +35,7 @@
         }
         /* 左分欄：FSE 文字與終端 */
         #left-panel {
-            width: 500px;
+            width: 450px;
             background: #12131a;
             border-right: 2px solid #3b3d54;
             display: flex;
@@ -42,15 +43,37 @@
             padding: 20px;
             overflow-y: auto;
         }
-        /* 右分欄：Blockly 工作區 */
+        /* 記憶體使用條 */
+        .status-container {
+            margin-top: 15px;
+            padding: 10px;
+            background: #181922;
+            border-radius: 6px;
+            border: 1px solid #3b3d54;
+        }
+        .status-bar-bg {
+            background: #3b3d54;
+            border-radius: 4px;
+            height: 14px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 5px;
+            position: relative;
+        }
+        .status-bar-fill {
+            background: #81c784;
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s, background 0.3s;
+        }
+        /* 右分欄：Blockly 工作區 + 程式碼預覽 */
         #right-panel {
             flex: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
         #blocklyArea {
-            flex: 1;
+            flex: 2;
             position: relative;
             background: #181922;
         }
@@ -58,6 +81,27 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
         }
+        #code-preview-panel {
+            flex: 1;
+            background: #1e1e2e;
+            border-top: 2px solid #3b3d54;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        #code-preview-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #cba6f7; }
+        #code-output {
+            flex: 1;
+            background: #11111b;
+            padding: 10px;
+            border-radius: 6px;
+            color: #a6e3a1;
+            font-size: 14px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #313244;
+        }
+        
         .terminal-container {
             flex: 1;
             background: #090a0f;
@@ -71,69 +115,74 @@
         .term-line { margin: 6px 0; line-height: 1.5; font-size: 15px; }
         .green-txt { color: #81c784; }
         .red-txt { color: #e57373; }
-        .blue-txt { color: #64b5f6; }
-        .yellow-txt { color: #ffd54f; }
+        .blue-txt { color: #89b4fa; }
+        .yellow-txt { color: #f9e2af; }
         
-        /* 綠色運行按鈕 (Scratch 風格) */
         .btn-run {
-            background: #4caf50;
-            color: white;
+            background: #a6e3a1;
+            color: #11111b;
             border: none;
             padding: 8px 18px;
             font-size: 14px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: transform 0.1s, background 0.2s;
         }
-        .btn-run:hover { background: #45a049; }
+        .btn-run:hover { background: #94e2d5; transform: scale(1.05); }
+        .btn-run:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>💻 FSE: Programming World (編程世界最小閉環)</h1>
-        <button id="btn-run" class="btn-run">▶ 執行程式 (Run Project)</button>
+        <h1>💻 FSE: Programming World (編程世界)</h1>
+        <button id="btn-run" class="btn-run">▶ 執行程式 (Run)</button>
     </header>
 
     <div id="wrapper">
-        <!-- 左側：FSE 探索與 Console 輸出 -->
         <div id="left-panel">
             <h3 class="blue-txt">📍 當前位置：無窮迴圈沼澤</h3>
-            <div id="site-desc" style="font-size: 14px; color: #aaa; line-height: 1.6;">
+            <div id="site-desc" style="font-size: 14px; color: #a6adc8; line-height: 1.6;">
                 這裡堆滿了永遠停不下來的廢棄進程，周圍飄散著發熱的記憶體碎屑。
             </div>
             
+            <div class="status-container">
+                <div style="font-size: 12px; color: #bac2de;">系統記憶體 (Memory)</div>
+                <div class="status-bar-bg">
+                    <div id="memory-bar" class="status-bar-fill"></div>
+                </div>
+            </div>
+
             <div class="terminal-container" id="terminal">
-                <div class="term-line yellow-txt">⚡ 系統就緒：請在右側組裝 Blockly 積木以修復無窮迴圈控制流。</div>
+                <div class="term-line yellow-txt">⚡ 系統就緒：請在右側組裝 Blockly 積木。</div>
             </div>
         </div>
 
-        <!-- 右側：Blockly 工作區 -->
         <div id="right-panel">
             <div id="blocklyArea">
                 <div id="blocklyDiv"></div>
             </div>
+            <div id="code-preview-panel">
+                <h3>📝 偽代碼預覽 (Pseudo Code)</h3>
+                <div id="code-output">// 拖曳積木來產生程式碼...</div>
+            </div>
         </div>
     </div>
 
-    <!-- Blockly Toolbox 定義 -->
     <xml id="toolbox" style="display: none">
         <category name="控制流" colour="#5b80a5">
             <block type="controls_loop"></block>
-            <!-- 條件式顯示層 (Reveal) 會在解鎖 loop_termination 後注入此積木 -->
+            <!-- 隱藏的中斷積木 -->
             <block type="controls_break" id="break_block_xml" style="display: none;"></block>
         </category>
     </xml>
 
     <script>
-        // 1. 自訂一個 FSE 通用 Loop 積木
         Blockly.Blocks['controls_loop'] = {
             init: function() {
-                this.appendDummyInput()
-                    .appendField("重複執行 (Loop)");
-                this.appendStatementInput("DO")
-                    .appendField("執行");
+                this.appendDummyInput().appendField("重複執行 (Loop)");
+                this.appendStatementInput("DO").appendField("執行");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(120);
@@ -141,18 +190,15 @@
             }
         };
 
-        // 2. 自訂一個中斷積木
         Blockly.Blocks['controls_break'] = {
             init: function() {
-                this.appendDummyInput()
-                    .appendField("中斷 (Break)");
+                this.appendDummyInput().appendField("中斷 (Break)");
                 this.setPreviousStatement(true, null);
                 this.setColour(0);
                 this.setTooltip("強制跳出迴圈");
             }
         };
 
-        // 3. 初始化 Workspace (預設工具箱 XML 字串)
         var defaultToolbox = '<xml id="toolbox" style="display: none">' +
             '  <category name="控制流" colour="#5b80a5">' +
             '    <block type="controls_loop"></block>' +
@@ -161,19 +207,62 @@
 
         var workspace = Blockly.inject('blocklyDiv', {
             toolbox: defaultToolbox,
-            grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
-            zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }
+            grid: { spacing: 20, length: 3, colour: '#313244', snap: true },
+            zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 },
+            theme: Blockly.Themes.Dark
         });
 
-        // 4. WebSocket 通訊
+        // 產生偽碼
+        function updatePseudoCode() {
+            var blocks = workspace.getTopBlocks(true);
+            var code = "";
+            function traverse(block, indent) {
+                if (block.type === 'controls_loop') {
+                    code += indent + "while (true) {\n";
+                    var child = block.getInputTargetBlock('DO');
+                    while (child) {
+                        traverse(child, indent + "    ");
+                        child = child.getNextBlock();
+                    }
+                    code += indent + "}\n";
+                } else if (block.type === 'controls_break') {
+                    code += indent + "break;\n";
+                }
+            }
+            for(var i=0; i<blocks.length; i++) {
+                var b = blocks[i];
+                while(b) {
+                    traverse(b, "");
+                    b = b.getNextBlock();
+                }
+            }
+            if(code === "") code = "// 拖曳積木來產生程式碼...";
+            document.getElementById('code-output').innerText = code;
+        }
+
+        workspace.addChangeListener(updatePseudoCode);
+
         var wsUrl = "ws://" + window.location.host + "/ws";
         var socket = new WebSocket(wsUrl);
-        var hasBreakUnlocked = false; // 🚀 新增：防止重複彈出解鎖提示的狀態鎖
+        var hasBreakUnlocked = false; 
+        var memoryLevel = 100;
+
+        function updateMemoryBar(level) {
+            memoryLevel = level;
+            if (memoryLevel < 0) memoryLevel = 0;
+            var bar = document.getElementById('memory-bar');
+            bar.style.width = memoryLevel + "%";
+            if (memoryLevel < 30) {
+                bar.style.background = "#e57373"; // Red
+            } else if (memoryLevel < 60) {
+                bar.style.background = "#f9e2af"; // Yellow
+            } else {
+                bar.style.background = "#a6e3a1"; // Green
+            }
+        }
 
         socket.onopen = function() {
             logToTerminal("🌐 已成功連接至 FSE 核心虛擬機。", "green-txt");
-            logToTerminal("");
-            logToTerminal("👉 [新手任務指引]：請在右側積木區拖出 [重複執行 (Loop)] 積木，放開後點擊上方綠色的「▶ 執行程式」按鈕，看看會發生什麼事！", "yellow-txt");
         };
 
         socket.onmessage = function(event) {
@@ -181,40 +270,33 @@
             if (msg.type === "mud_text" || msg.type === "output" || msg.type === "welcome") {
                 var payload = msg.payload || "";
                 
-                // 檢查是否為特殊工具箱更新標籤
                 if (payload.indexOf("__TOOLBOX__") === 0) {
                     var yamlStr = payload.substring(11);
-                    try {
-                        if (yamlStr.indexOf("break_block") !== -1) {
-                            // 🚀 只有在第一次解鎖時，才印出提示並更新
-                            if (!hasBreakUnlocked) {
-                                hasBreakUnlocked = true;
-                                logToTerminal("✨ [概念領悟] 你發現了「迴圈的盡頭」！原來重複執行的迴圈需要一個終止中斷條件，否則電腦會永遠執行下去直到崩潰卡死。", "yellow-txt");
-                                logToTerminal("🛠️ [工具箱更新] 你的 Blockly 積木庫已新增 [中斷 (Break)] 積木！", "green-txt");
-                                
-                                // 動態重繪 XML 工具箱，注入中斷積木
-                                var upgradedToolbox = '<xml>' +
-                                    '  <category name="控制流" colour="#5b80a5">' +
-                                    '    <block type="controls_loop"></block>' +
-                                    '    <block type="controls_break"></block>' + // 注入
-                                    '  </category>' +
-                                    '</xml>';
-                                workspace.updateToolbox(upgradedToolbox);
-                            }
-                        }
-                    } catch(e) {
-                        console.error("Toolbox parse error", e);
+                    if (yamlStr.indexOf("break_block") !== -1 && !hasBreakUnlocked) {
+                        hasBreakUnlocked = true;
+                        triggerUnlockEffect();
+                        logToTerminal("✨ [成就解鎖] 你領悟了「迴圈的盡頭」！", "yellow-txt");
+                        logToTerminal("🛠️ [工具箱更新] 已新增 [中斷 (Break)] 積木！", "green-txt");
+                        var upgradedToolbox = '<xml>' +
+                            '  <category name="控制流" colour="#5b80a5">' +
+                            '    <block type="controls_loop"></block>' +
+                            '    <block type="controls_break"></block>' +
+                            '  </category>' +
+                            '</xml>';
+                        workspace.updateToolbox(upgradedToolbox);
                     }
                 } else if (payload !== "") {
-                    // 清理 LPC ANSI 顏色代碼 與 $TAG$ MUD 標記，讓網頁 Console 更乾淨
                     var cleanText = payload.replace(/\u001b\[\d+m/g, "");
-                    cleanText = cleanText.replace(/\$\w+\$/g, ""); // 清理 $HIG$, $NOR$ 等標籤
+                    cleanText = cleanText.replace(/\$\w+\$/g, ""); 
                     
-                    // 根據文字關鍵字自訂顏色
                     if (cleanText.indexOf("🎉") !== -1 || cleanText.indexOf("成功") !== -1) {
                         logToTerminal(cleanText, "green-txt");
-                    } else if (cleanText.indexOf("💥") !== -1 || cleanText.indexOf("失敗") !== -1 || cleanText.indexOf("卡死") !== -1) {
+                        triggerSuccessEffect();
+                        updateMemoryBar(100);
+                    } else if (cleanText.indexOf("💥") !== -1 || cleanText.indexOf("無窮迴圈") !== -1) {
                         logToTerminal(cleanText, "red-txt");
+                        shakeScreen();
+                        updateMemoryBar(memoryLevel - 40); // 扣除記憶體
                     } else {
                         logToTerminal(cleanText, "blue-txt");
                     }
@@ -231,31 +313,42 @@
             term.scrollTop = term.scrollHeight;
         }
 
-        // 5. 點擊「執行程式」
+        function triggerUnlockEffect() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#f9e2af', '#89b4fa', '#a6e3a1'] });
+        }
+        function triggerSuccessEffect() {
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
+        }
+        function shakeScreen() {
+            var wrap = document.getElementById('wrapper');
+            wrap.style.transform = 'translate(10px, 10px)';
+            setTimeout(() => wrap.style.transform = 'translate(-10px, -10px)', 50);
+            setTimeout(() => wrap.style.transform = 'translate(10px, -10px)', 100);
+            setTimeout(() => wrap.style.transform = 'translate(-10px, 10px)', 150);
+            setTimeout(() => wrap.style.transform = 'translate(0, 0)', 200);
+        }
+
         document.getElementById("btn-run").addEventListener("click", function() {
-            logToTerminal("▶ 正在傳送積木邏輯至虛擬機執行...", "blue-txt");
-            
-            // 簡單生成 AST 語意元組
             var blocks = workspace.getAllBlocks(false);
             var ast = { type: "Unknown" };
             var hasBreak = false;
-
             for (var i = 0; i < blocks.length; i++) {
                 if (blocks[i].type === "controls_loop") {
                     ast.type = "Loop";
+                    ast.condition = "count < 100";
+                    ast.act = "count++";
                 }
-                if (blocks[i].type === "controls_break") {
-                    hasBreak = true;
-                }
+                if (blocks[i].type === "controls_break") hasBreak = true;
             }
             ast.has_break = hasBreak;
-
-            // 送出指令，封裝為 cmd 格式以便 Go 端直接轉發給 LPC VM 的 execute 指令
+            
             socket.send(JSON.stringify({
                 type: "cmd",
                 payload: "execute " + JSON.stringify({
                     type: ast.type,
-                    has_break: hasBreak ? 1 : 0 // 傳送明確的 1 或 0
+                    condition: ast.condition,
+                    act: ast.act,
+                    has_break: hasBreak ? 1 : 0
                 })
             }));
         });

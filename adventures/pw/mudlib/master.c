@@ -12,9 +12,13 @@ void create() {
     // 啟動 FSE 通用核心服務
     object factor_svc   = load_object("/runtime/services/factor_service.c");
     object progress_svc = load_object("/runtime/services/progress_manager.c");
+    object i18n_svc     = load_object("/runtime/services/i18n_service.c");
     load_object("/runtime/services/discovery_service.c");
 
     // === PW 冒險注入 (Adventure-specific Configuration) ===
+    // 注入語系檔目錄並載入預設語系
+    i18n_svc->register_locale_path("/content/locales");
+    i18n_svc->set_language("zh_TW");
     // 注冊因素定義的搜尋目錄 (factor_service 零路徑知識，全由此注入)
     factor_svc->register_discovery_path("/content/factors");
     factor_svc->register_discovery_path("/content/nodes/infinite_loop_swamp/discoveries");

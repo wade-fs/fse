@@ -4,12 +4,19 @@
 #include "/include/ansi.h"
 
 private mapping dictionary;
-private string current_lang;
+private string *locale_paths;
 
 void create() {
     dictionary = ([]);
+    locale_paths = ({});
     current_lang = "zh_TW";
-    set_language(current_lang, 0); // 預設先載入 core 語系
+}
+
+// 註冊語系檔的搜尋目錄
+void register_locale_path(string path) {
+    if (member_array(path, locale_paths) == -1) {
+        locale_paths += ({ path });
+    }
 }
 
 // 載入特定的 yaml 語系檔並合併到當前字典中
@@ -32,18 +39,17 @@ void load_locale_file(string file_path) {
     }
 }
 
-// 設定當前語系，並重新載入核心與冒險的語系檔
-void set_language(string lang, string adventure_path) {
-    current_lang = lang;
+// 重新載入所有已註冊目錄的語系檔
+void reload_language() {
     dictionary = ([]);
-    
-    // 1. 載入 Core 語系檔 (例如 /runtime/locales/zh_TW.yaml)
-    load_locale_file("/runtime/locales/" + lang + ".yaml");
-    
-    // 2. 載入 Adventure 語系檔 (例如 /adventures/pw/mudlib/content/locales/zh_TW.yaml)
-    if (adventure_path) {
-        load_locale_file(adventure_path + "/locales/" + lang + ".yaml");
+    foreach (string path in locale_paths) {
+        load_locale_file(path + "/" + current_lang + ".yaml");
     }
+}
+
+void set_language(string lang) {
+    current_lang = lang;
+    reload_language();
 }
 
 // 取得翻譯字串 (支援基礎變數替換，例如 {name})
