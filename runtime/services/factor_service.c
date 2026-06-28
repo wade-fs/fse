@@ -1,24 +1,34 @@
 // /runtime/services/factor_service.c
 // FSE 通用核心因素管理器 (Factor Service)
+// 零冒險認知 (Adventure-Agnostic)：不含任何冒險特定路徑或邏輯
 #include "/include/ansi.h"
 
 private nosave mapping factors;
+private nosave string *discovery_paths;
 
 void create() {
     factors = ([]);
+    discovery_paths = ({});
 }
 
-// 從 YAML 載入特定因素定義 (優先搜尋全域 /content/factors/{fid}.yaml，再搜尋 Node 自包含目錄)
+// Adventure 在啟動時注冊因素定義目錄 (Adventure-injected)
+// 例如："/content/factors", "/content/nodes/some_node/discoveries"
+void register_discovery_path(string path) {
+    if (!path) return;
+    if (member_array(path, discovery_paths) == -1)
+        discovery_paths += ({ path });
+}
+
+// 在已注冊路徑中搜尋因素 YAML 定義 (通用搜尋，不含冒險特定路徑)
 mapping load_factor_data(string fid) {
-    string path = sprintf("/content/factors/%s.yaml", fid);
-    if (file_size(path) <= 0) {
-        // 搜尋 Node 自包含目錄
-        path = sprintf("/content/nodes/infinite_loop_swamp/discoveries/%s.yaml", fid);
+    foreach (string base in discovery_paths) {
+        string path = sprintf("%s/%s.yaml", base, fid);
+        if (file_size(path) > 0) {
+            string raw = read_file(path);
+            if (raw) return yaml_decode(raw);
+        }
     }
-    if (file_size(path) <= 0) return 0;
-    string content = read_file(path);
-    if (!content) return 0;
-    return yaml_decode(content);
+    return 0;
 }
 
 // 判定玩家是否已解鎖特定因素
@@ -53,12 +63,14 @@ int discover_factor(object player, string fid) {
     }
 
     // 發送事件至 FSE EventBus 讓進度管理器連鎖更新
+    // 事件攜帶完整的 factor_data，讓接收端可以讀取 quest_trigger 等欄位
     event_bus = load_object("/runtime/services/event_service.c");
     if (event_bus) {
-        event_bus->publish("FactorDiscovered", ([ 
-            "player": player, 
-            "factor_id": fid,
-            "progress": factor["progress"] || 50 
+        event_bus->publish("FactorDiscovered", ([
+            "player":      player,
+            "factor_id":   fid,
+            "progress":    factor["progress"] || 50,
+            "factor_data": factor   // 完整資料由接收端自行讀取，無需 runtime 理解其內容
         ]));
     }
 

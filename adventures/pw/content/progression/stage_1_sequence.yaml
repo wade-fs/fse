@@ -1,0 +1,5 @@
+stage_id: "stage_1_sequence"
+name: "序列篇"
+description: "學習程序的線性執行，掌握循序邏輯的基礎。"
+min_progress: 50
+next: "stage_2_loop"

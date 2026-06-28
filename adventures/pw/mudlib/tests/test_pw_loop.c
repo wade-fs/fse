@@ -25,6 +25,7 @@ int run_tests() {
 
     // 強制重置世界階段與狀態
     progress_d->reset_stage();
+    progress_d->set_initial_stage("stage_1_sequence");
 
     // ==========================================================
     // 2. 驗證第一關互動一：【非法作弊輸入】

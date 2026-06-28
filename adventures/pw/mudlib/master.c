@@ -10,9 +10,19 @@ void create() {
     write("===================================\n");
 
     // 啟動 FSE 通用核心服務
-    load_object("/runtime/services/progress_service.c");
-    load_object("/runtime/services/factor_service.c");
+    object factor_svc   = load_object("/runtime/services/factor_service.c");
+    object progress_svc = load_object("/runtime/services/progress_service.c");
     load_object("/runtime/services/discovery_service.c");
+
+    // === PW 冒險注入 (Adventure-specific Configuration) ===
+    // 注冊因素定義的搜尋目錄 (factor_service 零路徑知識，全由此注入)
+    factor_svc->register_discovery_path("/content/factors");
+    factor_svc->register_discovery_path("/content/nodes/infinite_loop_swamp/discoveries");
+    factor_svc->register_discovery_path("/content/nodes/counter_valley/discoveries");
+
+    // 注冊進度階段 YAML 目錄，並設定初始階段
+    progress_svc->register_progression_path("/content/progression");
+    progress_svc->set_initial_stage("stage_1_sequence");
 
     // 如果是測試模式，自動在一秒後執行測試
     if (getenv("MUD_TEST_MODE")) {
