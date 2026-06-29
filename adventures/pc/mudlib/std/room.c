@@ -7,6 +7,7 @@ private string short_desc;
 private string long_desc;
 private mapping exits;      // 方向 -> 目標房間路徑
 private object *occupants;  // 所有在此房間的物件 (玩家/怪物)
+private nosave mapping monster_configs;
 
 void create() {
     ::create();
@@ -20,6 +21,51 @@ void set_short(string s)  { short_desc = s; }
 string query_short()      { return short_desc; }
 void set_long(string l)   { long_desc = l; }
 string query_long()       { return long_desc; }
+
+void spawn_monsters_from_config() {
+    if (!monster_configs) return;
+    foreach (string mid, int count in monster_configs) {
+        for (int i = 0; i < count; i++) {
+            object ob = clone_object(mid);
+            if (ob) {
+                ob->set_respawn_room(base_name(this_object()));
+                move_object(ob, this_object());
+                enter(ob);
+            }
+        }
+    }
+}
+
+// 從 YAML 定義動態載入房間屬性與怪物配置 (資料驅動)
+void initialize_from_yaml(string yaml_path) {
+    if (file_size(yaml_path) <= 0) return;
+    string raw = read_file(yaml_path);
+    if (!raw) return;
+    mapping data = yaml_decode(raw);
+    if (!data) return;
+
+    if (data["short"]) set_short(data["short"]);
+    if (data["long"]) set_long(data["long"]);
+
+    // 解析出口
+    mapping ex = data["exits"];
+    if (ex) {
+        foreach (string dir, string dest in ex) {
+            add_exit(dir, dest);
+        }
+    }
+
+    // 解析怪物配置
+    mixed monsters = data["monsters"];
+    if (arrayp(monsters) && sizeof(monsters) > 0) {
+        monster_configs = ([]);
+        foreach (mapping m in monsters) {
+            monster_configs[m["id"]] = m["count"];
+        }
+        // 延遲在當前 tick 結束後執行，避免 create 期間移動物件造成的時序問題
+        call_out("spawn_monsters_from_config", 0);
+    }
+}
 
 void add_exit(string dir, string dest) {
     exits[dir] = dest;
