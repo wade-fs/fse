@@ -164,19 +164,19 @@ func (d *Driver) registerDataStructures(obj *object.LPCObject) {
 				if len(preview) > 200 {
 					preview = preview[:200] + "..."
 				}
-				return object.NewError(fmt.Sprintf("yaml_decode error: %v\nPreview: %s", err, preview))
+				return object.NewError("yaml_decode error: %v\nPreview: %s", err, preview)
 			}
 
 			// 透過 JSON 正規化類型，避免 Go map[interface{}]interface{} 類型與整數類型不相容問題
 			jsonBytes, err := json.Marshal(raw)
 			if err != nil {
-				return object.NewError(fmt.Sprintf("yaml_decode json marshal error: %v", err))
+				return object.NewError("yaml_decode json marshal error: %v", err)
 			}
 
 			var jsonRaw interface{}
 			err = json.Unmarshal(jsonBytes, &jsonRaw)
 			if err != nil {
-				return object.NewError(fmt.Sprintf("yaml_decode json unmarshal error: %v", err))
+				return object.NewError("yaml_decode json unmarshal error: %v", err)
 			}
 
 			return goToLPCValue(jsonRaw)

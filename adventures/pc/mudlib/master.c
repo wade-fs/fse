@@ -18,19 +18,43 @@ void create() {
     object factor_svc   = load_object("/runtime/services/factor_service.c");
     object i18n_svc     = load_object("/runtime/services/i18n_service.c");
 
-    // 注入 PC 的 progression 定義目錄
-    progress_svc->register_progression_path("/content/progression");
-    progress_svc->set_default_initial_stage("novice", "main"); // 0 for global default
+    // === 自動讀取 manifest.yaml 宣告式配置 ===
+    string raw = read_file("/manifest.yaml");
+    if (raw) {
+        mapping manifest = yaml_decode(raw);
+        if (manifest) {
+            mapping content_paths = manifest["content_paths"];
+            string init_stage = manifest["initial_stage"];
 
-    // 注入 PC 的因素與語系目錄
-    factor_svc->register_discovery_path("/content/factors");
-    i18n_svc->register_locale_path("/content/locales");
-    i18n_svc->reload_language(); // 確保重新載入剛註冊的路徑
+            // 1. 註冊多語系目錄並載入語系
+            if (content_paths && content_paths["locales"]) {
+                i18n_svc->register_locale_path(content_paths["locales"]);
+                i18n_svc->set_language("zh_TW"); // 預設中文
+                i18n_svc->reload_language();
+            }
 
-    write("  [runtime/progress_manager] 已載入，初始階段：novice\n");
-    write("  [runtime/factor_service]   已載入，探索路徑：/content/factors\n");
-    write("  [runtime/i18n_service]     已載入，語系路徑：/content/locales\n");
-    write("  [runtime/event_bus]        已載入\n");
+            // 2. 註冊因素探索目錄
+            if (content_paths && content_paths["factors"]) {
+                mixed factors = content_paths["factors"];
+                if (stringp(factors)) {
+                    factor_svc->register_discovery_path(factors);
+                } else if (arrayp(factors)) {
+                    foreach (string path in factors) {
+                        factor_svc->register_discovery_path(path);
+                    }
+                }
+            }
+
+            // 3. 註冊進度階段與設定初始階段
+            if (content_paths && content_paths["progression"] && init_stage) {
+                progress_svc->register_progression_path(content_paths["progression"]);
+                progress_svc->set_default_initial_stage(0, init_stage, "main");
+            }
+            write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
+        }
+    } else {
+        write("  [master] 警告：找不到 /manifest.yaml 檔案，請檢查配置。\n");
+    }
 
     // 測試模式
     if (getenv("MUD_TEST_MODE")) {

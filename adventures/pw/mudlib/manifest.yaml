@@ -1,0 +1,14 @@
+adventure_id: pw
+name: "Programming World"
+version: "0.1"
+requires_runtime: ">=1.0"
+services:
+  - blockly_service
+content_paths:
+  factors:
+    - "/content/factors"
+    - "/content/nodes/infinite_loop_swamp/discoveries"
+    - "/content/nodes/counter_valley/discoveries"
+  progression: "/content/progression"
+  locales: "/content/locales"
+initial_stage: "stage_1_sequence"

@@ -552,7 +552,14 @@ func (p *Preprocessor) processInternal(filename, input string, depth int) (strin
 			var err error
 
 			// 1. 優先嘗試從實體磁碟讀取
-			fullPath := filepath.Join(p.MudLibPath, relPath)
+			var fullPath string
+			isCoreRuntime := strings.HasPrefix(relPath, "runtime/")
+			if isCoreRuntime {
+				// "/runtime/..." -> "../../../runtime/..."
+				fullPath = filepath.Join(p.MudLibPath, "../../..", relPath)
+			} else {
+				fullPath = filepath.Join(p.MudLibPath, relPath)
+			}
 			if _, statErr := os.Stat(fullPath); statErr == nil {
 				content, err = os.ReadFile(fullPath)
 			} else if p.EmbeddedFS != nil {

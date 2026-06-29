@@ -81,14 +81,10 @@ void set_language(string lang) {
 
 // 獨立的 ANSI 色碼替換函式
 string apply_color(string text) {
-    if (!text || !stringp(text)) return text;
-    text = replace_string(text, "$HIG$", HIG);
-    text = replace_string(text, "$HIW$", HIW);
-    text = replace_string(text, "$HIR$", HIR);
-    text = replace_string(text, "$HIC$", HIC);
-    text = replace_string(text, "$HIY$", HIY);
-    text = replace_string(text, "$NOR$", NOR);
-    text = replace_string(text, "$RED$", RED);
+    object color_svc = load_object("/runtime/services/color_service.c");
+    if (color_svc) {
+        return color_svc->parse_color(text, "web");
+    }
     return text;
 }
 

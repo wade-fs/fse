@@ -1,0 +1,9 @@
+adventure_id: pc
+name: "Prehistoric Civilization"
+version: "0.1"
+requires_runtime: ">=1.0"
+content_paths:
+  factors: "/content/factors"
+  progression: "/content/progression"
+  locales: "/content/locales"
+initial_stage: "novice"
