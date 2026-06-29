@@ -3,7 +3,7 @@
 // 職責：
 //   - 讀取關卡的 challenges 清單
 //   - 依據定義的 executor（例如 ast_matcher）對輸入積木進行校驗與執行效果處理。
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 // 輔助函式：根據 JSONPath 風格（簡單支援 $.key 與 $.key[idx].subkey）取得值
 mixed get_ast_value(mapping ast, string path) {

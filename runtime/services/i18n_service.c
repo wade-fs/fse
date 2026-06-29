@@ -1,7 +1,7 @@
 // /runtime/services/i18n_service.c
 // FSE 核心國際化 (i18n) 服務
 // 支援從多個 locale 目錄載入 YAML 語系檔
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 private mapping dictionary;
 private string *locale_paths;

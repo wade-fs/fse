@@ -1,7 +1,7 @@
 // /runtime/services/factor_service.c
 // FSE 通用核心因素管理器 (Factor Service)
 // 零冒險認知 (Adventure-Agnostic)：不含任何冒險特定路徑或邏輯
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 private nosave mapping factors;
 private nosave string *discovery_paths;

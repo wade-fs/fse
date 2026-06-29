@@ -1,7 +1,7 @@
 // /runtime/services/progress_manager.c
 // FSE 通用核心進度管理器 (Progress Manager)
 // 支援「多線並行進度」 (Parallel Tracks)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 private nosave mapping global_events;
 private nosave string progression_path;  // 由 Adventure 注入

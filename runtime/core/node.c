@@ -1,7 +1,7 @@
 // /runtime/core/node.c
 // FSE 核心通用節點基底 (Node Base)
 // 支援完全資料驅動，從 YAML 檔案讀取配置與邏輯
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/runtime/core/entity";
 inherit "/std/reveal_layer.c";
