@@ -6,6 +6,11 @@ mentor: "mentor_i"
 description: "這裡流水潺潺，每一滴水都在計算著循環的次數。"
 exits:
   go_swamp: "infinite_loop_swamp"
+reveal_layers:
+  - reveal_block: "variables_count"
+  - reveal_block: "compare_less_100"
+  - reveal_block: "action_increment"
+  - reveal_block: "action_assignment"
 challenges:
   - id: "count_to_100"
     executor: "ast_matcher"

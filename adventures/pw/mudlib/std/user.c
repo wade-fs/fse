@@ -61,8 +61,15 @@ string *query_write_paths() { return ({ "/" }); }
 
 // 模擬測試與真實連線的指令分發攔截 (由 Go 驅動優先呼叫)
 mixed process_input(string cmd) {
-    if (strsrch(cmd, "execute ") == 0) {
-        string arg = substr(cmd, 8, strlen(cmd));
+    cmd = trim(cmd);
+    write_file("/data/state/system/test_execute.txt", sprintf("[%s] CMD received: %s\n", ctime(time()), cmd), 0);
+    if (strsrch(cmd, "execute") == 0) {
+        string arg = "";
+        if (strlen(cmd) > 7) {
+            arg = cmd[7..];
+            arg = trim(arg);
+        }
+        write_file("/data/state/system/test_execute.txt", sprintf("[%s] Routed to execute.c with arg: %s\n", ctime(time()), arg), 0);
         load_object("/cmds/player/execute.c")->main(this_object(), arg, 0);
         return 1; // 回傳 1 代表已完全處理，阻止 Go 印出 "什麼？"
     }

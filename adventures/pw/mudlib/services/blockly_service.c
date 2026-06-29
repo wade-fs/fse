@@ -22,14 +22,10 @@ private mapping block_registry = ([
 ]);
 
 // ──────────────────────────────────────────────
-// 固定永遠可用的基礎積木（不受 reveal_layer 管控）
+// 固定永遠可用的基礎積木（不受 reveal_layer 管控，此為最極簡的基礎，其餘應由 reveal_layers 或 stage 動態揭露）
 // ──────────────────────────────────────────────
 private mixed *base_blocks = ({
     "controls_loop",
-    "variables_count",
-    "compare_less_100",
-    "action_increment",
-    "action_assignment",
 });
 
 // 將平坦的 block_type 清單組裝為前端需要的 categories 結構

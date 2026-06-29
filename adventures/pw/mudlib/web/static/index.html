@@ -270,13 +270,7 @@
         // ─────────────────────────────────────────────────────────
         Blockly.Blocks['controls_loop'] = {
             init: function() {
-                this.appendDummyInput().appendField("重複執行 (Loop)");
-                this.appendValueInput("CONDITION")
-                    .setCheck("Boolean")
-                    .appendField("條件");
-                this.appendValueInput("ACT")
-                    .setCheck("Action")
-                    .appendField("每步執行");
+                this.appendDummyInput().appendField("無條件重複 (Loop)");
                 this.appendStatementInput("DO").appendField("執行");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
@@ -339,12 +333,6 @@
         var initialToolbox = '<xml>' +
             '  <category name="控制流" colour="#5b80a5">' +
             '    <block type="controls_loop"></block>' +
-            '  </category>' +
-            '  <category name="變數與運算" colour="#a55b80">' +
-            '    <block type="variables_count"></block>' +
-            '    <block type="compare_less_100"></block>' +
-            '    <block type="action_increment"></block>' +
-            '    <block type="action_assignment"></block>' +
             '  </category>' +
             '</xml>';
 
