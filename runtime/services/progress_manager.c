@@ -98,6 +98,43 @@ mapping query_current_stage_data(object player, string track) {
     return yaml_decode(raw);
 }
 
+// 檢查玩家階段晉級條件 (Condition-based Evaluator)
+void check_player_stage_advancement(object player, string track) {
+    if (!player) return;
+    if (!track) track = "main";
+
+    mapping stage_data = query_current_stage_data(player, track);
+    if (!stage_data) return;
+
+    mapping requires = stage_data["requires"];
+    if (!requires) return; // 無特別條件限制，則不自動升階
+
+    // 1. 檢查 Quests 挑戰是否全部完成
+    if (arrayp(requires["quests"])) {
+        mapping track_data = get_player_track_data(player, track);
+        string *completed = track_data["completed_quests"];
+        if (!completed) completed = ({});
+        
+        foreach (string req_quest in requires["quests"]) {
+            if (member_array(req_quest, completed) == -1) {
+                return; // 還有需要的挑戰未完成，中斷判定
+            }
+        }
+    }
+
+    // 2. 檢查 Factors 知識點是否解鎖
+    if (arrayp(requires["factors"])) {
+        foreach (string req_factor in requires["factors"]) {
+            if (!player->has_factor(req_factor)) {
+                return; // 還有需要的知識概念未解鎖，中斷判定
+            }
+        }
+    }
+
+    // 所有要求條件均滿足，晉升至下一階段！
+    next_player_stage(player, track);
+}
+
 // 軌道進階
 void next_player_stage(object player, string track) {
     if (!player) return;
@@ -108,7 +145,6 @@ void next_player_stage(object player, string track) {
     mapping track_data = get_player_track_data(player, track);
     string old_stage = track_data["stage_id"];
     track_data["stage_id"] = next;
-    track_data["progress"] = 0;
     set_player_track_data(player, track, track_data);
 
     mapping next_data = query_current_stage_data(player, track);
@@ -119,7 +155,7 @@ void next_player_stage(object player, string track) {
     object i18n = load_object("/runtime/services/i18n_service.c");
     if (i18n) {
         string msg = i18n->translate("core.progress.stage_shifted", ([ "track_display": track_display, "name": name, "next": next ]));
-        tell_object(player, msg); // 對個人進行提示，而非 shout 全世界！
+        tell_object(player, msg); // 對個人進行提示
     }
 
     load_object("/runtime/services/event_bus.c")->publish("StageShifted", ([
@@ -129,25 +165,6 @@ void next_player_stage(object player, string track) {
         "to_stage"    : next,
         "timestamp"   : time()
     ]));
-}
-
-// 增加特定軌道的進度並檢查進階
-varargs void add_player_progress(object player, int val, string track) {
-    if (!player) return;
-    if (!track) track = "main";
-
-    mapping track_data = get_player_track_data(player, track);
-    track_data["progress"] += val;
-    set_player_track_data(player, track, track_data);
-
-    int threshold = 50;  // 預設進階閾值
-    mapping stage_data = query_current_stage_data(player, track);
-    if (stage_data && intp(stage_data["min_progress"]))
-        threshold = stage_data["min_progress"];
-
-    if (track_data["progress"] >= threshold) {
-        next_player_stage(player, track);
-    }
 }
 
 // 完成 Challenge/Quest (通用)
@@ -160,7 +177,7 @@ varargs void complete_player_quest(object player, string qid, string track, int 
         track_data["completed_quests"] = ({});
     }
 
-    // 避免重複完成同一個任務並重複加進度
+    // 避免重複完成同一個任務
     if (member_array(qid, track_data["completed_quests"]) != -1) {
         return;
     }
@@ -176,9 +193,8 @@ varargs void complete_player_quest(object player, string qid, string track, int 
     log_file("progress.log", sprintf("[%s] 玩家 %s 完成了任務 %s (Track: %s)\n",
         ctime(time()), player->query_entity_id(), qid, track));
 
-    // 任務完成預設加 10 進度，若有指定則加指定值
-    if (!progress_val) progress_val = 10;
-    add_player_progress(player, progress_val, track);
+    // 🚀 完成挑戰後，觸發條件檢查！
+    check_player_stage_advancement(player, track);
 }
 
 // Factor 事件連鎖處理
@@ -188,10 +204,7 @@ void on_factor_discovered(mapping event) {
 
     object player     = data["player"];
     string fid        = data["factor_id"];
-    int progress_val  = data["progress"];
     mapping factor_data = data["factor_data"];
-
-    if (undefinedp(data["progress"])) progress_val = 0;
 
     // 若 factor 指定了所屬 track，則進度加在該 track，否則預設 main
     string target_track = "main";
@@ -204,7 +217,8 @@ void on_factor_discovered(mapping event) {
     }
 
     if (player) {
-        add_player_progress(player, progress_val, target_track);
+        // 🚀 解鎖 Factor 後，觸發條件檢查！
+        check_player_stage_advancement(player, target_track);
 
         if (factor_data) {
             string quest_trigger = factor_data["quest_trigger"];
@@ -215,11 +229,10 @@ void on_factor_discovered(mapping event) {
     }
 
     log_file("progress.log", sprintf(
-        "[%s] FactorDiscovered: %s 由 %s 觸發，+%d 進度 (Track: %s)\n",
+        "[%s] FactorDiscovered: %s 由 %s 觸發 (Track: %s)\n",
         ctime(time()),
         fid || "unknown",
         player ? player->query_entity_id() : "unknown",
-        progress_val,
         target_track
     ));
 }
