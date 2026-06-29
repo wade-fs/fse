@@ -8,6 +8,7 @@ private string password_hash;
 private int exp;              // 當前經驗值
 private int exp_to_next;      // 升下一級所需經驗值
 private mapping progression;  // 進度 (同步給 progress_manager)
+private mapping factors;      // 已解鎖因素 (供 factor_service 讀寫)
 
 void create() {
     ::create();
@@ -21,6 +22,7 @@ void create() {
     exp          = 0;
     exp_to_next  = 20;
     progression  = ([]);
+    factors      = ([]);
 }
 
 // --- 帳號 ---
@@ -45,6 +47,17 @@ void restore_state() {
 mapping query_progression()   { if (!progression) progression = ([]); return progression; }
 void    set_progression(mapping p) { progression = p; save_state(); }
 
+// --- 因素探索 (供 factor_service 讀寫) ---
+int has_factor(string fid) {
+    if (!factors) factors = ([]);
+    return !undefinedp(factors[fid]);
+}
+void discover_factor(string fid, mapping metadata) {
+    if (!factors) factors = ([]);
+    factors[fid] = metadata;
+    save_state();
+}
+
 // --- 經驗值與升級 ---
 varargs void gain_exp(int amount, object from_monster) {
     exp += amount;
@@ -53,12 +66,19 @@ varargs void gain_exp(int amount, object from_monster) {
         HIG + "✦ 你獲得了 %d 點經驗值（來自 %s）。" + NOR +
         " 當前經驗：%d / %d\n", amount, from_name, exp, exp_to_next));
 
-    // 使用 progress_manager 完成挑戰並檢查升階
+    // 使用 progress_manager 完成挑戰並檢查升階，同時解鎖生存因素
     object pm = load_object("/runtime/services/progress_manager.c");
+    object factor_svc = load_object("/runtime/services/factor_service.c");
+    
     if (pm) {
         // 升到1級需完成 "first_kill" 任務
         if (query_level() < 1 && from_monster) {
             pm->complete_player_quest(this_object(), "first_kill", "main");
+            
+            // 解鎖 PC 專屬的戰鬥生存因素
+            if (factor_svc) {
+                factor_svc->discover_factor(this_object(), "combat_survival");
+            }
         }
     }
 

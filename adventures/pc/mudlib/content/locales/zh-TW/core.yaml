@@ -1,0 +1,6 @@
+progress:
+  quest_completed: "✅ 任務完成：[%{qid}]"
+  stage_advanced: "🌟 你的境界提升到了：[%{new_stage}]"
+  stage_shifted: "🗺️ 進入新階段：%{name}%{track_display}"
+factor:
+  missing_prerequisite: "❌ 你必須先解鎖前置概念：%{pre_names}"

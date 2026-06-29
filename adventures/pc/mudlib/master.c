@@ -15,14 +15,21 @@ void create() {
     // ─── 載入並配置 FSE 共用核心服務 ───
     object progress_svc = load_object("/runtime/services/progress_manager.c");
     object event_bus    = load_object("/runtime/services/event_bus.c");
+    object factor_svc   = load_object("/runtime/services/factor_service.c");
+    object i18n_svc     = load_object("/runtime/services/i18n_service.c");
 
     // 注入 PC 的 progression 定義目錄
     progress_svc->register_progression_path("/content/progression");
+    progress_svc->set_default_initial_stage(0, "novice", "main"); // 0 for global default
 
-    // 注入 PC 的預設初始階段（novice），不涉及 PW 的任何概念
-    progress_svc->set_default_initial_stage("main", "novice");
+    // 注入 PC 的因素與語系目錄
+    factor_svc->register_discovery_path("/content/factors");
+    i18n_svc->register_locale_path("/content/locales");
+    i18n_svc->reload_language(); // 確保重新載入剛註冊的路徑
 
     write("  [runtime/progress_manager] 已載入，初始階段：novice\n");
+    write("  [runtime/factor_service]   已載入，探索路徑：/content/factors\n");
+    write("  [runtime/i18n_service]     已載入，語系路徑：/content/locales\n");
     write("  [runtime/event_bus]        已載入\n");
 
     // 測試模式

@@ -1,0 +1,4 @@
+core.progress.quest_completed: "$HIG$✅ 任務完成：[{qid}]$NOR$\n"
+core.progress.stage_advanced: "$HIY$🌟 你的境界提升到了：[{new_stage}]$NOR$\n"
+core.progress.stage_shifted: "$HIC$🗺️ 進入新階段：{name}{track_display}$NOR$\n"
+core.factor.missing_prerequisite: "$HIR$❌ 你必須先解鎖前置概念：{pre_names}$NOR$\n"

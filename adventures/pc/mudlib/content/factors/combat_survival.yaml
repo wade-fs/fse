@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "combat_survival"
+name: "戰鬥生存"
+description: "你體會到在史前世界，戰鬥不是為了榮耀，而是為了生存。"
+category: "survival"
+level: 1

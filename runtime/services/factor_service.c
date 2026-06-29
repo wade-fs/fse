@@ -48,7 +48,7 @@ int discover_factor(object player, string fid) {
     // 載入因素資料
     mapping factor = load_factor_data(fid);
     if (!factor) {
-        write(HIR "❌ 因素探索失敗：找不到該因素的設定資料 [" + fid + "]\n" NOR);
+        tell_object(player, HIR + "❌ 因素探索失敗：找不到該因素的設定資料 [" + fid + "]\n" + NOR);
         return 0;
     }
 
@@ -70,9 +70,9 @@ int discover_factor(object player, string fid) {
         if (sizeof(missing) > 0) {
             object i18n = load_object("/runtime/services/i18n_service.c");
             if (i18n) {
-                write(i18n->translate("core.factor.missing_prerequisite", ([ "pre_names": implode(missing, ", ") ])));
+                tell_object(player, i18n->translate("core.factor.missing_prerequisite", ([ "pre_names": implode(missing, ", ") ])));
             } else {
-                write(HIR "❌ 因素探索失敗：你必須先解鎖前置概念 [" + implode(missing, ", ") + "]！\n" NOR);
+                tell_object(player, HIR + "❌ 因素探索失敗：你必須先解鎖前置概念 [" + implode(missing, ", ") + "]！\n" + NOR);
             }
             return 0;
         }
@@ -85,10 +85,10 @@ int discover_factor(object player, string fid) {
     ]));
 
     // 印出通用因素發現視覺提示
-    write("\n" HIY "【 💡 因素探索發現 (Factor Discovery) 】" NOR "\n");
-    write("你獲得了關鍵概念發現：" HIG + (factor["name"] || fid) + NOR "\n");
+    tell_object(player, "\n" + HIY + "【 💡 因素探索發現 (Factor Discovery) 】" + NOR + "\n");
+    tell_object(player, "你獲得了關鍵概念發現：" + HIG + (factor["name"] || fid) + NOR + "\n");
     if (factor["description"]) {
-        write(factor["description"] + "\n\n");
+        tell_object(player, factor["description"] + "\n\n");
     }
 
     // 發送事件至 FSE EventBus 讓進度管理器連鎖更新
