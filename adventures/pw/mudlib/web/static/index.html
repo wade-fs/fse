@@ -2,10 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FSE: Programming World (編程冒險)</title>
+    <meta name="description" content="FSE 編程冒險：透過拖曳積木學習程式設計概念，解鎖隱藏的程式世界。">
     <!-- 載入 Google Blockly CDN -->
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- PW Blockly 通訊適配器 -->
+    <script src="/static/js/pw-blockly-adapter.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -134,21 +138,20 @@
 
         /* Blockly 工具區/飛出面板對比度特化 override */
         .blocklyToolboxDiv {
-            background-color: #11111b !important; /* 卡布奇諾極暗色，與主背景區分 */
+            background-color: #11111b !important;
             border-right: 3px solid #313244 !important;
             padding: 12px 8px !important;
         }
         .blocklyTreeLabel {
             font-size: 15px !important;
-            font-weight: 800 !important; /* 最粗字體 */
+            font-weight: 800 !important;
             letter-spacing: 0.8px;
         }
-        /* 所有分類行與內部元素（支援舊版 .blocklyTreeRow 與新版 .blocklyToolboxCategory） */
         .blocklyToolboxCategory,
         .blocklyToolboxCategory *,
         .blocklyTreeRow,
         .blocklyTreeRow * {
-            opacity: 1.0 !important; /* 強制關閉任何透明度，不與背景融合 */
+            opacity: 1.0 !important;
         }
         
         .blocklyToolboxCategory,
@@ -156,47 +159,43 @@
             margin-bottom: 12px !important;
             padding: 8px 12px !important;
             border-radius: 6px !important;
-            box-shadow: none !important; /* 徹底拔除陰影/立體感，使用純扁平化設計 */
+            box-shadow: none !important;
             transition: all 0.2s ease-in-out;
-            border: 2px solid #313244 !important; /* 預設深色扁平邊框 */
-            height: auto !important; /* 強制高度自動，完美包裹文字 */
-            min-height: 40px !important; /* 保證充足的按鈕高度 */
+            border: 2px solid #313244 !important;
+            height: auto !important;
+            min-height: 40px !important;
             display: flex !important;
-            align-items: center !important; /* 垂直居中對齊內部文字 */
+            align-items: center !important;
         }
         
-        /* 1. 未選取狀態：純扁平深卡片色，高對比亮金色文字與金邊框 */
         .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected),
         .blocklyTreeRow:not(.blocklyTreeSelected) {
             background-color: #1e1e2e !important; 
-            border-color: #ffd54f !important; /* 亮金色邊框強化輪廓 */
+            border-color: #ffd54f !important;
         }
         .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected) .blocklyTreeLabel,
         .blocklyTreeRow:not(.blocklyTreeSelected) .blocklyTreeLabel {
-            color: #ffd54f !important; /* 強制使用高對比金色文字 */
+            color: #ffd54f !important;
         }
         
-        /* 滑鼠移入 */
         .blocklyToolboxCategory:not(.blocklyToolboxCategorySelected):hover,
         .blocklyTreeRow:not(.blocklyTreeSelected):hover {
             background-color: #252538 !important;
             border-color: #89b4fa !important;
         }
         
-        /* 2. 已選取狀態：純扁平明亮天藍色，深黑藍色文字 */
         .blocklyToolboxCategorySelected,
         .blocklyTreeSelected {
             background-color: #89b4fa !important; 
             border-color: #89b4fa !important;
-            box-shadow: none !important; /* 拔除發光立體感 */
+            box-shadow: none !important;
         }
         .blocklyToolboxCategorySelected .blocklyTreeLabel,
         .blocklyTreeSelected .blocklyTreeLabel {
-            color: #11111b !important; /* 深黑字 */
+            color: #11111b !important;
         }
-        /* 飛出展開面板 (Flyout) 的背景與文字 */
         .blocklyFlyoutBackground {
-            fill: #16161e !important; /* 極深背景，襯托明亮積木 */
+            fill: #16161e !important;
             fill-opacity: 0.98 !important;
         }
         .blocklyFlyoutLabelText {
@@ -205,15 +204,13 @@
             font-size: 15px !important;
         }
         
-        /* 視覺特化：強制積木上的標籤文字使用高對比純白，並加粗與放大，防止在深色背景下看不清 */
         .blocklyText {
             fill: #ffffff !important; 
-            font-weight: 800 !important; /* 超粗體 */
+            font-weight: 800 !important;
             font-size: 14px !important;
-            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9); /* 文字陰影，進一步提升對比度 */
+            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9);
         }
         
-        /* 針對積木內的文字輸入框與下拉選單 */
         .blocklyHtmlInput {
             background-color: #1e1e2e !important;
             color: #ffffff !important;
@@ -267,20 +264,10 @@
         </div>
     </div>
 
-    <xml id="toolbox" style="display: none">
-        <category name="控制流" colour="#5b80a5">
-            <block type="controls_loop"></block>
-            <!-- 隱藏的中斷積木 -->
-            <block type="controls_break" id="break_block_xml" style="display: none;"></block>
-        </category>
-        <category name="變數與運算" colour="#a55b80">
-            <block type="variables_count"></block>
-            <block type="compare_less_100"></block>
-            <block type="action_increment"></block>
-        </category>
-    </xml>
-
     <script>
+        // ─────────────────────────────────────────────────────────
+        // 1. 積木類型定義（前端宣告，與後端 block_registry 對應）
+        // ─────────────────────────────────────────────────────────
         Blockly.Blocks['controls_loop'] = {
             init: function() {
                 this.appendDummyInput().appendField("重複執行 (Loop)");
@@ -346,7 +333,10 @@
             }
         };
 
-        var defaultToolbox = '<xml id="toolbox" style="display: none">' +
+        // ─────────────────────────────────────────────────────────
+        // 2. 初始化 Blockly 工作區（使用最小 toolbox，後端會即時更新）
+        // ─────────────────────────────────────────────────────────
+        var initialToolbox = '<xml>' +
             '  <category name="控制流" colour="#5b80a5">' +
             '    <block type="controls_loop"></block>' +
             '  </category>' +
@@ -359,13 +349,15 @@
             '</xml>';
 
         var workspace = Blockly.inject('blocklyDiv', {
-            toolbox: defaultToolbox,
+            toolbox: initialToolbox,
             grid: { spacing: 20, length: 3, colour: '#313244', snap: true },
             zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 },
             theme: Blockly.Themes.Dark
         });
 
-        // 遞迴將 Blockly Blocks 轉成 FSE 標準 AST
+        // ─────────────────────────────────────────────────────────
+        // 3. AST 轉換（Blockly → FSE 標準 AST）
+        // ─────────────────────────────────────────────────────────
         function blockToAST(block) {
             if (!block) return null;
             
@@ -415,7 +407,9 @@
             return null;
         }
 
-        // 將 AST 轉成 Python-like 偽碼
+        // ─────────────────────────────────────────────────────────
+        // 4. AST → 偽代碼（Python-like）
+        // ─────────────────────────────────────────────────────────
         function astToPython(ast, indent) {
             if (!ast) return "";
             var res = "";
@@ -445,30 +439,28 @@
             return res;
         }
 
-        // 產生偽碼並渲染
         function updatePseudoCode() {
             var topBlocks = workspace.getTopBlocks(true);
             var code = "";
-            for(var i=0; i<topBlocks.length; i++) {
+            for (var i = 0; i < topBlocks.length; i++) {
                 var ast = blockToAST(topBlocks[i]);
                 if (ast) {
                     code += astToPython(ast, "") + "\n";
                 }
             }
-            if(code.trim() === "") code = "// 拖曳積木來產生程式碼...";
+            if (code.trim() === "") code = "// 拖曳積木來產生程式碼...";
             document.getElementById('code-output').innerText = code;
         }
 
         workspace.addChangeListener(updatePseudoCode);
 
-        var wsUrl = "ws://" + window.location.host + "/ws";
-        var socket = new WebSocket(wsUrl);
-        var hasBreakUnlocked = false; 
+        // ─────────────────────────────────────────────────────────
+        // 5. UI 工具函式
+        // ─────────────────────────────────────────────────────────
         var memoryLevel = 100;
 
         function updateMemoryBar(level) {
-            memoryLevel = level;
-            if (memoryLevel < 0) memoryLevel = 0;
+            memoryLevel = Math.max(0, Math.min(100, level));
             var bar = document.getElementById('memory-bar');
             bar.style.width = memoryLevel + "%";
             if (memoryLevel < 30) {
@@ -480,70 +472,10 @@
             }
         }
 
-        socket.onopen = function() {
-            logToTerminal("🌐 已成功連接至 FSE 核心虛擬機。", "green-txt");
-        };
-
-        socket.onmessage = function(event) {
-            var msg = JSON.parse(event.data);
-            if (msg.type === "mud_text" || msg.type === "output" || msg.type === "welcome") {
-                var payload = msg.payload || "";
-                
-                // 結構化 JSON 協定處理
-                if (payload.indexOf("JSON:") === 0) {
-                    try {
-                        var packet = JSON.parse(payload.substring(5));
-                        if (packet.type === "toolbox") {
-                            var unlockBreak = packet.data && packet.data.break_block === 1;
-                            if (unlockBreak && !hasBreakUnlocked) {
-                                hasBreakUnlocked = true;
-                                triggerUnlockEffect();
-                                logToTerminal("✨ [成就解鎖] 你領悟了「迴圈的盡頭」！", "yellow-txt");
-                                logToTerminal("🛠️ [工具箱更新] 已新增 [中斷 (Break)] 積木！", "green-txt");
-                                var upgradedToolbox = '<xml>' +
-                                    '  <category name="控制流" colour="#5b80a5">' +
-                                    '    <block type="controls_loop"></block>' +
-                                    '    <block type="controls_break"></block>' +
-                                    '  </category>' +
-                                    '  <category name="變數與運算" colour="#a55b80">' +
-                                    '    <block type="variables_count"></block>' +
-                                    '    <block type="compare_less_100"></block>' +
-                                    '    <block type="action_increment"></block>' +
-                                    '    <block type="action_assignment"></block>' +
-                                    '  </category>' +
-                                    '</xml>';
-                                workspace.updateToolbox(upgradedToolbox);
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse JSON protocol", e);
-                    }
-                    return;
-                }
-
-                if (payload !== "") {
-                    var cleanText = payload.replace(/\u001b\[\d+m/g, "");
-                    cleanText = cleanText.replace(/\$\w+\$/g, ""); 
-                    
-                    if (cleanText.indexOf("🎉") !== -1 || cleanText.indexOf("成功") !== -1) {
-                        logToTerminal(cleanText, "green-txt");
-                        triggerSuccessEffect();
-                        updateMemoryBar(100);
-                    } else if (cleanText.indexOf("💥") !== -1 || cleanText.indexOf("無窮迴圈") !== -1) {
-                        logToTerminal(cleanText, "red-txt");
-                        shakeScreen();
-                        updateMemoryBar(memoryLevel - 40); 
-                    } else {
-                        logToTerminal(cleanText, "blue-txt");
-                    }
-                }
-            }
-        };
-
-        function logToTerminal(text, className) {
+        function logToTerminal(text, cssClass) {
             var term = document.getElementById("terminal");
             var line = document.createElement("div");
-            line.className = "term-line " + (className || "");
+            line.className = "term-line " + (cssClass || "");
             line.innerText = text;
             term.appendChild(line);
             term.scrollTop = term.scrollHeight;
@@ -564,21 +496,51 @@
             setTimeout(() => wrap.style.transform = 'translate(0, 0)', 200);
         }
 
+        // ─────────────────────────────────────────────────────────
+        // 6. 初始化 PWBlocklyAdapter（後端主導通訊）
+        // ─────────────────────────────────────────────────────────
+        var adapter = new PWBlocklyAdapter(workspace, {
+            onLog: function(text, cssClass) {
+                logToTerminal(text, cssClass);
+            },
+            onMemoryUpdate: function(level) {
+                updateMemoryBar(level);
+            },
+            onWorldState: function(payload) {
+                // 可依 payload.current_node 更新場景名稱等
+                console.log("[WorldState]", payload);
+            },
+            onUnlock: function() {
+                triggerUnlockEffect();
+            },
+            onExecutionResult: function(success) {
+                if (success) {
+                    triggerSuccessEffect();
+                    updateMemoryBar(100);
+                } else {
+                    shakeScreen();
+                    updateMemoryBar(memoryLevel - 40);
+                }
+            }
+        });
+
+        var wsUrl = "ws://" + window.location.host + "/ws";
+        adapter.connect(wsUrl);
+
+        // ─────────────────────────────────────────────────────────
+        // 7. 執行按鈕：透過 adapter 送出標準 EXECUTE 訊息
+        // ─────────────────────────────────────────────────────────
         document.getElementById("btn-run").addEventListener("click", function() {
             var topBlocks = workspace.getTopBlocks(true);
             if (topBlocks.length === 0) {
                 logToTerminal("⚠️ 請先拖曳積木到工作區！", "yellow-txt");
                 return;
             }
-            
+
             var ast = blockToAST(topBlocks[0]);
             if (!ast) return;
-            
-            logToTerminal("▶ 正在傳送積木邏輯至虛擬機執行...", "blue-txt");
-            socket.send(JSON.stringify({
-                type: "cmd",
-                payload: "execute " + JSON.stringify(ast)
-            }));
+
+            adapter.execute(ast);
         });
     </script>
 </body>
