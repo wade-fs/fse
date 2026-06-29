@@ -254,3 +254,75 @@ config := driver.DriverConfig{
 | Executor 擴充點 | `runtime/executors/<name>.c` 支援各冒險自訂判定邏輯 |
 | 事件驅動進度 | Factor 解鎖 → EventBus → progress_manager 連鎖更新，無直接耦合 |
 | 多軌道進度 | 同一玩家可同時在不同 track 推進，支援主線與支線並行 |
+
+---
+
+## 架構總覽圖
+
+```mermaid
+graph TD
+    subgraph RT["Runtime 核心層（Adventure-Agnostic）"]
+        direction LR
+        subgraph OBJ["物件基底"]
+            OB[object.c] --> EN[entity.c]
+            EN --> ND[node.c]
+            EN --> AC[actor.c]
+        end
+        subgraph SVC["核心服務"]
+            EB[event_bus]
+            FS[factor_service]
+            PM[progress_manager]
+            NE[node_executor]
+            DS[discovery_service]
+            I18[i18n_service]
+            RL[reveal_layer]
+        end
+        FS -->|FactorDiscovered| EB
+        EB -->|on_factor_discovered| PM
+        PM -->|complete_player_quest| PM
+        NE -->|complete_player_quest| PM
+        NE -->|discover_factor| FS
+        DS -->|委派| FS
+    end
+
+    subgraph INJ["Adventure 注入層（master.c）"]
+        direction LR
+        INJ1[register_locale_path]
+        INJ2[register_discovery_path]
+        INJ3[register_progression_path]
+        INJ4[set_default_initial_stage]
+        INJ5[compile_object 虛擬節點]
+    end
+
+    subgraph PW["Adventure 內容層（以 PW 為例）"]
+        direction LR
+        subgraph CONTENT["content/"]
+            SY[progression/stage_N.yaml\nspawn_node / requires / next]
+            NY[nodes/node.yaml\nexits / reveal_layers / challenges]
+            CY[challenges/id.yaml\nexecutor / expected_ast / consequence]
+            FY[factors/id.yaml\nprerequisites / progress]
+        end
+        subgraph STD["std/"]
+            UC[user.c\nprogression / factors / physical_state]
+        end
+        subgraph CMDS["cmds/"]
+            EX[player/execute.c]
+        end
+        subgraph WEBSVC["services/"]
+            BK[blockly_service.c]
+        end
+    end
+
+    subgraph GO["Go 驅動層"]
+        DRV[lpc-vm/driver\nLPC 執行引擎]
+        WS[signaling Hub\nWebSocket]
+        P2P[P2P Node\n多伺服器互連]
+        EFS[EmbeddedFS\n單檔部署]
+    end
+
+    INJ -->|啟動時注入路徑與初始值| RT
+    PW -->|YAML 資料驅動| RT
+    UC -->|query_spawn_node| PM
+    GO -->|載入 mudlib + master.c| INJ
+    GO -->|驅動 LPC VM| RT
+```
