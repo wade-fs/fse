@@ -5,5 +5,4 @@ trigger_condition:
   required_action: "execute_valid_ast"
   required_failure_history: "memory_leak_crash"
 description: "原來重複執行的迴圈需要一個終止中斷條件，否則電腦會永遠執行下去直到崩潰卡死。"
-progress: 50
-quest_trigger: "infinite_loop_termination"
+progress: 0

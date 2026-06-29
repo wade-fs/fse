@@ -17,3 +17,4 @@ failure_consequence:
   discover_factor: "loop_termination"
   error_warning: "🔥 [錯誤警告] 重複執行無終止條件！\n💥 程式進入無窮迴圈！系統內存正在急速流失...\n⚡ 提示：似乎需要一種能夠在滿足條件時「跳出」或「中斷」迴圈的控制積木...\n"
 description: "控制流的修復：寫一段能夠在無條件重複執行中安全中斷的積木邏輯，以跳出無窮沼澤。"
+success_progress: 50

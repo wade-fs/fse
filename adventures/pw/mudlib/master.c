@@ -56,9 +56,8 @@ string get_bb_uid() { return "Backbone"; }
 string get_simul_efun() { return "/secure/simul_efun.c"; }
 
 // 提供一個最極簡的 connect 入口，回傳玩家物件
-object connect(string lang) {
+object connect(string token) {
     object user_ob = clone_object("/std/user.c");
-    user_ob->set_id("tester");
     return user_ob;
 }
 

@@ -16,6 +16,23 @@ void create() {
 void set_id(string new_id) { id = new_id; }
 string get_id() { return id; }
 
+void save_state() {
+    if (!id || id == "") return;
+    if (file_size("/data/state/players/") < 0) {
+        mkdir("/data/state/players/");
+    }
+    save_object("/data/state/players/" + id);
+}
+
+void restore_state() {
+    if (!id || id == "") return;
+    if (file_size("/data/state/players/" + id + ".o") > 0) {
+        restore_object("/data/state/players/" + id);
+    }
+    if (!discovered_factors) discovered_factors = ([]);
+    if (!physical_state) physical_state = ([ "memory": 100 ]);
+}
+
 string *query_discovered_factors() { 
     return keys(discovered_factors); 
 }
@@ -32,6 +49,7 @@ varargs void discover_factor(string fid, mapping metadata) {
             metadata["unlocked_at"] = time();
         }
         discovered_factors[fid] = metadata;
+        save_state();
     }
 }
 
@@ -48,6 +66,7 @@ int has_discovery(string did) { return has_factor(did); }
 void add_physical_state(string state, int val) {
     if (!physical_state) physical_state = ([]);
     physical_state[state] = (physical_state[state] || 100) + val;
+    save_state();
 }
 
 int query_physical_state(string state) {
@@ -59,10 +78,72 @@ int query_physical_state(string state) {
 string query_role() { return "god"; }
 string *query_write_paths() { return ({ "/" }); }
 
+string password_hash;
+
+void get_account(string acc);
+void check_password(string pwd);
+void new_password(string pwd);
+
+void logon() {
+    write("請輸入帳號 (Nickname): \n");
+    input_to("get_account");
+}
+
+void get_account(string acc) {
+    write("debug: acc = '" + acc + "'\n");
+    acc = trim(acc);
+    if (!acc || acc == "") {
+        write("請輸入帳號: \n");
+        input_to("get_account");
+        return;
+    }
+    set_id(acc);
+    if (file_size("/data/state/players/" + acc + ".o") > 0) {
+        restore_state();
+        write("請輸入密碼: \n");
+        input_to("check_password");
+    } else {
+        write("新帳號，請設定密碼: \n");
+        input_to("new_password");
+    }
+}
+
+void check_password(string pwd) {
+    pwd = trim(pwd);
+    if (pwd != password_hash) {
+        write("密碼錯誤！請重新輸入: \n");
+        input_to("check_password");
+        return;
+    }
+    set_living_name(get_id());
+    write("登入成功！歡迎回來，" + get_id() + "！\n");
+    load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
+}
+
+void new_password(string pwd) {
+    pwd = trim(pwd);
+    if (!pwd || pwd == "") {
+        write("密碼不能為空，請重新設定: \n");
+        input_to("new_password");
+        return;
+    }
+    password_hash = pwd;
+    save_state();
+    set_living_name(get_id());
+    write("註冊成功！歡迎加入，" + get_id() + "！\n");
+    load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
+}
+
 // 模擬測試與真實連線的指令分發攔截 (由 Go 驅動優先呼叫)
 mixed process_input(string cmd) {
     cmd = trim(cmd);
     write_file("/data/state/system/test_execute.txt", sprintf("[%s] CMD received: %s\n", ctime(time()), cmd), 0);
+    
+    if (cmd == "logon") {
+        logon();
+        return 1;
+    }
+    
     if (strsrch(cmd, "execute") == 0) {
         string arg = "";
         if (strlen(cmd) > 7) {

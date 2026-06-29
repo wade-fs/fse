@@ -40,6 +40,10 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		username = "Anonymous"
 	}
 	isP2P := q.Get("p2p") == "true"
+	token := q.Get("token")
+	if token == "" {
+		token = uuid.NewString()
+	}
 
 	// 🚀 新增：獲取瀏覽器語言 (Accept-Language)
 	lang := r.Header.Get("Accept-Language")
@@ -51,7 +55,7 @@ func HandleWS(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &Client{
-		ID:       uuid.NewString(),
+		ID:       token, // 🚀 使用前端傳來的 token 作為唯一身分識別
 		Username: username,
 		Language: lang, 
 		IsP2P:    isP2P, // 存入 Client

@@ -137,7 +137,7 @@ varargs void add_world_progress(int val, string track) {
 }
 
 // 完成 Challenge/Quest (通用)
-varargs void complete_quest(object player, string qid, string track) {
+varargs void complete_quest(object player, string qid, string track, int progress_val) {
     if (!player) return;
     if (!track) track = "main";
     if (!active_tracks[track]) return;
@@ -162,8 +162,9 @@ varargs void complete_quest(object player, string qid, string track) {
     log_file("progress.log", sprintf("[%s] 玩家 %s 完成了任務 %s (Track: %s)\n",
         ctime(time()), player->query_entity_id(), qid, track));
 
-    // 任務完成預設加 10 進度
-    add_world_progress(10, track);
+    // 任務完成預設加 10 進度，若有指定則加指定值
+    if (!progress_val) progress_val = 10;
+    add_world_progress(progress_val, track);
 }
 
 // Factor 事件連鎖處理
@@ -176,7 +177,7 @@ void on_factor_discovered(mapping event) {
     int progress_val  = data["progress"];
     mapping factor_data = data["factor_data"];
 
-    if (!progress_val) progress_val = 50;
+    if (undefinedp(data["progress"])) progress_val = 50;
 
     // 若 factor 指定了所屬 track，則進度加在該 track，否則預設 main
     string target_track = "main";

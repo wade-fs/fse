@@ -169,7 +169,9 @@ int execute_challenges(object node_obj, object player, mapping ast) {
                 tell_object(player, HIG + success_msg + NOR);
                 
                 // 呼叫進度管理器完成任務
-                load_object("/runtime/services/progress_manager.c")->complete_quest(player, cid);
+                int success_prog = chal_data["success_progress"];
+                if (!success_prog) success_prog = 10;
+                load_object("/runtime/services/progress_manager.c")->complete_quest(player, cid, "main", success_prog);
                 return 1;
             }
 

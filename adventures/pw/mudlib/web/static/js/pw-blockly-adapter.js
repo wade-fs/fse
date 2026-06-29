@@ -46,8 +46,6 @@ class PWBlocklyAdapter {
         this._socket.onopen = () => {
             this._connected = true;
             this._log("✅ 已成功連接至 FSE 核心虛擬機。", "green-txt");
-            // 連線後立即請求工具箱
-            this.requestToolbox();
         };
 
         this._socket.onmessage = (event) => {

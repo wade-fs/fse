@@ -234,6 +234,7 @@
         <button id="btn-run" class="btn-run">▶ 執行程式 (Run)</button>
     </header>
 
+
     <div id="wrapper">
         <div id="left-panel">
             <h3 class="blue-txt">📍 當前位置：無窮迴圈沼澤</h3>
@@ -248,9 +249,10 @@
                 </div>
             </div>
 
-            <div class="terminal-container" id="terminal">
-                <div class="term-line yellow-txt">⚡ 系統就緒：請在右側組裝 Blockly 積木。</div>
+            <div class="terminal-container" id="terminal" onclick="document.getElementById('cmd-input').focus()">
+                <div class="term-line yellow-txt">⚡ 系統就緒：連接至伺服器中...</div>
             </div>
+            <input type="text" id="cmd-input" placeholder="在這裡輸入文字 (按 Enter 發送)..." style="width: 100%; background: #11111b; color: #eceef4; border: 1px solid #3b3d54; border-radius: 4px; padding: 10px; margin-top: 10px; font-family: 'Consolas', monospace; font-size: 14px; outline: none;">
         </div>
 
         <div id="right-panel">
@@ -485,7 +487,7 @@
         }
 
         // ─────────────────────────────────────────────────────────
-        // 6. 初始化 PWBlocklyAdapter（後端主導通訊）
+        // 6. 登入與初始化 PWBlocklyAdapter（後端主導通訊）
         // ─────────────────────────────────────────────────────────
         var adapter = new PWBlocklyAdapter(workspace, {
             onLog: function(text, cssClass) {
@@ -511,9 +513,25 @@
                 }
             }
         });
+        function connectWebSocket() {
+            var wsUrl = "ws://" + window.location.host + "/ws";
+            adapter.connect(wsUrl);
+        }
 
-        var wsUrl = "ws://" + window.location.host + "/ws";
-        adapter.connect(wsUrl);
+        connectWebSocket();
+
+        document.getElementById("cmd-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                var text = this.value.trim();
+                this.value = "";
+                if (text === "") return;
+                logToTerminal("> " + text, "yellow-txt");
+                if (adapter._socket && adapter._socket.readyState === WebSocket.OPEN) {
+                    adapter._socket.send(JSON.stringify({ type: "cmd", payload: text }));
+                }
+            }
+        });
+
 
         // ─────────────────────────────────────────────────────────
         // 7. 執行按鈕：透過 adapter 送出標準 EXECUTE 訊息
@@ -524,7 +542,6 @@
                 logToTerminal("⚠️ 請先拖曳積木到工作區！", "yellow-txt");
                 return;
             }
-
             var ast = blockToAST(topBlocks[0]);
             if (!ast) return;
 

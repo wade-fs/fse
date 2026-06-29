@@ -92,7 +92,7 @@ func (h *Hub) Run() {
 					}
 				}
 
-				userObj := h.mudDriver.AcceptConnection(pConn, client.Language)
+				userObj := h.mudDriver.AcceptConnection(pConn, client.ID)
 				if userObj != nil {
 					pConn.Object = userObj
 					h.mudDriver.RegisterInteractive(userObj, pConn)
