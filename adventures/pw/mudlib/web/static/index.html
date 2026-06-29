@@ -276,6 +276,17 @@
         // ─────────────────────────────────────────────────────────
         Blockly.Blocks['controls_loop'] = {
             init: function() {
+                this.appendDummyInput().appendField("無條件重複 (Loop)");
+                this.appendStatementInput("DO").appendField("執行");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(120);
+                this.setTooltip("無條件重複執行");
+            }
+        };
+
+        Blockly.Blocks['controls_loop_conditional'] = {
+            init: function() {
                 this.appendValueInput("CONDITION")
                     .setCheck("Boolean")
                     .appendField("重複執行 (Loop) 當");
@@ -287,7 +298,7 @@
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(120);
-                this.setTooltip("重複執行邏輯");
+                this.setTooltip("條件重複執行邏輯");
             }
         };
 
@@ -363,6 +374,29 @@
             
             var ast = null;
             if (block.type === 'controls_loop') {
+                var doBlock = block.getInputTargetBlock('DO');
+                
+                ast = {
+                    type: "Loop",
+                    condition: null,
+                    act: null,
+                    body: []
+                };
+                
+                var current = doBlock;
+                var hasBreak = 0;
+                while (current) {
+                    var childAST = blockToAST(current);
+                    if (childAST) {
+                        ast.body.push(childAST);
+                        if (childAST.type === "Break" || childAST.has_break === 1) {
+                            hasBreak = 1;
+                        }
+                    }
+                    current = current.getNextBlock();
+                }
+                ast.has_break = hasBreak;
+            } else if (block.type === 'controls_loop_conditional') {
                 var condBlock = block.getInputTargetBlock('CONDITION');
                 var actBlock = block.getInputTargetBlock('ACT');
                 var doBlock = block.getInputTargetBlock('DO');
@@ -406,7 +440,7 @@
             }
 
             // 🚀 關鍵修改：遍歷 NextBlock 拼接積木鏈
-            if (ast && (block.type === 'action_assignment' || block.type === 'controls_loop' || block.type === 'controls_break')) {
+            if (ast && (block.type === 'action_assignment' || block.type === 'controls_loop' || block.type === 'controls_loop_conditional' || block.type === 'controls_break')) {
                 var nextBlock = block.getNextBlock();
                 if (nextBlock) {
                     var nextAST = blockToAST(nextBlock);

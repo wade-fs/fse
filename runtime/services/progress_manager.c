@@ -3,30 +3,12 @@
 // 支援「多線並行進度」 (Parallel Tracks)
 #include "/include/ansi.h"
 
-// active_tracks 結構： ([ "track_name" : ([ "stage_id": "xxx", "progress": 0 ]) ])
-mapping active_tracks;
 private nosave mapping global_events;
 private nosave string progression_path;  // 由 Adventure 注入
 
-void save_state() {
-    if (file_size("/data/state/system/") < 0) {
-        mkdir("/data/state/system/");
-    }
-    save_object("/data/state/system/progress");
-}
-
-void restore_state() {
-    if (file_size("/data/state/system/progress.o") > 0) {
-        restore_object("/data/state/system/progress");
-    }
-    if (!active_tracks) active_tracks = ([]);
-}
-
 void create() {
-    active_tracks = ([]);
     global_events = ([]);
     progression_path = "";
-    restore_state();
 
     // 訂閱 Discovery 事件以驅動進度
     call_out("subscribe_events", 1);
@@ -42,45 +24,73 @@ void register_progression_path(string path) {
     progression_path = path;
 }
 
+// 取得玩家 progression 資料 (輔助函式)
+private mapping get_player_track_data(object player, string track) {
+    if (!player) return 0;
+    mapping prog = player->query_progression();
+    if (!prog) prog = ([]);
+    if (!prog[track]) {
+        // 預設初始化為第一階段 (pw 第一階段為 stage_1_sequence)
+        prog[track] = ([ "stage_id": "stage_1_sequence", "progress": 0, "completed_quests": ({}) ]);
+    }
+    return prog[track];
+}
+
+// 寫入玩家 progression 資料 (輔助函式)
+private void set_player_track_data(object player, string track, mapping track_data) {
+    if (!player) return;
+    mapping prog = player->query_progression();
+    if (!prog) prog = ([]);
+    prog[track] = track_data;
+    player->set_progression(prog);
+}
+
 // 初始化進階軌道 (預設 track 為 "main")
-varargs void set_initial_stage(string stage_id, string track) {
+varargs void set_initial_stage(object player, string stage_id, string track) {
+    if (!player) return;
     if (!track) track = "main";
-    if (!active_tracks[track] || active_tracks[track]["stage_id"] == "") {
-        active_tracks[track] = ([ "stage_id": stage_id, "progress": 0 ]);
-        save_state();
+    mapping track_data = get_player_track_data(player, track);
+    if (!track_data || track_data["stage_id"] == "") {
+        track_data = ([ "stage_id": stage_id, "progress": 0, "completed_quests": ({}) ]);
+        set_player_track_data(player, track, track_data);
     }
 }
 
 // 取得特定軌道目前的階段 (預設 main)
-varargs string query_current_stage(string track) {
+varargs string query_current_stage(object player, string track) {
+    if (!player) return 0;
     if (!track) track = "main";
-    if (!active_tracks[track]) return 0;
-    return active_tracks[track]["stage_id"];
+    mapping track_data = get_player_track_data(player, track);
+    return track_data["stage_id"];
 }
 
 // 取得特定軌道目前的進度數值
-varargs int query_world_progress(string track) {
+varargs int query_player_progress(object player, string track) {
+    if (!player) return 0;
     if (!track) track = "main";
-    if (!active_tracks[track]) return 0;
-    return active_tracks[track]["progress"];
+    mapping track_data = get_player_track_data(player, track);
+    return track_data["progress"];
 }
 
-// 判定特定階段是否完成 (若不指定軌道，則搜尋所有啟動中的軌道)
-varargs int stage_completed(string stage, string track) {
-    if (!stage) return 0;
+// 判定特定階段是否完成
+varargs int player_stage_completed(object player, string stage, string track) {
+    if (!player || !stage) return 0;
     if (track) {
-        return active_tracks[track] && active_tracks[track]["stage_id"] == stage;
+        mapping track_data = get_player_track_data(player, track);
+        return track_data && track_data["stage_id"] == stage;
     }
-    foreach (string t, mapping data in active_tracks) {
+    mapping prog = player->query_progression();
+    if (!prog) return 0;
+    foreach (string t, mapping data in prog) {
         if (data["stage_id"] == stage) return 1;
     }
     return 0;
 }
 
 // 從注冊路徑讀取軌道當前階段的 YAML 設定
-mapping query_current_stage_data(string track) {
-    if (!progression_path || !active_tracks[track]) return 0;
-    string sid = active_tracks[track]["stage_id"];
+mapping query_current_stage_data(object player, string track) {
+    if (!progression_path || !player) return 0;
+    string sid = query_current_stage(player, track);
     string yaml_path = sprintf("%s/%s.yaml", progression_path, sid);
     if (file_size(yaml_path) <= 0) return 0;
     string raw = read_file(yaml_path);
@@ -89,17 +99,19 @@ mapping query_current_stage_data(string track) {
 }
 
 // 軌道進階
-void next_stage(string track) {
-    mapping stage_data = query_current_stage_data(track);
+void next_player_stage(object player, string track) {
+    if (!player) return;
+    mapping stage_data = query_current_stage_data(player, track);
     string next = stage_data ? stage_data["next"] : 0;
     if (!next) return;  // 已是最後階段
 
-    string old_stage = active_tracks[track]["stage_id"];
-    active_tracks[track]["stage_id"] = next;
-    active_tracks[track]["progress"] = 0;
-    save_state();
+    mapping track_data = get_player_track_data(player, track);
+    string old_stage = track_data["stage_id"];
+    track_data["stage_id"] = next;
+    track_data["progress"] = 0;
+    set_player_track_data(player, track, track_data);
 
-    mapping next_data = query_current_stage_data(track);
+    mapping next_data = query_current_stage_data(player, track);
     string name = next_data ? next_data["name"] : next;
 
     string track_display = (track == "main") ? "" : " [" + track + "軌道]";
@@ -107,10 +119,11 @@ void next_stage(string track) {
     object i18n = load_object("/runtime/services/i18n_service.c");
     if (i18n) {
         string msg = i18n->translate("core.progress.stage_shifted", ([ "track_display": track_display, "name": name, "next": next ]));
-        shout(msg);
+        tell_object(player, msg); // 對個人進行提示，而非 shout 全世界！
     }
 
     load_object("/runtime/services/event_bus.c")->publish("StageShifted", ([
+        "player"      : player,
         "track"       : track,
         "from_stage"  : old_stage,
         "to_stage"    : next,
@@ -119,40 +132,41 @@ void next_stage(string track) {
 }
 
 // 增加特定軌道的進度並檢查進階
-varargs void add_world_progress(int val, string track) {
+varargs void add_player_progress(object player, int val, string track) {
+    if (!player) return;
     if (!track) track = "main";
-    if (!active_tracks[track]) return;
 
-    active_tracks[track]["progress"] += val;
-    save_state();
+    mapping track_data = get_player_track_data(player, track);
+    track_data["progress"] += val;
+    set_player_track_data(player, track, track_data);
 
     int threshold = 50;  // 預設進階閾值
-    mapping stage_data = query_current_stage_data(track);
+    mapping stage_data = query_current_stage_data(player, track);
     if (stage_data && intp(stage_data["min_progress"]))
         threshold = stage_data["min_progress"];
 
-    if (active_tracks[track]["progress"] >= threshold) {
-        next_stage(track);
+    if (track_data["progress"] >= threshold) {
+        next_player_stage(player, track);
     }
 }
 
 // 完成 Challenge/Quest (通用)
-varargs void complete_quest(object player, string qid, string track, int progress_val) {
+varargs void complete_player_quest(object player, string qid, string track, int progress_val) {
     if (!player) return;
     if (!track) track = "main";
-    if (!active_tracks[track]) return;
 
-    if (!active_tracks[track]["completed_quests"]) {
-        active_tracks[track]["completed_quests"] = ({});
+    mapping track_data = get_player_track_data(player, track);
+    if (!track_data["completed_quests"]) {
+        track_data["completed_quests"] = ({});
     }
 
     // 避免重複完成同一個任務並重複加進度
-    if (member_array(qid, active_tracks[track]["completed_quests"]) != -1) {
+    if (member_array(qid, track_data["completed_quests"]) != -1) {
         return;
     }
 
-    active_tracks[track]["completed_quests"] += ({ qid });
-    save_state();
+    track_data["completed_quests"] += ({ qid });
+    set_player_track_data(player, track, track_data);
 
     object i18n = load_object("/runtime/services/i18n_service.c");
     if (i18n) {
@@ -164,7 +178,7 @@ varargs void complete_quest(object player, string qid, string track, int progres
 
     // 任務完成預設加 10 進度，若有指定則加指定值
     if (!progress_val) progress_val = 10;
-    add_world_progress(progress_val, track);
+    add_player_progress(player, progress_val, track);
 }
 
 // Factor 事件連鎖處理
@@ -183,18 +197,20 @@ void on_factor_discovered(mapping event) {
     string target_track = "main";
     if (factor_data && factor_data["track"]) {
         target_track = factor_data["track"];
-        // 如果這個 track 還沒啟動，自動初始化 (可選邏輯)
-        if (!active_tracks[target_track]) {
-            set_initial_stage(fid, target_track);
+        // 自動初始化
+        if (player) {
+            set_initial_stage(player, fid, target_track);
         }
     }
 
-    add_world_progress(progress_val, target_track);
+    if (player) {
+        add_player_progress(player, progress_val, target_track);
 
-    if (player && factor_data) {
-        string quest_trigger = factor_data["quest_trigger"];
-        if (quest_trigger) {
-            complete_quest(player, quest_trigger, target_track);
+        if (factor_data) {
+            string quest_trigger = factor_data["quest_trigger"];
+            if (quest_trigger) {
+                complete_player_quest(player, quest_trigger, target_track);
+            }
         }
     }
 
@@ -222,24 +238,17 @@ void on_discovery_completed(mapping event) {
 }
 
 varargs void set_stage(object player, string new_stage, string track) {
+    if (!player) return;
     if (!track) track = "main";
-    if (!active_tracks[track]) active_tracks[track] = ([]);
     
-    active_tracks[track]["stage_id"] = new_stage;
-    save_state();
+    mapping track_data = get_player_track_data(player, track);
+    track_data["stage_id"] = new_stage;
+    set_player_track_data(player, track, track_data);
 
-    if (player) {
-        object i18n = load_object("/runtime/services/i18n_service.c");
-        if (i18n) {
-            tell_object(player, i18n->translate("core.progress.stage_advanced", ([ "track": track, "new_stage": new_stage ])));
-        }
+    object i18n = load_object("/runtime/services/i18n_service.c");
+    if (i18n) {
+        tell_object(player, i18n->translate("core.progress.stage_advanced", ([ "track": track, "new_stage": new_stage ])));
     }
 
-    log_file("progress.log", sprintf("[%s] 世界階段 (%s) 推進至 %s\n", ctime(time()), track, new_stage));
-}
-
-// 供測試或重置使用的強制初始化函數
-void reset_stage() {
-    active_tracks = ([]);
-    save_state();
+    log_file("progress.log", sprintf("[%s] 玩家 %s 階段 (%s) 推進至 %s\n", ctime(time()), player->query_entity_id(), track, new_stage));
 }

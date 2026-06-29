@@ -4,6 +4,7 @@ inherit "/std/entity";
 private string id;
 private mapping discovered_factors;
 private mapping physical_state;
+private mapping progression;
 
 void create() {
     ::create();
@@ -11,6 +12,7 @@ void create() {
     set_entity_type("user");
     discovered_factors = ([]);
     physical_state = ([ "memory": 100 ]);
+    progression = ([]);
 }
 
 void set_id(string new_id) { id = new_id; }
@@ -31,6 +33,17 @@ void restore_state() {
     }
     if (!discovered_factors) discovered_factors = ([]);
     if (!physical_state) physical_state = ([ "memory": 100 ]);
+    if (!progression) progression = ([]);
+}
+
+mapping query_progression() {
+    if (!progression) progression = ([]);
+    return progression;
+}
+
+void set_progression(mapping prog) {
+    progression = prog;
+    save_state();
 }
 
 string *query_discovered_factors() { 
@@ -116,6 +129,18 @@ void check_password(string pwd) {
     }
     set_living_name(get_id());
     write("登入成功！歡迎回來，" + get_id() + "！\n");
+    
+    // 🚀 根據當前世界進程階段動態決定玩家的初始房間
+    string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
+    string dest = "/nodes/infinite_loop_swamp/node";
+    if (stage == "stage_2_loop") dest = "/nodes/counter_valley/node";
+    else if (stage == "stage_3_variable") dest = "/nodes/variable_forest/node";
+    
+    object dest_obj = load_object(dest);
+    if (dest_obj) {
+        catch(move_object(this_object(), dest_obj));
+    }
+    
     load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
 }
 
@@ -130,6 +155,18 @@ void new_password(string pwd) {
     save_state();
     set_living_name(get_id());
     write("註冊成功！歡迎加入，" + get_id() + "！\n");
+    
+    // 🚀 根據當前世界進程階段動態決定玩家的初始房間
+    string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
+    string dest = "/nodes/infinite_loop_swamp/node";
+    if (stage == "stage_2_loop") dest = "/nodes/counter_valley/node";
+    else if (stage == "stage_3_variable") dest = "/nodes/variable_forest/node";
+    
+    object dest_obj = load_object(dest);
+    if (dest_obj) {
+        catch(move_object(this_object(), dest_obj));
+    }
+    
     load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
 }
 

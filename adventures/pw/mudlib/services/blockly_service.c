@@ -12,8 +12,9 @@
 // ──────────────────────────────────────────────
 private mapping block_registry = ([
     // 控制流
-    "controls_loop":   ({ "控制流", "#5b80a5", "statement" }),
-    "controls_break":  ({ "控制流", "#5b80a5", "statement" }),
+    "controls_loop":             ({ "控制流", "#5b80a5", "statement" }),
+    "controls_loop_conditional": ({ "控制流", "#5b80a5", "statement" }),
+    "controls_break":            ({ "控制流", "#5b80a5", "statement" }),
     // 數學運算 / 變數
     "variables_count":   ({ "變數與運算", "#a55b80", "value" }),
     "compare_less_100":  ({ "變數與運算", "#a55b80", "value" }),
@@ -78,14 +79,7 @@ mapping query_player_toolbox(object player) {
         if (test_site) {
             env = load_object("/nodes/" + test_site + "/node");
         } else {
-            string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
-            if (stage == "stage_2_loop") {
-                env = load_object("/nodes/counter_valley/node");
-            } else if (stage == "stage_3_variable") {
-                env = load_object("/nodes/variable_forest/node");
-            } else {
-                env = load_object("/nodes/infinite_loop_swamp/node");
-            }
+            env = load_object("/nodes/infinite_loop_swamp/node");
         }
     }
     if (!env) return 0;
@@ -176,14 +170,7 @@ string format_world_state(object player) {
         if (test_site) {
             env = load_object("/nodes/" + test_site + "/node");
         } else {
-            string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
-            if (stage == "stage_2_loop") {
-                env = load_object("/nodes/counter_valley/node");
-            } else if (stage == "stage_3_variable") {
-                env = load_object("/nodes/variable_forest/node");
-            } else {
-                env = load_object("/nodes/infinite_loop_swamp/node");
-            }
+            env = load_object("/nodes/infinite_loop_swamp/node");
         }
     }
     string current_node = "unknown";

@@ -111,6 +111,20 @@ private int handle_execute(object me, mapping packet) {
     // 我們在這裡額外送一個結構化的 EXECUTION_RESULT 供前端動畫/狀態更新使用
     string exec_msg;
     if (res) {
+        // 🚀 挑戰成功後，檢查世界階段進程是否被前推，並動態將玩家移入下一個關卡地標房間
+        string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage(me, "main");
+        string dest = "/nodes/infinite_loop_swamp/node";
+        if (stage == "stage_2_loop") dest = "/nodes/counter_valley/node";
+        else if (stage == "stage_3_variable") dest = "/nodes/variable_forest/node";
+        
+        // 若玩家目前位置與新階段目的地不同，執行轉移
+        if (env && file_name(env) != dest) {
+            object dest_obj = load_object(dest);
+            if (dest_obj) {
+                catch(move_object(me, dest_obj));
+            }
+        }
+        
         exec_msg = blockly_svc->format_execution_result(1, "", 0, ({}), me);
     } else {
         exec_msg = blockly_svc->format_execution_result(0, "", 0, ({}), me);

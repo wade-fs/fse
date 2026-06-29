@@ -194,7 +194,7 @@ int execute_challenges(object node_obj, object player, mapping ast) {
                 // 呼叫進度管理器完成任務
                 int success_prog = chal_data["success_progress"];
                 if (!success_prog) success_prog = 10;
-                load_object("/runtime/services/progress_manager.c")->complete_quest(player, cid, "main", success_prog);
+                load_object("/runtime/services/progress_manager.c")->complete_player_quest(player, cid, "main", success_prog);
                 return 1;
             }
 
