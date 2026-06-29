@@ -79,6 +79,15 @@ int receive_damage(int dmg) {
     return actual;
 }
 
+// 受到已計算的直接傷害，繞過防禦力減免
+int receive_damage_raw(int actual) {
+    if (hp <= 0) return 0;
+    if (actual < 1) actual = 1;
+    hp -= actual;
+    if (hp < 0) hp = 0;
+    return actual;
+}
+
 // 一回合戰鬥結算 (攻擊方呼叫)
 varargs void do_attack(object target) {
     if (!is_alive()) {
@@ -89,8 +98,16 @@ varargs void do_attack(object target) {
         stop_combat();
         return;
     }
-    int dmg = attack + random(attack / 2 + 1);
-    int actual = target->receive_damage(dmg);
+    
+    int actual;
+    object combat_svc = load_object("/runtime/services/combat_service.c");
+    if (combat_svc) {
+        int dmg = combat_svc->calculate_damage(this_object(), target);
+        actual = target->receive_damage_raw(dmg);
+    } else {
+        int dmg = attack + random(attack / 2 + 1);
+        actual = target->receive_damage(dmg);
+    }
 
     tell_object(this_object(), sprintf(
         YEL + "你攻擊 %s，造成 %d 點傷害。" + NOR + " (對方剩餘 HP: %d/%d)\n",

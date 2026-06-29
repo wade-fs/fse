@@ -1,0 +1,10 @@
+name: "始祖小雞"
+max_hp: 15
+attack: 4
+defense: 1
+level: 1
+exp_value: 20
+respawn_delay: 10
+combat_interval: 2
+short_desc: "一隻看似無害的史前始祖小雞。"
+long_desc: "這是一隻生活在三疊紀的始祖小雞，身上覆蓋著稀疏的羽毛，雖然小但爪子看起來很銳利。"
