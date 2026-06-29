@@ -237,9 +237,13 @@
 
     <div id="wrapper">
         <div id="left-panel">
-            <h3 class="blue-txt">📍 當前位置：無窮迴圈沼澤</h3>
-            <div id="site-desc" style="font-size: 14px; color: #a6adc8; line-height: 1.6;">
+            <h3 class="blue-txt" id="site-title">📍 當前位置：無窮迴圈沼澤</h3>
+            <div id="site-desc" style="font-size: 14px; color: #a6adc8; line-height: 1.6; margin-bottom: 10px;">
                 這裡堆滿了永遠停不下來的廢棄進程，周圍飄散著發熱的記憶體碎屑。
+            </div>
+            <div id="challenge-panel" style="background: #181922; border: 1px solid #3b3d54; border-radius: 4px; padding: 10px; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 5px 0; color: #f9e2af;">🎯 當前任務目標 (Challenge)</h4>
+                <div id="challenge-desc" style="font-size: 13px; color: #bac2de; line-height: 1.5;">載入中...</div>
             </div>
             
             <div class="status-container">
@@ -272,12 +276,18 @@
         // ─────────────────────────────────────────────────────────
         Blockly.Blocks['controls_loop'] = {
             init: function() {
-                this.appendDummyInput().appendField("無條件重複 (Loop)");
-                this.appendStatementInput("DO").appendField("執行");
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("重複執行 (Loop) 當");
+                this.appendValueInput("ACT")
+                    .setCheck("Action")
+                    .appendField("每次循環後");
+                this.appendStatementInput("DO")
+                    .appendField("執行");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(120);
-                this.setTooltip("無條件重複執行");
+                this.setTooltip("重複執行邏輯");
             }
         };
 
@@ -318,10 +328,10 @@
 
         Blockly.Blocks['action_assignment'] = {
             init: function() {
-                this.appendDummyInput().appendField("設定")
-                    .appendField(new Blockly.FieldTextInput("x"), "VAR")
+                this.appendDummyInput().appendField("設定變數")
+                    .appendField(new Blockly.FieldTextInput("count"), "VAR")
                     .appendField("為")
-                    .appendField(new Blockly.FieldNumber(42), "VALUE");
+                    .appendField(new Blockly.FieldNumber(0), "VALUE");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(290);
@@ -351,12 +361,13 @@
         function blockToAST(block) {
             if (!block) return null;
             
+            var ast = null;
             if (block.type === 'controls_loop') {
                 var condBlock = block.getInputTargetBlock('CONDITION');
                 var actBlock = block.getInputTargetBlock('ACT');
                 var doBlock = block.getInputTargetBlock('DO');
                 
-                var ast = {
+                ast = {
                     type: "Loop",
                     condition: condBlock ? blockToAST(condBlock) : null,
                     act: actBlock ? blockToAST(actBlock) : null,
@@ -376,11 +387,10 @@
                     current = current.getNextBlock();
                 }
                 ast.has_break = hasBreak;
-                return ast;
             } else if (block.type === 'controls_break') {
-                return { type: "Break" };
+                ast = { type: "Break" };
             } else if (block.type === 'variables_count') {
-                return "count";
+                return "count"; // count 變數直接回傳字串
             } else if (block.type === 'compare_less_100') {
                 var leftBlock = block.getInputTargetBlock('LEFT');
                 var leftVal = leftBlock ? blockToAST(leftBlock) : "?";
@@ -388,13 +398,36 @@
             } else if (block.type === 'action_increment') {
                 return "count++";
             } else if (block.type === 'action_assignment') {
-                return {
+                ast = {
                     type: "Assignment",
                     var_name: block.getFieldValue('VAR'),
                     value: parseInt(block.getFieldValue('VALUE'), 10)
                 };
             }
-            return null;
+
+            // 🚀 關鍵修改：遍歷 NextBlock 拼接積木鏈
+            if (ast && (block.type === 'action_assignment' || block.type === 'controls_loop' || block.type === 'controls_break')) {
+                var nextBlock = block.getNextBlock();
+                if (nextBlock) {
+                    var nextAST = blockToAST(nextBlock);
+                    if (nextAST) {
+                        // 如果 nextAST 已經是 Sequence，將其合併
+                        if (nextAST.type === "Sequence") {
+                            return {
+                                type: "Sequence",
+                                body: [ast].concat(nextAST.body)
+                            };
+                        } else {
+                            return {
+                                type: "Sequence",
+                                body: [ast, nextAST]
+                            };
+                        }
+                    }
+                }
+            }
+
+            return ast;
         }
 
         // ─────────────────────────────────────────────────────────
@@ -403,7 +436,13 @@
         function astToPython(ast, indent) {
             if (!ast) return "";
             var res = "";
-            if (ast.type === "Loop") {
+            if (ast.type === "Sequence") {
+                if (ast.body && ast.body.length > 0) {
+                    ast.body.forEach(function(child) {
+                        res += astToPython(child, indent);
+                    });
+                }
+            } else if (ast.type === "Loop") {
                 var cond = ast.condition || "True";
                 res += indent + "while " + cond + ":\n";
                 
@@ -489,16 +528,35 @@
         // ─────────────────────────────────────────────────────────
         // 6. 登入與初始化 PWBlocklyAdapter（後端主導通訊）
         // ─────────────────────────────────────────────────────────
+        var isPasswordMode = false;
+
         var adapter = new PWBlocklyAdapter(workspace, {
             onLog: function(text, cssClass) {
+                if (text.indexOf("密碼") !== -1) {
+                    isPasswordMode = true;
+                    document.getElementById("cmd-input").type = "password";
+                } else if (text.indexOf("成功！歡迎") !== -1) {
+                    isPasswordMode = false;
+                    document.getElementById("cmd-input").type = "text";
+                }
                 logToTerminal(text, cssClass);
             },
             onMemoryUpdate: function(level) {
                 updateMemoryBar(level);
             },
             onWorldState: function(payload) {
-                // 可依 payload.current_node 更新場景名稱等
                 console.log("[WorldState]", payload);
+                if (payload.current_node_name) {
+                    document.getElementById('site-title').innerText = "📍 當前位置：" + payload.current_node_name;
+                }
+                if (payload.current_node_desc) {
+                    document.getElementById('site-desc').innerText = payload.current_node_desc;
+                }
+                if (payload.challenge_desc) {
+                    document.getElementById('challenge-desc').innerText = payload.challenge_desc;
+                } else {
+                    document.getElementById('challenge-desc').innerText = "本區域目前沒有新的編程挑戰，請繼續前行！";
+                }
             },
             onUnlock: function() {
                 triggerUnlockEffect();
@@ -507,6 +565,12 @@
                 if (success) {
                     triggerSuccessEffect();
                     updateMemoryBar(100);
+                    // 🚀 挑戰成功後，延遲清空積木區，讓玩家看到成功特效後有乾淨的新工作區
+                    setTimeout(function() {
+                        if (typeof workspace !== "undefined") {
+                            workspace.clear();
+                        }
+                    }, 1000);
                 } else {
                     shakeScreen();
                     updateMemoryBar(memoryLevel - 40);
@@ -525,7 +589,13 @@
                 var text = this.value.trim();
                 this.value = "";
                 if (text === "") return;
-                logToTerminal("> " + text, "yellow-txt");
+                
+                if (isPasswordMode) {
+                    logToTerminal("> *******", "yellow-txt");
+                } else {
+                    logToTerminal("> " + text, "yellow-txt");
+                }
+                
                 if (adapter._socket && adapter._socket.readyState === WebSocket.OPEN) {
                     adapter._socket.send(JSON.stringify({ type: "cmd", payload: text }));
                 }

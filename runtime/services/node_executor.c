@@ -158,6 +158,29 @@ int execute_challenges(object node_obj, object player, mapping ast) {
                 }
             }
 
+            // 🚀 關鍵修改：如果前端傳來的是 Sequence 積木鏈，且挑戰預期的是單一節點（如 Loop），自動在 Sequence 中尋找該節點進行匹配
+            if (ast["type"] == "Sequence" && expected["type"] != "Sequence") {
+                mapping found = 0;
+                foreach (mapping child in ast["body"]) {
+                    if (child["type"] == expected["type"]) {
+                        found = child;
+                        break;
+                    }
+                }
+                // 如果在 rules 比對模式，我們可以直接將 ast 覆寫為裡面的第一個 Loop 子積木
+                if (!found && expected["matcher"] == "rule_based") {
+                    foreach (mapping child in ast["body"]) {
+                        if (child["type"] == "Loop") {
+                            found = child;
+                            break;
+                        }
+                    }
+                }
+                if (found) {
+                    ast = found;
+                }
+            }
+
             // 檢查 AST 匹配 (使用新的彈性匹配器)
             int matched = match_ast(ast, expected);
 

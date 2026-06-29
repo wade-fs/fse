@@ -187,10 +187,35 @@ string format_world_state(object player) {
         }
     }
     string current_node = "unknown";
+    string current_node_name = "";
+    string current_node_desc = "";
+    string challenge_desc = "";
     if (env) {
         mapping cfg = 0;
         catch(cfg = env->query_node_config());
-        if (cfg && cfg["node_id"]) current_node = cfg["node_id"];
+        if (cfg) {
+            if (cfg["node_id"]) current_node = cfg["node_id"];
+            current_node_name = cfg["name"] || "";
+            current_node_desc = cfg["description"] || "";
+            
+            // 讀取第一個挑戰的描述
+            mixed *chals = cfg["challenges"];
+            string node_dir = env->query_node_dir();
+            if (arrayp(chals) && sizeof(chals) > 0 && node_dir) {
+                string cid = chals[0]["id"];
+                string chal_path = sprintf("%schallenges/%s.yaml", node_dir, cid);
+                if (file_size(chal_path) > 0) {
+                    string raw_chal = read_file(chal_path);
+                    if (raw_chal) {
+                        mapping chal_data = 0;
+                        catch(chal_data = yaml_decode(raw_chal));
+                        if (chal_data && chal_data["description"]) {
+                            challenge_desc = chal_data["description"];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     int memory_val = 100;
@@ -202,6 +227,9 @@ string format_world_state(object player) {
         "type": "WORLD_STATE",
         "payload": ([
             "current_node":      current_node,
+            "current_node_name": current_node_name,
+            "current_node_desc": current_node_desc,
+            "challenge_desc":    challenge_desc,
             "memory":            memory_val,
             "unlocked_factors":  arrayp(factors) ? factors : ({}),
         ]),

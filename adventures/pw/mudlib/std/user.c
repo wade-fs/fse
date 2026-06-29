@@ -90,7 +90,6 @@ void logon() {
 }
 
 void get_account(string acc) {
-    write("debug: acc = '" + acc + "'\n");
     acc = trim(acc);
     if (!acc || acc == "") {
         write("請輸入帳號: \n");

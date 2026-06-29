@@ -95,7 +95,7 @@ int discover_factor(object player, string fid) {
     // 事件攜帶完整的 factor_data，讓接收端可以讀取 quest_trigger 等欄位
     event_bus = load_object("/runtime/services/event_bus.c");
     if (event_bus) {
-        int prog_val = 50;
+        int prog_val = 0;
         if (!undefinedp(factor["progress"])) {
             prog_val = factor["progress"];
         }

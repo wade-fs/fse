@@ -177,7 +177,7 @@ void on_factor_discovered(mapping event) {
     int progress_val  = data["progress"];
     mapping factor_data = data["factor_data"];
 
-    if (undefinedp(data["progress"])) progress_val = 50;
+    if (undefinedp(data["progress"])) progress_val = 0;
 
     // 若 factor 指定了所屬 track，則進度加在該 track，否則預設 main
     string target_track = "main";
