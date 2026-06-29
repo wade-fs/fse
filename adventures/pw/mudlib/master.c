@@ -87,20 +87,6 @@ object connect(string token) {
 }
 
 // 支援完全資料驅動 (Virtual Object) 機制
-// 當載入 /nodes/<site>/node.c 時，若無實體檔案，會呼叫此處 compile_object
 object compile_object(string file) {
-    if (sscanf(file, "%s.c", file)) {}
-    
-    string *parts = explode(file, "/");
-    // 如果路徑以斜線開頭，explode 產生的數組 parts 的第一個元素會是 ""
-    int offset = (sizeof(parts) > 0 && parts[0] == "") ? 1 : 0;
-    
-    if (sizeof(parts) >= (3 + offset) && parts[offset] == "nodes" && parts[sizeof(parts)-1] == "node") {
-        // 這是節點虛擬物件載入請求
-        // 我們直接 clone_object 通用的 /std/node.c 作為虛擬物件
-        object virtual_node = clone_object("/std/node.c");
-        return virtual_node;
-    }
-    return 0;
+    return load_object("/runtime/core/virtual.c")->compile_virtual_object(file);
 }
-

@@ -3,49 +3,32 @@
 // 支援完全資料驅動，從 YAML 檔案讀取配置與邏輯
 #include "/runtime/include/ansi.h"
 
-inherit "/runtime/core/entity";
+inherit "/runtime/core/virtual_object";
 inherit "/std/reveal_layer.c";
-
-private string node_dir;
-private mapping node_config;
 
 void create() {
     ::create();
     set_entity_type("node");
     
-    // 從檔名推導所在目錄。例如虛擬路徑為: /nodes/counter_valley/node -> /content/nodes/counter_valley/
-    string fname = file_name(this_object());
-    string *parts = explode(fname, "/");
-    if (sizeof(parts) >= 2) {
-        string node_id = parts[sizeof(parts)-2];
-        node_dir = "/content/nodes/" + node_id + "/";
-        
-        // 載入該節點的 YAML 設定
-        string node_yaml = read_file(node_dir + "node.yaml");
-        if (node_yaml) {
-            mixed err = catch(node_config = yaml_decode(node_yaml));
-            if (err) {
-                log_file("sys_error.log", sprintf("[%s] node.c yaml_decode error (%s): %s\n", ctime(time()), node_dir, err));
-            }
+    // 初始化虛擬路徑與 YAML 設定
+    setup_virtual("nodes", "node.yaml");
+    
+    mapping config = query_virtual_config();
+    if (config) {
+        if (config["node_id"]) {
+            set_entity_id("node:" + config["node_id"]);
         }
         
-        if (node_config) {
-            if (node_config["node_id"]) {
-                set_entity_id("node:" + node_config["node_id"]);
-            }
-            
-            // 載入 reveal_layers 設定
-            if (arrayp(node_config["reveal_layers"])) {
-                foreach (mapping layer in node_config["reveal_layers"]) {
-                    add_reveal_layer(layer);
-                }
+        if (arrayp(config["reveal_layers"])) {
+            foreach (mapping layer in config["reveal_layers"]) {
+                add_reveal_layer(layer);
             }
         }
     }
 }
 
-mapping query_node_config() { return node_config; }
-string query_node_dir() { return node_dir; }
+mapping query_node_config() { return query_virtual_config(); }
+string query_node_dir() { return query_virtual_dir(); }
 
 int receive_execution(object player, mapping ast) {
     return load_object("/runtime/services/node_executor.c")->execute_challenges(this_object(), player, ast);

@@ -76,3 +76,8 @@ object connect(string token) {
     object user_ob = clone_object("/std/user.c");
     return user_ob;
 }
+
+// 支援完全資料驅動 (Virtual Object) 機制
+object compile_object(string file) {
+    return load_object("/runtime/core/virtual.c")->compile_virtual_object(file);
+}
