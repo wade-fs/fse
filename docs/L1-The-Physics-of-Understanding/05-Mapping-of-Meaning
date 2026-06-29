@@ -1,0 +1,7 @@
+職責：
+
+node ≠ content
+world ≠ map
+discovery ≠ instruction
+
+👉 這章是防止讀者誤解 FSE 的關鍵

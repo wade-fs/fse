@@ -1,3 +1,5 @@
+If you have not lived in a world, you have not yet understood it.
+
 FSE (Factor Space Engine) is an engine for building explorable worlds.
 Narrative Exploration: 我要做一個讓人可以探索、可以發現、非常有趣的世界，在裡面學到某些事
 在這裡，我想留下一段值得親身經歷的探索。
@@ -44,3 +46,27 @@ Every design decision in FSE should preserve or enhance the player's desire to e
 中文可以寫成：
 
 FSE 的每一個設計決策，都應該以「是否能維持或增強玩家的探索慾望」作為最高原則。
+
+The Nature of FSE
+
+FSE is not a game engine.
+
+It is not a teaching framework.
+
+It is not a programming architecture.
+
+FSE is a theory about how understanding emerges through exploration.
+
+Every implementation is only one possible expression of that theory.
+
+中文版，我想寫成：
+
+FSE 不是遊戲引擎。
+
+不是教學框架。
+
+也不是某一種軟體架構。
+
+FSE 是一套描述「理解如何透過探索而形成」的理論。
+
+任何程式，都只是這套理論的一種實作。
