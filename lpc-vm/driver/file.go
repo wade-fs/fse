@@ -68,7 +68,17 @@ func (d *Driver) ResolvePath(basePath, relPath string) string {
 	return relPath
 }
 
+// 🚀 新增：取得對應實體硬碟的路徑 (處理 /runtime/ 和 /data/ 映射)
+func (d *Driver) GetPhysicalPath(resolvedPath string) string {
+	cleanPath := strings.TrimPrefix(resolvedPath, "/")
+	if strings.HasPrefix(resolvedPath, "/runtime/") || strings.HasPrefix(resolvedPath, "/data/") {
+		return filepath.Join(d.Config.MudLibPath, "../../..", cleanPath)
+	}
+	return filepath.Join(d.Config.MudLibPath, cleanPath)
+}
+
 // 🚀 新增：混合模式讀取檔案 (支援 .c 尾碼自動修復)
+
 func (d *Driver) ReadFile(filename string) ([]byte, error) {
 	tryFiles := []string{filename}
 	if !strings.HasSuffix(filename, ".c") {
@@ -79,12 +89,12 @@ func (d *Driver) ReadFile(filename string) ([]byte, error) {
 		relPath := strings.TrimPrefix(f, "/")
 
 		// 1. 優先從實體磁碟讀取
-		// 🚀 關鍵：確保路徑不會逃脫 MudLibPath (Virtual Chroot)，但特別允許通用核心服務 /runtime/ 對應到專案根目錄的實體 /runtime
+		// 🚀 關鍵：確保路徑不會逃脫 MudLibPath (Virtual Chroot)，但特別允許 /runtime/ 和 /data/ 對應到專案根目錄
 		var fullPath string
 		isCoreRuntime := strings.HasPrefix(f, "/runtime/")
-		if isCoreRuntime {
-			// filename "/runtime/services/factor_service.c" -> "../../../runtime/services/factor_service.c"
-			// 由於 MudLibPath 是 "adventures/pw/mudlib"，將其往上三層後與 runtime 拼合
+		isDataPath := strings.HasPrefix(f, "/data/")
+		if isCoreRuntime || isDataPath {
+			// 由於 MudLibPath 是 "adventures/pw/mudlib"，將其往上三層後與 runtime 或 data 拼合
 			fullPath = filepath.Join(d.Config.MudLibPath, "../../..", relPath)
 		} else {
 			fullPath = filepath.Join(d.Config.MudLibPath, relPath)

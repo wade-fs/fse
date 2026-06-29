@@ -31,14 +31,14 @@ string get_id()          { return id; }
 
 void save_state() {
     if (!id || id == "") return;
-    if (file_size("/data/state/players/") < 0) mkdir("/data/state/players/");
-    save_object("/data/state/players/" + id);
+    if (file_size("/data/pc/state/players/") < 0) mkdir("/data/pc/state/players/");
+    save_object("/data/pc/state/players/" + id);
 }
 
 void restore_state() {
     if (!id || id == "") return;
-    if (file_size("/data/state/players/" + id + ".o") > 0) {
-        restore_object("/data/state/players/" + id);
+    if (file_size("/data/pc/state/players/" + id + ".o") > 0) {
+        restore_object("/data/pc/state/players/" + id);
     }
     if (!progression) progression = ([]);
 }
@@ -133,7 +133,7 @@ void get_account(string acc) {
     acc = trim(acc);
     if (!acc || acc == "") { write("請輸入帳號: "); input_to("get_account"); return; }
     set_id(acc);
-    if (file_size("/data/state/players/" + acc + ".o") > 0) {
+    if (file_size("/data/pc/state/players/" + acc + ".o") > 0) {
         restore_state();
         write("請輸入密碼: ");
         input_to("check_password");

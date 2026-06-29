@@ -42,7 +42,7 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				return &object.Integer{Value: 0}
 			}
 
-			fullPath := filepath.Join(d.Config.MudLibPath, resolvedPath)
+			fullPath := d.GetPhysicalPath(resolvedPath)
 			err := os.Remove(fullPath)
 			if err != nil {
 				return &object.Integer{Value: 0}
@@ -83,8 +83,8 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				return &object.Integer{Value: 0}
 			}
 
-			fullFrom := filepath.Join(d.Config.MudLibPath, resolvedFrom)
-			fullTo := filepath.Join(d.Config.MudLibPath, resolvedTo)
+			fullFrom := d.GetPhysicalPath(resolvedFrom)
+			fullTo := d.GetPhysicalPath(resolvedTo)
 
 			os.MkdirAll(filepath.Dir(fullTo), 0755)
 			err := os.Rename(fullFrom, fullTo)
@@ -117,7 +117,7 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				return &object.Integer{Value: 0}
 			}
 
-			fullPath := filepath.Join(d.Config.MudLibPath, resolvedPath)
+			fullPath := d.GetPhysicalPath(resolvedPath)
 			err := os.MkdirAll(fullPath, 0755)
 			if err != nil {
 				return &object.Integer{Value: 0}
@@ -148,7 +148,7 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				return &object.Integer{Value: 0}
 			}
 
-			fullPath := filepath.Join(d.Config.MudLibPath, resolvedPath)
+			fullPath := d.GetPhysicalPath(resolvedPath)
 			err := os.Remove(fullPath)
 			if err != nil {
 				return &object.Integer{Value: 0}
@@ -189,8 +189,8 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				return &object.Integer{Value: 0}
 			}
 
-			fullFrom := filepath.Join(d.Config.MudLibPath, resolvedFrom)
-			fullTo := filepath.Join(d.Config.MudLibPath, resolvedTo)
+			fullFrom := d.GetPhysicalPath(resolvedFrom)
+			fullTo := d.GetPhysicalPath(resolvedTo)
 
 			content, err := os.ReadFile(fullFrom)
 			if err != nil {
@@ -396,7 +396,7 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 				}
 			}
 
-			fullPath := filepath.Join(d.Config.MudLibPath, resolvedPath)
+			fullPath := d.GetPhysicalPath(resolvedPath)
 			os.MkdirAll(filepath.Dir(fullPath), 0755)
 			f, err := os.OpenFile(fullPath, flag, 0644)
 			if err != nil {
@@ -512,7 +512,7 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 			}
 
 			resolvedPath := d.ResolvePath(obj.Filename, fileName.Value)
-			fullPath := filepath.Join(d.Config.MudLibPath, resolvedPath)
+			fullPath := d.GetPhysicalPath(resolvedPath)
 			if info, err := os.Stat(fullPath); err == nil {
 				if info.IsDir() {
 					return &object.Integer{Value: -2}
@@ -719,8 +719,8 @@ func (d *Driver) registerSystemAndFiles(obj *object.LPCObject) {
 			allowed, _ = d.checkWritePermission(obj, resolvedTo, "link_to")
 			if !allowed { return &object.Integer{Value: 0} }
 
-			fullFrom := filepath.Join(d.Config.MudLibPath, resolvedFrom)
-			fullTo := filepath.Join(d.Config.MudLibPath, resolvedTo)
+			fullFrom := d.GetPhysicalPath(resolvedFrom)
+			fullTo := d.GetPhysicalPath(resolvedTo)
 
 			err := os.Link(fullFrom, fullTo)
 			if err != nil {
@@ -819,7 +819,7 @@ func (d *Driver) registerMonitorEfuns(obj *object.LPCObject) {
 			}
 
 			resolved := d.ResolvePath(obj.Filename, path.Value)
-			fullPath := filepath.Join(d.Config.MudLibPath, resolved)
+			fullPath := d.GetPhysicalPath(resolved)
 			info, err := os.Stat(fullPath)
 			if err != nil {
 				return &object.Nil{}

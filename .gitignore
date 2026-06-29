@@ -7,4 +7,4 @@ fse.zip
 log/
 *log
 *.txt
-data/state/system
+data/**/state/system
