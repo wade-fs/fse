@@ -15,7 +15,7 @@
 inherit "/std/object";
 
 // blockly_service 路徑（PW 專屬，不在 runtime 下）
-#define BLOCKLY_SVC "/adventures/pw/mudlib/services/blockly_service"
+#define BLOCKLY_SVC "/services/blockly_service"
 
 void create() {
     ::create();
@@ -148,25 +148,32 @@ private int handle_request_toolbox(object me, mapping packet) {
 int main(object me, string arg, string extra) {
     if (!me) return 0;
     if (!arg || arg == "") {
-        write("❌ 執行失敗：無效指令，缺少 JSON 資料。\n");
+        write("❌ 執行失敗：無效的積木資料。\n");
         return 1;
     }
 
-    // 解析 JSON 封包（JSON 是 YAML 子集，直接用 yaml_decode）
     mapping packet;
-    mixed err = catch(packet = yaml_decode(arg));
-    if (err || !packet || !mapp(packet)) {
-        write("❌ 執行失敗：JSON 解析失敗。\n");
-        log_file("sys_error.log", sprintf("[%s] execute.c parse error: %s | raw_arg: %s\n",
-            ctime(time()), err || "null packet", arg));
-        return 1;
+
+    // 新協議：完整 JSON
+    if (strsrch(arg, "\"type\":") != -1 || strsrch(arg, "'type':") != -1) {
+        mixed err = catch(packet = yaml_decode(arg));
+        if (err || !packet) {
+            write("❌ JSON 解析失敗\n");
+            return 1;
+        }
+    } 
+    // 舊協議：直接是 AST（向下相容）
+    else {
+        packet = ([
+            "type": "EXECUTE",
+            "payload": ([
+                "ast": yaml_decode(arg)
+            ])
+        ]);
     }
 
     string msg_type = packet["type"];
-    if (!msg_type) {
-        write("❌ 執行失敗：封包缺少 type 欄位。\n");
-        return 1;
-    }
+    if (!msg_type) msg_type = "EXECUTE";
 
     switch (msg_type) {
         case "EXECUTE":
@@ -174,7 +181,7 @@ int main(object me, string arg, string extra) {
         case "REQUEST_TOOLBOX":
             return handle_request_toolbox(me, packet);
         default:
-            write("⚠️ 未知的 Blockly 指令類型：" + msg_type + "\n");
+            write("⚠️ 未知指令類型：" + msg_type + "\n");
             return 1;
     }
 }

@@ -46,7 +46,7 @@ private mixed *build_categories(mixed *block_types) {
         string cat_colour = info[1];
 
         if (!cat_map[cat_name]) {
-            cat_map[cat_name] = ({ "colour": cat_colour, "blocks": ({}) });
+            cat_map[cat_name] = ([ "colour": cat_colour, "blocks": ({}) ]);
             cat_order += ({ cat_name });
         }
         cat_map[cat_name]["blocks"] += ({ ([ "type": btype ]) });
@@ -98,7 +98,8 @@ mapping query_player_toolbox(object player) {
     }
 
     // 取得玩家已解鎖的因素清單
-    mixed *factors = player->query_all_factors ? player->query_all_factors() : ({});
+    mixed *factors = ({});
+    catch(factors = player->query_all_factors());
     if (!arrayp(factors)) factors = ({});
 
     return ([
@@ -165,12 +166,15 @@ string format_world_state(object player) {
     object env = environment(player);
     string current_node = "unknown";
     if (env) {
-        mapping cfg = env->query_node_config ? env->query_node_config() : 0;
+        mapping cfg = 0;
+        catch(cfg = env->query_node_config());
         if (cfg && cfg["node_id"]) current_node = cfg["node_id"];
     }
 
-    int memory_val = player->query_physical_state ? player->query_physical_state("memory") : 100;
-    mixed *factors = player->query_all_factors ? player->query_all_factors() : ({});
+    int memory_val = 100;
+    catch(memory_val = player->query_physical_state("memory"));
+    mixed *factors = ({});
+    catch(factors = player->query_all_factors());
 
     mapping msg = ([
         "type": "WORLD_STATE",

@@ -46,8 +46,28 @@ func (h *Hub) Run() {
 						// 🚀 關鍵：偵測是否為原始 JSON 訊息
 						if strings.HasPrefix(mudText, "__JSON_MSG__") {
 							rawJson := strings.TrimPrefix(mudText, "__JSON_MSG__")
-							var customMsg Message
-							if err := json.Unmarshal([]byte(rawJson), &customMsg); err == nil {
+							type TempMsg struct {
+								Type    string          `json:"type"`
+								From    string          `json:"from"`
+								To      string          `json:"to"`
+								Payload json.RawMessage `json:"payload"`
+							}
+							var temp TempMsg
+							if err := json.Unmarshal([]byte(rawJson), &temp); err == nil {
+								var payloadStr string
+								if len(temp.Payload) > 0 {
+									if temp.Payload[0] == '"' {
+										_ = json.Unmarshal(temp.Payload, &payloadStr)
+									} else {
+										payloadStr = string(temp.Payload)
+									}
+								}
+								customMsg := Message{
+									Type:    temp.Type,
+									From:    temp.From,
+									To:      temp.To,
+									Payload: payloadStr,
+								}
 								select {
 								case client.Send <- customMsg:
 								default:

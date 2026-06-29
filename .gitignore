@@ -6,3 +6,5 @@ fse.zip
 .*swo
 log/
 *log
+*.txt
+data/state/system
