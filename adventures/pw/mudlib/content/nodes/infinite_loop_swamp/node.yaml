@@ -7,9 +7,6 @@ description: "這裡堆滿了永遠停不下來的廢棄進程，周圍飄散著
 exits:
   go_valley: "counter_valley"
 reveal_layers:
-  - reveal_block: "variables_count"
-  - reveal_block: "compare_less_100"
-  - reveal_block: "action_increment"
   - reveal_block: "controls_break"
     checks:
       - type: "factor_discovered"

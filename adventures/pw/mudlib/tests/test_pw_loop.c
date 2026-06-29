@@ -232,6 +232,7 @@ int test_integration_progression() {
     write(HIG "  ✓ 整合測試 (5/5): 【變數與賦值過關驗證】驗證通過。" NOR "\n");
 
     destruct(player);
+    progress_d->reset_stage();
     return 0;
 }
 

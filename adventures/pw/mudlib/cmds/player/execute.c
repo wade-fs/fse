@@ -36,10 +36,18 @@ private object get_env(object me) {
     object env = environment(me);
     if (!env) {
         string test_site = me->query_temp("current_site");
-        if (test_site)
+        if (test_site) {
             env = load_object("/nodes/" + test_site + "/node");
-        else
-            env = load_object("/nodes/infinite_loop_swamp/node");
+        } else {
+            string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
+            if (stage == "stage_2_loop") {
+                env = load_object("/nodes/counter_valley/node");
+            } else if (stage == "stage_3_variable") {
+                env = load_object("/nodes/variable_forest/node");
+            } else {
+                env = load_object("/nodes/infinite_loop_swamp/node");
+            }
+        }
     }
     return env;
 }

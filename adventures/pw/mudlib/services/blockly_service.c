@@ -73,12 +73,19 @@ mapping query_player_toolbox(object player) {
 
     object env = environment(player);
     if (!env) {
-        // 測試環境 fallback
+        // 測試與執行期 fallback
         string test_site = player->query_temp("current_site");
         if (test_site) {
             env = load_object("/nodes/" + test_site + "/node");
         } else {
-            env = load_object("/nodes/infinite_loop_swamp/node");
+            string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
+            if (stage == "stage_2_loop") {
+                env = load_object("/nodes/counter_valley/node");
+            } else if (stage == "stage_3_variable") {
+                env = load_object("/nodes/variable_forest/node");
+            } else {
+                env = load_object("/nodes/infinite_loop_swamp/node");
+            }
         }
     }
     if (!env) return 0;
@@ -164,6 +171,21 @@ string format_world_state(object player) {
     if (!player) return 0;
 
     object env = environment(player);
+    if (!env) {
+        string test_site = player->query_temp("current_site");
+        if (test_site) {
+            env = load_object("/nodes/" + test_site + "/node");
+        } else {
+            string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
+            if (stage == "stage_2_loop") {
+                env = load_object("/nodes/counter_valley/node");
+            } else if (stage == "stage_3_variable") {
+                env = load_object("/nodes/variable_forest/node");
+            } else {
+                env = load_object("/nodes/infinite_loop_swamp/node");
+            }
+        }
+    }
     string current_node = "unknown";
     if (env) {
         mapping cfg = 0;
