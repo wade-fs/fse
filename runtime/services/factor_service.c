@@ -85,6 +85,17 @@ int discover_factor(object player, string fid) {
     ]));
 
     // 印出通用因素發現視覺提示
+    object i18n = load_object("/runtime/services/i18n_service.c");
+    if (player->query_temp("is_confused")) {
+        if (i18n) {
+            string insight_msg = i18n->translate("core.factor.insight_transition");
+            if (insight_msg) tell_object(player, insight_msg);
+        } else {
+            tell_object(player, "\n" + HIC + "【 🌟 困惑 → 領悟 (Insight) 】 之前的疑惑瞬間解開了！" + NOR + "\n");
+        }
+        player->delete_temp("is_confused");
+    }
+
     tell_object(player, "\n" + HIY + "【 💡 因素探索發現 (Factor Discovery) 】" + NOR + "\n");
     tell_object(player, "你獲得了關鍵概念發現：" + HIG + (factor["name"] || fid) + NOR + "\n");
     if (factor["description"]) {

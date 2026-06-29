@@ -200,6 +200,23 @@ int execute_challenges(object node_obj, object player, mapping ast) {
 
             // 匹配失敗，執行懲罰與提示
             mapping consequence = chal_data["failure_consequence"];
+            
+            // 標記困惑狀態，並發送事件
+            object event_bus = load_object("/runtime/services/event_bus.c");
+            if (event_bus) {
+                event_bus->publish("PlayerConfused", ([
+                    "player": player,
+                    "challenge_id": cid,
+                    "node_id": node_obj->query_entity_id()
+                ]));
+            }
+            player->set_temp("is_confused", 1);
+            
+            string confusion_msg = i18n->translate("core.executor.confusion");
+            if (confusion_msg) {
+                tell_object(player, confusion_msg);
+            }
+            
             if (consequence) {
                 if (consequence["memory_cost"]) {
                     player->add_physical_state("memory", -consequence["memory_cost"]);
