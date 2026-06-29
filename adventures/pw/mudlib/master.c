@@ -26,7 +26,7 @@ void create() {
 
     // 注冊進度階段 YAML 目錄，並設定初始階段
     progress_svc->register_progression_path("/content/progression");
-    progress_svc->set_initial_stage("stage_1_sequence");
+    progress_svc->set_default_initial_stage("main", "stage_1_sequence");
 
     // 如果是測試模式，自動在一秒後執行測試
     if (getenv("MUD_TEST_MODE")) {

@@ -131,17 +131,18 @@ void check_password(string pwd) {
     write("登入成功！歡迎回來，" + get_id() + "！\n");
     
     // 🚀 根據當前世界進程階段動態決定玩家的初始房間
-    string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
-    string dest = "/nodes/infinite_loop_swamp/node";
-    if (stage == "stage_2_loop") dest = "/nodes/counter_valley/node";
-    else if (stage == "stage_3_variable") dest = "/nodes/variable_forest/node";
+    string dest = load_object("/runtime/services/progress_manager.c")->query_spawn_node(this_object(), "main");
+    if (!dest) {
+        // PW-specific fallback: 避免未設定 spawn_node 時無處可去
+        dest = "/nodes/infinite_loop_swamp/node";
+    }
     
     object dest_obj = load_object(dest);
     if (dest_obj) {
         catch(move_object(this_object(), dest_obj));
     }
     
-    load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
+    process_input("execute {\"type\":\"REQUEST_TOOLBOX\"}");
 }
 
 void new_password(string pwd) {
@@ -157,17 +158,18 @@ void new_password(string pwd) {
     write("註冊成功！歡迎加入，" + get_id() + "！\n");
     
     // 🚀 根據當前世界進程階段動態決定玩家的初始房間
-    string stage = load_object("/runtime/services/progress_manager.c")->query_current_stage("main");
-    string dest = "/nodes/infinite_loop_swamp/node";
-    if (stage == "stage_2_loop") dest = "/nodes/counter_valley/node";
-    else if (stage == "stage_3_variable") dest = "/nodes/variable_forest/node";
+    string dest = load_object("/runtime/services/progress_manager.c")->query_spawn_node(this_object(), "main");
+    if (!dest) {
+        // PW-specific fallback: 避免未設定 spawn_node 時無處可去
+        dest = "/nodes/infinite_loop_swamp/node";
+    }
     
     object dest_obj = load_object(dest);
     if (dest_obj) {
         catch(move_object(this_object(), dest_obj));
     }
     
-    load_object("/cmds/player/execute.c")->main(this_object(), "{\"type\":\"REQUEST_TOOLBOX\"}", 0);
+    process_input("execute {\"type\":\"REQUEST_TOOLBOX\"}");
 }
 
 // 模擬測試與真實連線的指令分發攔截 (由 Go 驅動優先呼叫)
@@ -180,16 +182,20 @@ mixed process_input(string cmd) {
         return 1;
     }
     
-    if (strsrch(cmd, "execute") == 0) {
-        string arg = "";
-        if (strlen(cmd) > 7) {
-            arg = cmd[7..];
-            arg = trim(arg);
-        }
-        write_file("/data/state/system/test_execute.txt", sprintf("[%s] Routed to execute.c with arg: %s\n", ctime(time()), arg), 0);
-        load_object("/cmds/player/execute.c")->main(this_object(), arg, 0);
-        return 1; // 回傳 1 代表已完全處理，阻止 Go 印出 "什麼？"
+    string verb, arg;
+    if (sscanf(cmd, "%s %s", verb, arg) != 2) {
+        verb = cmd;
+        arg = "";
     }
+    
+    // 動態分派指令，避免直接 hardcode /cmds 裡面的具體指令
+    object cmd_ob = load_object("/cmds/player/" + verb + ".c");
+    if (cmd_ob) {
+        write_file("/data/state/system/test_execute.txt", sprintf("[%s] Routed to %s.c with arg: %s\n", ctime(time()), verb, arg), 0);
+        cmd_ob->main(this_object(), arg, 0);
+        return 1;
+    }
+    
     return 0;
 }
 

@@ -219,8 +219,25 @@ int execute_challenges(object node_obj, object player, mapping ast) {
             }
             return 0;
         } else {
-            write(i18n->translate("core.executor.unknown_type", ([ "executor": executor ])));
-            return 0;
+            // 嘗試載入擴充的 executor
+            string executor_path = "/runtime/executors/" + executor + ".c";
+            if (file_size(executor_path) > 0) {
+                object exec_obj = load_object(executor_path);
+                if (exec_obj) {
+                    string chal_path = sprintf("%schallenges/%s.yaml", node_dir, cid);
+                    mapping chal_data = ([]);
+                    if (file_size(chal_path) > 0) {
+                        string raw = read_file(chal_path);
+                        if (raw) chal_data = yaml_decode(raw);
+                    }
+                    if (exec_obj->execute(node_obj, player, ast, chal_data, cid)) {
+                        return 1;
+                    }
+                }
+            } else {
+                write(i18n->translate("core.executor.unknown_type", ([ "executor": executor ])));
+                return 0;
+            }
         }
     }
 

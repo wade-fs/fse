@@ -5,10 +5,12 @@
 
 private nosave mapping global_events;
 private nosave string progression_path;  // 由 Adventure 注入
+private nosave mapping default_stages;   // 由 Adventure 注入的預設階段
 
 void create() {
     global_events = ([]);
     progression_path = "";
+    default_stages = ([]);
 
     // 訂閱 Discovery 事件以驅動進度
     call_out("subscribe_events", 1);
@@ -24,14 +26,20 @@ void register_progression_path(string path) {
     progression_path = path;
 }
 
+// Adventure 注冊軌道預設階段
+varargs void set_default_initial_stage(string track, string stage_id) {
+    if (!track) track = "main";
+    default_stages[track] = stage_id;
+}
+
 // 取得玩家 progression 資料 (輔助函式)
 private mapping get_player_track_data(object player, string track) {
     if (!player) return 0;
     mapping prog = player->query_progression();
     if (!prog) prog = ([]);
     if (!prog[track]) {
-        // 預設初始化為第一階段 (pw 第一階段為 stage_1_sequence)
-        prog[track] = ([ "stage_id": "stage_1_sequence", "progress": 0, "completed_quests": ({}) ]);
+        string init_stage = default_stages[track] ? default_stages[track] : "";
+        prog[track] = ([ "stage_id": init_stage, "progress": 0, "completed_quests": ({}) ]);
     }
     return prog[track];
 }
@@ -45,7 +53,7 @@ private void set_player_track_data(object player, string track, mapping track_da
     player->set_progression(prog);
 }
 
-// 初始化進階軌道 (預設 track 為 "main")
+// 針對個別玩家初始化進階軌道
 varargs void set_initial_stage(object player, string stage_id, string track) {
     if (!player) return;
     if (!track) track = "main";
@@ -96,6 +104,17 @@ mapping query_current_stage_data(object player, string track) {
     string raw = read_file(yaml_path);
     if (!raw) return 0;
     return yaml_decode(raw);
+}
+
+// 取得當前階段的初始節點
+varargs string query_spawn_node(object player, string track) {
+    if (!player) return 0;
+    if (!track) track = "main";
+    mapping stage_data = query_current_stage_data(player, track);
+    if (stage_data && stage_data["spawn_node"]) {
+        return stage_data["spawn_node"];
+    }
+    return 0; // 若無設定，回傳 0
 }
 
 // 檢查玩家階段晉級條件 (Condition-based Evaluator)

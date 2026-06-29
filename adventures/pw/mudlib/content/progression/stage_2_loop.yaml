@@ -2,6 +2,7 @@ version: "1.0"
 stage_id: "stage_2_loop"
 name: "循環篇"
 description: "精確循環的建立：組裝一個帶有變數計數器的條件迴圈。"
+spawn_node: "/nodes/counter_valley/node"
 requires:
   quests:
     - "count_to_100"

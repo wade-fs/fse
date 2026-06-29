@@ -2,6 +2,7 @@ version: "1.0"
 stage_id: "stage_3_variable"
 name: "變數篇"
 description: "變數的宣告與運算應用。"
+spawn_node: "/nodes/variable_forest/node"
 requires:
   quests:
     - "variable_intro"
