@@ -14,6 +14,37 @@ void create() {
 
     // 訂閱 Discovery 事件以驅動進度
     call_out("subscribe_events", 1);
+    
+    // 啟動熵值 (Entropy) 循環
+    call_out("entropy_tick", 180); // 每 3 分鐘衰退一次
+}
+
+void entropy_tick() {
+    object *players = users();
+    foreach (object p in players) {
+        mapping prog = p->query_progression();
+        if (!prog) continue;
+        
+        int changed = 0;
+        foreach (string track, mapping track_data in prog) {
+            // 讓進度自然衰退 (熵增)
+            if (track_data["progress"] > 0) {
+                track_data["progress"] -= 1; // 輕微衰退
+                changed = 1;
+                
+                // 當進度衰退時，偶爾給予提示
+                if (track_data["progress"] % 10 == 0) {
+                    tell_object(p, HIK + "\n【世界熵增】 你感覺在 [" + track + "] 的某些情境連結，似乎隨著時間變得有些模糊了...\n" + NOR);
+                }
+            }
+        }
+        
+        if (changed) {
+            p->set_progression(prog);
+        }
+    }
+    
+    call_out("entropy_tick", 180);
 }
 
 void subscribe_events() {
@@ -115,6 +146,20 @@ varargs string query_spawn_node(object player, string track) {
         return stage_data["spawn_node"];
     }
     return 0; // 若無設定，回傳 0
+}
+
+// 抵抗熵增：玩家與世界互動時增加 progress
+varargs void resist_entropy(object player, string track, int amount) {
+    if (!player) return;
+    if (!track) track = "main";
+    
+    mapping track_data = get_player_track_data(player, track);
+    if (!track_data) return;
+    
+    if (!amount) amount = 1;
+    track_data["progress"] += amount;
+    
+    set_player_track_data(player, track, track_data);
 }
 
 // 檢查玩家階段晉級條件 (Condition-based Evaluator)
