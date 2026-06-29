@@ -84,6 +84,7 @@ void respawn() {
     // 回到房間
     object room = load_object(respawn_room);
     if (room) {
+        move_object(this_object(), room);
         room->enter(this_object());
         foreach (object ob in room->query_occupants()) {
             if (ob != this_object()) {

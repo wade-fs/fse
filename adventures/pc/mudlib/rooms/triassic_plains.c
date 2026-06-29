@@ -17,15 +17,18 @@ void create() {
     );
     // 目前無出口（極簡一房間）
 
-    // 延遲初始化怪物，等 create 完成後再 clone
-    call_out("init_monsters", 1);
+    // 直接初始化怪物，不要延遲，這樣玩家登入第一眼就能看到
+    init_monsters();
 }
 
 void init_monsters() {
-    proto_chicken = clone_object("/monsters/proto_chicken.c");
-    if (proto_chicken) {
-        proto_chicken->set_respawn_room("/rooms/triassic_plains.c");
-        enter(proto_chicken);
+    if (!proto_chicken) {
+        proto_chicken = clone_object("/monsters/proto_chicken.c");
+        if (proto_chicken) {
+            proto_chicken->set_respawn_room("/rooms/triassic_plains.c");
+            move_object(proto_chicken, this_object());
+            enter(proto_chicken);
+        }
     }
 }
 

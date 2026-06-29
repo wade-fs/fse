@@ -92,7 +92,10 @@ void on_death(object killer) {
     save_state();
     // 回到初始房間
     object room = load_object("/rooms/triassic_plains.c");
-    if (room) room->enter(this_object());
+    if (room) {
+        move_object(this_object(), room);
+        room->enter(this_object());
+    }
 }
 
 // --- 登入流程 ---
@@ -151,6 +154,7 @@ void new_password(string pwd) {
 void _enter_world() {
     object room = load_object("/rooms/triassic_plains.c");
     if (room) {
+        move_object(this_object(), room);
         room->enter(this_object());
         tell_object(this_object(), room->describe(this_object()));
     }
