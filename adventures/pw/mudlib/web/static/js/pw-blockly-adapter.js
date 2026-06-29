@@ -86,11 +86,13 @@ class PWBlocklyAdapter {
             return;
         }
         const reqId = this._nextReqId();
-        this._send({
+        // Hub 只接受 {type:"cmd", payload: string} 格式
+        // payload 為完整 JSON 協定封包的字串化
+        this._sendCmd(JSON.stringify({
             type: "EXECUTE",
             payload: { ast },
             request_id: reqId,
-        });
+        }));
         this._log("▶ 正在傳送積木邏輯至虛擬機執行...", "blue-txt");
     }
 
@@ -99,10 +101,10 @@ class PWBlocklyAdapter {
      */
     requestToolbox() {
         if (!this._connected) return;
-        this._send({
+        this._sendCmd(JSON.stringify({
             type: "REQUEST_TOOLBOX",
             request_id: this._nextReqId(),
-        });
+        }));
     }
 
     // ─────────────────────────────────────────
@@ -125,8 +127,19 @@ class PWBlocklyAdapter {
             return;
         }
 
+        // hub.go 的 Message.Payload 欄位是 string 型別
+        // 後端送來的 payload 可能是 JSON 字串，需要再解析一次
+        if (typeof outer.payload === "string" && outer.payload.startsWith("{")) {
+            try {
+                outer.payload = JSON.parse(outer.payload);
+            } catch (e) {
+                // 不是 JSON，保持字串
+            }
+        }
+
         // 標準 JSON 協定
         this._dispatch(outer);
+
     }
 
     _dispatch(msg) {
@@ -279,12 +292,18 @@ class PWBlocklyAdapter {
     // 工具函式
     // ─────────────────────────────────────────
 
-    _send(obj) {
+    // 依照 hub.go 的路由規則：前端送 {type:"cmd", payload: string}
+    // hub 將 payload 字串交給 driver.ProcessCommand()
+    // driver 再路由到對應的 LPC 指令（例如 execute.c）
+    _sendCmd(payloadStr) {
         if (!this._socket || this._socket.readyState !== WebSocket.OPEN) {
             console.warn("[PWBlocklyAdapter] Cannot send, socket not open.");
             return;
         }
-        this._socket.send(JSON.stringify(obj));
+        this._socket.send(JSON.stringify({
+            type: "cmd",
+            payload: "execute " + payloadStr,
+        }));
     }
 
     _log(text, cssClass) {

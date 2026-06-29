@@ -1,20 +1,47 @@
 // /adventures/pw/mudlib/cmds/player/execute.c
 // 接收前端 Blockly EXECUTE 請求並執行，回傳標準 JSON 協定訊息
-// 支援的前端請求 type：
-//   - EXECUTE       → 執行積木 AST，回傳 EXECUTION_RESULT + TOOLBOX_UPDATE
-//   - REQUEST_TOOLBOX → 查詢工具箱，回傳 TOOLBOX_UPDATE
+//
+// 前端訊息格式（WebSocket 外殼）：
+//   { "type": "cmd", "payload": "execute <JSON>" }
+//   其中 <JSON> 為：
+//     { "type": "EXECUTE",         "payload": { "ast": {...} } }
+//   或
+//     { "type": "REQUEST_TOOLBOX"                             }
+//
+// 後端回應（透過 tell_object，帶 __JSON_MSG__ 前綴讓 hub 直送前端）：
+//   TOOLBOX_UPDATE, EXECUTION_RESULT, WORLD_STATE
 #include "/include/ansi.h"
 
 inherit "/std/object";
+
+// blockly_service 路徑（PW 專屬，不在 runtime 下）
+#define BLOCKLY_SVC "/adventures/pw/mudlib/services/blockly_service"
 
 void create() {
     ::create();
 }
 
-// 輔助：推送 JSON 訊息到前端
+// ──────────────────────────────────────────────────────────────
+// 輔助：推送 JSON 訊息到前端（blockly_service 已加好 __JSON_MSG__ 前綴）
+// ──────────────────────────────────────────────────────────────
 private void push(object me, string json_str) {
     if (!me || !json_str) return;
     tell_object(me, json_str);
+}
+
+// ──────────────────────────────────────────────────────────────
+// 取得或 fallback 當前節點環境
+// ──────────────────────────────────────────────────────────────
+private object get_env(object me) {
+    object env = environment(me);
+    if (!env) {
+        string test_site = me->query_temp("current_site");
+        if (test_site)
+            env = load_object("/nodes/" + test_site + "/node");
+        else
+            env = load_object("/nodes/infinite_loop_swamp/node");
+    }
+    return env;
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -23,12 +50,12 @@ private void push(object me, string json_str) {
 private int handle_execute(object me, mapping packet) {
     object env;
     object blockly_svc;
-    mapping ast;
     mapping inner_payload;
+    mapping ast;
 
     inner_payload = packet["payload"];
     if (!inner_payload || !mapp(inner_payload)) {
-        push(me, json_encode(([
+        tell_object(me, "__JSON_MSG__" + json_encode(([
             "type": "EXECUTION_RESULT",
             "payload": ([
                 "success": 0,
@@ -41,7 +68,7 @@ private int handle_execute(object me, mapping packet) {
 
     ast = inner_payload["ast"];
     if (!ast || !mapp(ast)) {
-        push(me, json_encode(([
+        tell_object(me, "__JSON_MSG__" + json_encode(([
             "type": "EXECUTION_RESULT",
             "payload": ([
                 "success": 0,
@@ -52,17 +79,9 @@ private int handle_execute(object me, mapping packet) {
         return 1;
     }
 
-    // 取得當前節點環境
-    env = environment(me);
+    env = get_env(me);
     if (!env) {
-        string test_site = me->query_temp("current_site");
-        if (test_site)
-            env = load_object("/nodes/" + test_site + "/node");
-        else
-            env = load_object("/nodes/infinite_loop_swamp/node");
-    }
-    if (!env) {
-        push(me, json_encode(([
+        tell_object(me, "__JSON_MSG__" + json_encode(([
             "type": "EXECUTION_RESULT",
             "payload": ([
                 "success": 0,
@@ -73,11 +92,22 @@ private int handle_execute(object me, mapping packet) {
         return 1;
     }
 
-    // 執行節點挑戰判定
+    // 執行節點挑戰判定（node_executor.c 會用 write()/tell_object() 印出文字訊息）
+    // 我們在這裡接管結果，自己組裝 EXECUTION_RESULT 送給前端
     int res = env->receive_execution(me, ast);
 
-    // 使用 PW blockly_service 格式化回傳訊息
-    blockly_svc = load_object("/adventures/pw/mudlib/services/blockly_service");
+    blockly_svc = load_object(BLOCKLY_SVC);
+
+    // 組裝並送出 EXECUTION_RESULT
+    // 注意：node_executor 的 success_msg / error_warning 已經透過 write() 送出純文字
+    // 我們在這裡額外送一個結構化的 EXECUTION_RESULT 供前端動畫/狀態更新使用
+    string exec_msg;
+    if (res) {
+        exec_msg = blockly_svc->format_execution_result(1, "", 0, ({}), me);
+    } else {
+        exec_msg = blockly_svc->format_execution_result(0, "", 0, ({}), me);
+    }
+    if (exec_msg) push(me, exec_msg);
 
     // 🚀 無論成功或失敗，都同步推送最新 Toolbox（解題/失敗解鎖即時更新）
     string toolbox_msg = blockly_svc->format_toolbox_update(me);
@@ -94,7 +124,8 @@ private int handle_execute(object me, mapping packet) {
 // 處理 REQUEST_TOOLBOX 請求
 // ──────────────────────────────────────────────────────────────
 private int handle_request_toolbox(object me, mapping packet) {
-    object blockly_svc = load_object("/adventures/pw/mudlib/services/blockly_service");
+    object blockly_svc = load_object(BLOCKLY_SVC);
+
     string toolbox_msg = blockly_svc->format_toolbox_update(me);
     if (toolbox_msg) push(me, toolbox_msg);
 
@@ -107,7 +138,12 @@ private int handle_request_toolbox(object me, mapping packet) {
 
 // ──────────────────────────────────────────────────────────────
 // 主入口：接收來自 WebSocket 橋接層的指令
-// arg 格式：完整 JSON 字串，包含 "type" 欄位
+//
+// hub.go 路由規則：
+//   前端送 { type: "cmd", payload: "execute <json_str>" }
+//   → hub 呼叫 driver.ProcessCommand(pConn, "execute <json_str>")
+//   → driver 解析指令動詞 "execute"，呼叫 execute.c main(me, arg, extra)
+//   → arg = <json_str> = 完整 JSON 協定封包字串
 // ──────────────────────────────────────────────────────────────
 int main(object me, string arg, string extra) {
     if (!me) return 0;
@@ -121,7 +157,8 @@ int main(object me, string arg, string extra) {
     mixed err = catch(packet = yaml_decode(arg));
     if (err || !packet || !mapp(packet)) {
         write("❌ 執行失敗：JSON 解析失敗。\n");
-        log_file("sys_error.log", sprintf("[%s] execute.c parse error: %s\n", ctime(time()), err || "null packet"));
+        log_file("sys_error.log", sprintf("[%s] execute.c parse error: %s | raw_arg: %s\n",
+            ctime(time()), err || "null packet", arg));
         return 1;
     }
 

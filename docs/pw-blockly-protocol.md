@@ -98,7 +98,38 @@ PW Adventure 採用「**後端主導的動態 Blockly 容器**」架構：
 | `payload` | 依類型 | 訊息主體，各類型格式不同 |
 | `request_id` | ❌ | 前端發送的 Request 中攜帶，用於 request-response 配對（後端目前不強制要求） |
 
+### 3.1 實際傳輸層（重要）
+
+WebSocket 訊息須穿越 Go Hub（`internal/signaling/hub.go`），有以下限制與規則：
+
+#### 前端 → 後端
+
+Hub 只路由 `type: "cmd"` 的訊息。因此前端**必須**用以下外殼：
+
+```json
+{
+  "type": "cmd",
+  "payload": "execute {\"type\":\"EXECUTE\",\"payload\":{\"ast\":{...}}}"
+}
+```
+
+`payload` 是字串，格式為 `"execute <JSON協定封包字串>"`。Hub 呼叫 `driver.ProcessCommand(conn, payload)`，driver 解析指令動詞 `execute` 後路由到 `execute.c`，LPC 的 `arg` 即為後面的 JSON 字串。
+
+#### 後端 → 前端
+
+Hub 的 `OutputCallback` 中有特殊前綴識別：
+
+| 前綴 | 說明 |
+|------|------|
+| `__JSON_MSG__<json>` | Hub 將 `<json>` 解析為 `Message` struct 後直送前端，不包 `mud_text` 外殼 |
+| `__RAW__<html>` | Hub 以 `type: "mud_html"` 送出 |
+| （無前綴）| Hub 以 `type: "mud_text"`, `payload: <text>` 送出 |
+
+> **注意**：Hub 的 `Message.Payload` 欄位型別是 **string**。後端的 `blockly_service.c` 輸出 `__JSON_MSG__{...}` 時，hub 解析該 JSON 為 `Message`，其 `payload` 欄位會被序列化成字串（`"{\"toolbox\":{...}}"`），而非 JSON object。前端的 `PWBlocklyAdapter` 在收到時需判斷並二次解析（`JSON.parse(outer.payload)`）。
+
 ---
+
+
 
 ## 4. 後端 → 前端 訊息
 

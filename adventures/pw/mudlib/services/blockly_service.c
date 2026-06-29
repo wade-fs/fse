@@ -115,6 +115,7 @@ mapping query_player_toolbox(object player) {
 
 // ──────────────────────────────────────────────
 // 格式化標準 JSON 協定訊息：TOOLBOX_UPDATE
+// 注意：前綴 __JSON_MSG__ 讓 hub.go OutputCallback 以原始 JSON 傳送給前端
 // ──────────────────────────────────────────────
 string format_toolbox_update(object player) {
     mapping payload = query_player_toolbox(player);
@@ -124,11 +125,12 @@ string format_toolbox_update(object player) {
         "type":    "TOOLBOX_UPDATE",
         "payload": payload,
     ]);
-    return json_encode(msg);
+    return "__JSON_MSG__" + json_encode(msg);
 }
 
 // ──────────────────────────────────────────────
 // 格式化標準 JSON 協定訊息：EXECUTION_RESULT
+// 注意：前綴 __JSON_MSG__ 讓 hub.go OutputCallback 以原始 JSON 傳送給前端
 // ──────────────────────────────────────────────
 string format_execution_result(int success, string message, int memory_cost,
                                mixed *new_factors, object player) {
@@ -154,11 +156,12 @@ string format_execution_result(int success, string message, int memory_cost,
         "type":    "EXECUTION_RESULT",
         "payload": payload,
     ]);
-    return json_encode(msg);
+    return "__JSON_MSG__" + json_encode(msg);
 }
 
 // ──────────────────────────────────────────────
 // 格式化標準 JSON 協定訊息：WORLD_STATE
+// 注意：前綴 __JSON_MSG__ 讓 hub.go OutputCallback 以原始 JSON 傳送給前端
 // ──────────────────────────────────────────────
 string format_world_state(object player) {
     if (!player) return 0;
@@ -181,5 +184,5 @@ string format_world_state(object player) {
             "unlocked_factors":  arrayp(factors) ? factors : ({}),
         ]),
     ]);
-    return json_encode(msg);
+    return "__JSON_MSG__" + json_encode(msg);
 }
