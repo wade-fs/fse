@@ -146,8 +146,8 @@ int test_integration_progression() {
     }
 
     // 強制重置世界階段與狀態
-    progress_d->reset_stage();
-    progress_d->set_initial_stage("stage_1_sequence", "main"); // 帶入新版多軌道參數
+    player->set_progression(([]));
+    progress_d->set_initial_stage(player, "stage_1_sequence", "main"); // 帶入新版多軌道參數
 
     // ==========================================================
     // 互動一：【非法作弊輸入】
@@ -184,7 +184,7 @@ int test_integration_progression() {
     ast = ([ "type": "Loop", "has_break": 1 ]);
     player->process_input("execute " + yaml_encode(ast));
 
-    if (progress_d->query_current_stage("main") != "stage_2_loop") {
+    if (progress_d->query_current_stage(player, "main") != "stage_2_loop") {
         write(HIR "❌ 整合測試失敗: 第一關破關後，世界階段未推進至 stage_2_loop" NOR "\n");
         return 1;
     }
@@ -198,14 +198,14 @@ int test_integration_progression() {
     // A. 錯誤的計數器 (次數不對)
     ast = ([ "type": "Loop", "condition": "count < 50", "act": "count++" ]);
     player->process_input("execute " + yaml_encode(ast));
-    int old_progress = progress_d->query_world_progress("main");
+    int old_progress = progress_d->query_player_progress(player, "main");
 
     // B. 正確的計數器
-    string old_stage_id = progress_d->query_current_stage("main");
+    string old_stage_id = progress_d->query_current_stage(player, "main");
     ast = ([ "type": "Loop", "condition": "count < 100", "act": "count++" ]);
     player->process_input("execute " + yaml_encode(ast));
 
-    if (progress_d->query_world_progress("main") <= old_progress && progress_d->query_current_stage("main") == old_stage_id) {
+    if (progress_d->query_player_progress(player, "main") <= old_progress && progress_d->query_current_stage(player, "main") == old_stage_id) {
         write(HIR "❌ 整合測試失敗: 第二關成功破關後，任務未被標記完成" NOR "\n");
         return 1;
     }
@@ -219,20 +219,19 @@ int test_integration_progression() {
     // A. 錯誤的變數賦值 (數值不符)
     ast = ([ "type": "Assignment", "var_name": "x", "value": 99 ]);
     player->process_input("execute " + yaml_encode(ast));
-    int mid_progress = progress_d->query_world_progress("main");
+    int mid_progress = progress_d->query_player_progress(player, "main");
 
     // B. 正確的變數賦值 (應能完成挑戰並晉升 stage_3_variable)
     ast = ([ "type": "Assignment", "var_name": "x", "value": 42 ]);
     player->process_input("execute " + yaml_encode(ast));
 
-    if (progress_d->query_current_stage("main") != "stage_3_variable") {
+    if (progress_d->query_current_stage(player, "main") != "stage_3_variable") {
         write(HIR "❌ 整合測試失敗: 變數森林關卡過關後，世界階段未推進至 stage_3_variable" NOR "\n");
         return 1;
     }
     write(HIG "  ✓ 整合測試 (5/5): 【變數與賦值過關驗證】驗證通過。" NOR "\n");
 
     destruct(player);
-    progress_d->reset_stage();
     return 0;
 }
 

@@ -19,7 +19,7 @@ GO_EXE := $(shell if [ -f $(GOROOT)/bin/go ]; then echo $(GOROOT)/bin/go; else e
 GO_FLAGS := -ldflags="-s -w"
 COMMON_ENV := CGO_CFLAGS="-Wno-return-local-addr"
 
-.PHONY: all clean run-pw test-pw build-engine
+.PHONY: all clean run-pw test-pw run-pc test-pc build-engine
 
 all: build-engine
 
@@ -41,3 +41,9 @@ run-pw: build-engine
 
 test-pw: build-engine
 	@make -C adventures/pw test-pw
+
+run-pc: build-engine
+	@make -C adventures/pc run-pc
+
+test-pc: build-engine
+	@make -C adventures/pc test-pc

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>史前文明 — Prehistoric Civilization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background: #252526;
+            padding: 15px 20px;
+            border-bottom: 2px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 { margin: 0; font-size: 20px; color: #4CAF50; }
+        
+        #wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        #terminal-container {
+            flex: 1;
+            background: #1e1e1e;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #terminal {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        #input-container {
+            display: flex;
+            background: #2d2d30;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        #cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            outline: none;
+        }
+        
+        /* 終端機顏色對應 */
+        .color-blk { color: #808080; }
+        .color-red { color: #f44336; }
+        .color-grn { color: #4caf50; }
+        .color-yel { color: #ffeb3b; }
+        .color-blu { color: #2196f3; }
+        .color-mag { color: #e91e63; }
+        .color-cyn { color: #00bcd4; }
+        .color-wht { color: #ffffff; }
+        
+        .color-hir { color: #ff5252; font-weight: bold; }
+        .color-hig { color: #69f0ae; font-weight: bold; }
+        .color-hiy { color: #ffd740; font-weight: bold; }
+        .color-hib { color: #448aff; font-weight: bold; }
+        .color-him { color: #ff4081; font-weight: bold; }
+        .color-hic { color: #18ffff; font-weight: bold; }
+        .color-hiw { color: #ffffff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🦖 史前文明 (Prehistoric Civilization)</h1>
+        <div style="font-size: 14px; color: #888;">WebSocket 連線狀態: <span id="conn-status" style="color: #ff5252;">未連接</span></div>
+    </header>
+    
+    <div id="wrapper">
+        <div id="terminal-container" onclick="document.getElementById('cmd-input').focus()">
+            <div id="terminal"></div>
+            <div id="input-container">
+                <span style="color: #4caf50; margin-right: 10px;">></span>
+                <input type="text" id="cmd-input" placeholder="輸入指令 (如 look, score, kill) ... 按 Enter 發送" autocomplete="off" autofocus>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const terminal = document.getElementById('terminal');
+        const input = document.getElementById('cmd-input');
+        const statusSpan = document.getElementById('conn-status');
+        let socket;
+        let isPasswordMode = false;
+
+        function connect() {
+            const wsUrl = `ws://${window.location.host}/ws`;
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = function() {
+                statusSpan.textContent = '已連接';
+                statusSpan.style.color = '#4caf50';
+                appendLog('連線成功！正在進入世界...', 'color-hig');
+            };
+            
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'sys' || data.type === 'log') {
+                        processText(data.payload);
+                    }
+                } catch(e) {
+                    processText(event.data); // 處理非 JSON
+                }
+            };
+            
+            socket.onclose = function() {
+                statusSpan.textContent = '已斷線';
+                statusSpan.style.color = '#ff5252';
+                appendLog('\n與伺服器斷線，3秒後嘗試重連...', 'color-hir');
+                setTimeout(connect, 3000);
+            };
+        }
+        
+        function processText(text) {
+            if (typeof text !== 'string') return;
+            
+            // 密碼輸入遮罩偵測
+            if (text.includes("請輸入密碼") || text.includes("請設定密碼")) {
+                isPasswordMode = true;
+                input.type = 'password';
+            } else if (text.includes("登入成功") || text.includes("註冊成功") || text.includes("密碼錯誤")) {
+                isPasswordMode = false;
+                input.type = 'text';
+            }
+            
+            // 解析 $TAG$ 顏色代碼
+            const colorMap = {
+                '$BLK$': 'color-blk', '$RED$': 'color-red', '$GRN$': 'color-grn',
+                '$YEL$': 'color-yel', '$BLU$': 'color-blu', '$MAG$': 'color-mag',
+                '$CYN$': 'color-cyn', '$WHT$': 'color-wht', '$HIR$': 'color-hir',
+                '$HIG$': 'color-hig', '$HIY$': 'color-hiy', '$HIB$': 'color-hib',
+                '$HIM$': 'color-him', '$HIC$': 'color-hic', '$HIW$': 'color-hiw'
+            };
+            
+            // 將文字分割並轉換成 HTML
+            let html = '';
+            let currentSpan = '';
+            let parts = text.split(/(\$[A-Z]+\$)/);
+            
+            for (let part of parts) {
+                if (colorMap[part]) {
+                    if (currentSpan !== '') html += '</span>';
+                    html += `<span class="${colorMap[part]}">`;
+                    currentSpan = colorMap[part];
+                } else if (part === '$NOR$') {
+                    if (currentSpan !== '') html += '</span>';
+                    currentSpan = '';
+                } else if (part.length > 0) {
+                    // escape HTML
+                    let safe = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    html += safe;
+                }
+            }
+            if (currentSpan !== '') html += '</span>';
+            
+            const div = document.createElement('span');
+            div.innerHTML = html;
+            terminal.appendChild(div);
+            
+            // 捲動到底部
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        function appendLog(text, className) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            if (className) div.className = className;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const text = input.value;
+                input.value = '';
+                
+                if (text.trim() === '') return;
+                
+                // 本地顯示輸入
+                appendLog(`> ${isPasswordMode ? '********' : text}`, 'color-wht');
+                
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({ type: 'cmd', payload: text }));
+                }
+            }
+        });
+        
+        // 啟動連線
+        connect();
+    </script>
+</body>
+</html>

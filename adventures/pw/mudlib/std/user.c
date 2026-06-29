@@ -182,10 +182,15 @@ mixed process_input(string cmd) {
         return 1;
     }
     
+    // 只切第一個空白，arg 保留所有剩餘內容（含 JSON payload）
     string verb, arg;
-    if (sscanf(cmd, "%s %s", verb, arg) != 2) {
+    int sp = strsrch(cmd, " ");
+    if (sp == -1) {
         verb = cmd;
-        arg = "";
+        arg  = "";
+    } else {
+        verb = cmd[0..sp-1];
+        arg  = trim(cmd[sp+1..]);
     }
     
     // 動態分派指令，避免直接 hardcode /cmds 裡面的具體指令
