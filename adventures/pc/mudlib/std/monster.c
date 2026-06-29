@@ -2,6 +2,7 @@
 // 怪物基底：繼承 living，加入 AI 戰鬥回合與死亡/重生處理
 #include "/include/ansi.h"
 inherit "/std/living";
+inherit "/runtime/core/virtual_object";
 
 private int exp_value;         // 擊殺獲得的經驗值
 private string respawn_room;   // 重生後回到的房間路徑
@@ -14,6 +15,23 @@ void create() {
     respawn_room    = "";
     respawn_delay   = 30;
     combat_interval = 2;
+    
+    // 初始化虛擬路徑與 YAML 設定
+    setup_virtual("monsters", "monster.yaml");
+    
+    mapping data = query_virtual_config();
+    if (data) {
+        if (data["name"]) set_name(data["name"]);
+        if (data["max_hp"]) set_max_hp(data["max_hp"]);
+        if (data["attack"]) set_attack(data["attack"]);
+        if (data["defense"]) set_defense(data["defense"]);
+        if (data["level"]) set_level(data["level"]);
+        if (data["exp_value"]) set_exp_value(data["exp_value"]);
+        if (data["respawn_delay"]) set_respawn_delay(data["respawn_delay"]);
+        if (data["combat_interval"]) set_combat_interval(data["combat_interval"]);
+        if (data["short_desc"]) set_short(data["short_desc"]);
+        if (data["long_desc"]) set_long(data["long_desc"]);
+    }
 }
 
 void set_exp_value(int v)       { exp_value = v; }
@@ -23,25 +41,7 @@ string query_respawn_room()     { return respawn_room; }
 void set_respawn_delay(int d)   { respawn_delay = d; }
 void set_combat_interval(int i) { combat_interval = i; }
 
-// 從 YAML 定義動態載入怪物屬性 (資料驅動)
-void initialize_from_yaml(string yaml_path) {
-    if (file_size(yaml_path) <= 0) return;
-    string raw = read_file(yaml_path);
-    if (!raw) return;
-    mapping data = yaml_decode(raw);
-    if (!data) return;
-    
-    if (data["name"]) set_name(data["name"]);
-    if (data["max_hp"]) set_max_hp(data["max_hp"]);
-    if (data["attack"]) set_attack(data["attack"]);
-    if (data["defense"]) set_defense(data["defense"]);
-    if (data["level"]) set_level(data["level"]);
-    if (data["exp_value"]) set_exp_value(data["exp_value"]);
-    if (data["respawn_delay"]) set_respawn_delay(data["respawn_delay"]);
-    if (data["combat_interval"]) set_combat_interval(data["combat_interval"]);
-    if (data["short_desc"]) set_short(data["short_desc"]);
-    if (data["long_desc"]) set_long(data["long_desc"]);
-}
+
 
 // 怪物 AI 戰鬥心跳（每回合）
 void combat_round() {

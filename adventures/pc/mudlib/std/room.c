@@ -2,6 +2,7 @@
 // 房間基底：描述、出口、物件與生物容器
 #include "/include/ansi.h"
 inherit "/std/object";
+inherit "/runtime/core/virtual_object";
 
 private string short_desc;
 private string long_desc;
@@ -15,6 +16,34 @@ void create() {
     long_desc  = "這是一個地點。";
     exits      = ([]);
     occupants  = ({});
+    
+    // 初始化虛擬路徑與 YAML 設定
+    setup_virtual("rooms", "room.yaml");
+    
+    mapping config = query_virtual_config();
+    if (config) {
+        if (config["short"]) set_short(config["short"]);
+        if (config["long"]) set_long(config["long"]);
+
+        // 解析出口
+        mapping ex = config["exits"];
+        if (ex) {
+            foreach (string dir, string dest in ex) {
+                add_exit(dir, dest);
+            }
+        }
+
+        // 解析怪物配置
+        mixed monsters = config["monsters"];
+        if (arrayp(monsters) && sizeof(monsters) > 0) {
+            monster_configs = ([]);
+            foreach (mapping m in monsters) {
+                monster_configs[m["id"]] = m["count"];
+            }
+            // 延遲在當前 tick 結束後執行，避免 create 期間移動物件造成的時序問題
+            call_out("spawn_monsters_from_config", 0);
+        }
+    }
 }
 
 void set_short(string s)  { short_desc = s; }
@@ -36,36 +65,7 @@ void spawn_monsters_from_config() {
     }
 }
 
-// 從 YAML 定義動態載入房間屬性與怪物配置 (資料驅動)
-void initialize_from_yaml(string yaml_path) {
-    if (file_size(yaml_path) <= 0) return;
-    string raw = read_file(yaml_path);
-    if (!raw) return;
-    mapping data = yaml_decode(raw);
-    if (!data) return;
 
-    if (data["short"]) set_short(data["short"]);
-    if (data["long"]) set_long(data["long"]);
-
-    // 解析出口
-    mapping ex = data["exits"];
-    if (ex) {
-        foreach (string dir, string dest in ex) {
-            add_exit(dir, dest);
-        }
-    }
-
-    // 解析怪物配置
-    mixed monsters = data["monsters"];
-    if (arrayp(monsters) && sizeof(monsters) > 0) {
-        monster_configs = ([]);
-        foreach (mapping m in monsters) {
-            monster_configs[m["id"]] = m["count"];
-        }
-        // 延遲在當前 tick 結束後執行，避免 create 期間移動物件造成的時序問題
-        call_out("spawn_monsters_from_config", 0);
-    }
-}
 
 void add_exit(string dir, string dest) {
     exits[dir] = dest;

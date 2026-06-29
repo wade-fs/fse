@@ -3,6 +3,7 @@
 // 支援完全資料驅動，從 YAML 檔案讀取配置與邏輯
 #include "/runtime/include/ansi.h"
 
+inherit "/runtime/core/entity";
 inherit "/runtime/core/virtual_object";
 inherit "/std/reveal_layer.c";
 

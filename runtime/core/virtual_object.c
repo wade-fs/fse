@@ -2,7 +2,7 @@
 // FSE 核心通用虛擬物件基底 (Virtual Object Base)
 // 提供虛擬路徑解析與資料驅動 (YAML) 的通用基礎
 
-inherit "/runtime/core/entity";
+// 提供虛擬路徑解析與資料驅動 (YAML) 的通用基礎
 
 private string virtual_dir;
 private mapping virtual_config;
@@ -14,11 +14,28 @@ void setup_virtual(string prefix, string config_file) {
     string fname = file_name(this_object());
     string *parts = explode(fname, "/");
     
-    if (sizeof(parts) >= 2) {
-        string id = parts[sizeof(parts)-2];
-        virtual_dir = "/content/" + prefix + "/" + id + "/";
+    if (sizeof(parts) >= 1) {
+        string base_name = parts[sizeof(parts)-1];
+        string yaml_path;
         
-        string yaml_path = virtual_dir + config_file;
+        // 去除可能的 #xxx clone 後綴
+        if (strsrch(base_name, "#") != -1) {
+            base_name = explode(base_name, "#")[0];
+        }
+
+        // 如果傳入了特定的 config_file (例如 node.yaml)，且檔案名稱等於 config_file (例如 /nodes/loop_swamp/node)
+        // 則 ID 取上一層目錄名稱
+        if (config_file != "" && base_name == explode(config_file, ".")[0] && sizeof(parts) >= 2) {
+            string id = parts[sizeof(parts)-2];
+            virtual_dir = "/content/" + prefix + "/" + id + "/";
+            yaml_path = virtual_dir + config_file;
+        } else {
+            // 否則視為平坦結構，例如 /rooms/triassic_plains -> /content/rooms/triassic_plains.yaml
+            string id = base_name;
+            virtual_dir = "/content/" + prefix + "/";
+            yaml_path = virtual_dir + id + ".yaml";
+        }
+
         string yaml_content = read_file(yaml_path);
         
         if (yaml_content) {

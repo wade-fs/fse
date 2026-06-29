@@ -56,6 +56,13 @@ void create() {
         write("  [master] 警告：找不到 /manifest.yaml 檔案，請檢查配置。\n");
     }
 
+    // 註冊虛擬物件規則
+    object virtual_core = load_object("/runtime/core/virtual.c");
+    if (virtual_core) {
+        virtual_core->register_virtual_rule("rooms", "/std/room.c");
+        virtual_core->register_virtual_rule("monsters", "/std/monster.c");
+    }
+
     // 測試模式
     if (getenv("MUD_TEST_MODE")) {
         call_out("run_test_mode", 1);
