@@ -71,6 +71,7 @@ void stop_combat() {
 
 // 受到傷害，回傳實際受到的傷害值
 int receive_damage(int dmg) {
+    if (hp <= 0) return 0; // 已經死亡，不再受傷
     int actual = dmg - defense;
     if (actual < 1) actual = 1;
     hp -= actual;
@@ -80,6 +81,10 @@ int receive_damage(int dmg) {
 
 // 一回合戰鬥結算 (攻擊方呼叫)
 varargs void do_attack(object target) {
+    if (!is_alive()) {
+        stop_combat();
+        return;
+    }
     if (!target || !target->is_alive()) {
         stop_combat();
         return;

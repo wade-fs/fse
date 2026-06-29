@@ -22,7 +22,7 @@ void create() {
 }
 
 void init_monsters() {
-    if (!proto_chicken) {
+    if (!objectp(proto_chicken)) {
         proto_chicken = clone_object("/monsters/proto_chicken.c");
         if (proto_chicken) {
             proto_chicken->set_respawn_room("/rooms/triassic_plains.c");

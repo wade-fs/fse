@@ -3,14 +3,12 @@ package main
 
 import (
 	"flag"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
-	"mudscript" // 導入根目錄 package 以取得 Assets
 	"mudscript/lpc-vm/driver"
 	"mudscript/internal/p2p"
 	"mudscript/internal/signaling"
@@ -38,7 +36,6 @@ func main() {
 		StripModifiers:  *legacy,
 		HeartBeatTick:   0,               // 預設關閉，由各物件自行開啟
 		CleanUpInterval: 5 * time.Minute, // 5分鐘執行一次 GC
-		EmbeddedFS:      mudscript.Assets,
 	}
 
 	// 針對 legacy 模式的特別調整
@@ -136,13 +133,6 @@ func setupStaticServer(mudlib string) {
 		log.Printf("🌐 [WEB] 使用外部磁碟網頁檔案: %s\n", diskPath)
 		http.Handle("/", http.FileServer(http.Dir(diskPath)))
 	} else {
-		embedPath := mudlib + "/web/static"
-		log.Printf("📦 [WEB] 使用內建嵌入網頁檔案: %s\n", embedPath)
-		subFS, err := fs.Sub(mudscript.Assets, embedPath)
-		if err != nil {
-			log.Printf("⚠️ 無法開啟嵌入網頁目錄: %v，嘗試預設 fsmud\n", err)
-			subFS, _ = fs.Sub(mudscript.Assets, "fsmud/web/static")
-		}
-		http.Handle("/", http.FileServer(http.FS(subFS)))
+		log.Fatalf("❌ 錯誤: 找不到外部磁碟網頁檔案目錄: %s\n", diskPath)
 	}
 }

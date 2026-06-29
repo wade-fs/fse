@@ -20,7 +20,7 @@ void create() {
 
     // 注入 PC 的 progression 定義目錄
     progress_svc->register_progression_path("/content/progression");
-    progress_svc->set_default_initial_stage(0, "novice", "main"); // 0 for global default
+    progress_svc->set_default_initial_stage("novice", "main"); // 0 for global default
 
     // 注入 PC 的因素與語系目錄
     factor_svc->register_discovery_path("/content/factors");
