@@ -115,7 +115,7 @@
 #define YAML_ERAS         "/content/eras/"
 #define YAML_CAREERS      "/content/careers/"
 #define YAML_FACTIONS     "/content/factions/"
-#define STATE_SETTLEMENTS "/data/pw/state/settlements/"
-#define STATE_SYSTEM      "/data/pw/state/system/"
+#define STATE_SETTLEMENTS "/data/state/settlements/"
+#define STATE_SYSTEM      "/data/state/system/"
 
 #endif

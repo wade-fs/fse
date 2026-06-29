@@ -11,8 +11,8 @@ all:
 
 run-pw:
 	@echo "🚀 Starting FSE: PW (Programming World) on port 9090..."
-	@$(OUT)/fsmud -mudlib mudlib -master master.c --hub none -port 9090
+	@$(OUT)/fsmud -mudlib mudlib -data ../../data/pw -runtime ../../runtime -master master.c --hub none -port 9090
 
 test-pw:
 	@echo "🧪 Running PW Minimal Closed Loop Tests..."
-	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib -master master.c --hub none 2>&1
+	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib -data ../../data/pw -runtime ../../runtime -master master.c --hub none 2>&1

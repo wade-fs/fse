@@ -92,4 +92,4 @@
 #define FS_HUB_URL       "wss://wade-fs-fsmud-hub.hf.space/ws"
 
 // 遠端 clone 緩存路徑
-#define FS_CACHE_DIR     "/data/pw/fs_cache"
+#define FS_CACHE_DIR     "/data/fs_cache"

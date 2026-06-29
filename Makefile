@@ -34,7 +34,8 @@ build-engine: $(OUT)
 
 clean:
 	@rm -rf $(OUT)
-	@rm -f adventures/pw/mudlib/data/state/system/*.o
+	@rm -f data/pw/state/system/*.o
+	@rm -f data/pc/state/system/*.o
 
 run-pw: build-engine
 	@make -C adventures/pw run-pw

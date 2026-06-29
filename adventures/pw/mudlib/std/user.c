@@ -20,16 +20,16 @@ string get_id() { return id; }
 
 void save_state() {
     if (!id || id == "") return;
-    if (file_size("/data/pw/state/players/") < 0) {
-        mkdir("/data/pw/state/players/");
+    if (file_size("/data/state/players/") < 0) {
+        mkdir("/data/state/players/");
     }
-    save_object("/data/pw/state/players/" + id);
+    save_object("/data/state/players/" + id);
 }
 
 void restore_state() {
     if (!id || id == "") return;
-    if (file_size("/data/pw/state/players/" + id + ".o") > 0) {
-        restore_object("/data/pw/state/players/" + id);
+    if (file_size("/data/state/players/" + id + ".o") > 0) {
+        restore_object("/data/state/players/" + id);
     }
     if (!discovered_factors) discovered_factors = ([]);
     if (!physical_state) physical_state = ([ "memory": 100 ]);
@@ -110,7 +110,7 @@ void get_account(string acc) {
         return;
     }
     set_id(acc);
-    if (file_size("/data/pw/state/players/" + acc + ".o") > 0) {
+    if (file_size("/data/state/players/" + acc + ".o") > 0) {
         restore_state();
         write("請輸入密碼: \n");
         input_to("check_password");
@@ -175,7 +175,7 @@ void new_password(string pwd) {
 // 模擬測試與真實連線的指令分發攔截 (由 Go 驅動優先呼叫)
 mixed process_input(string cmd) {
     cmd = trim(cmd);
-    write_file("/data/pw/state/system/test_execute.txt", sprintf("[%s] CMD received: %s\n", ctime(time()), cmd), 0);
+    write_file("/data/state/system/test_execute.txt", sprintf("[%s] CMD received: %s\n", ctime(time()), cmd), 0);
     
     if (cmd == "logon") {
         logon();
@@ -196,7 +196,7 @@ mixed process_input(string cmd) {
     // 動態分派指令，避免直接 hardcode /cmds 裡面的具體指令
     object cmd_ob = load_object("/cmds/player/" + verb + ".c");
     if (cmd_ob) {
-        write_file("/data/pw/state/system/test_execute.txt", sprintf("[%s] Routed to %s.c with arg: %s\n", ctime(time()), verb, arg), 0);
+        write_file("/data/state/system/test_execute.txt", sprintf("[%s] Routed to %s.c with arg: %s\n", ctime(time()), verb, arg), 0);
         cmd_ob->main(this_object(), arg, 0);
         return 1;
     }

@@ -11,12 +11,12 @@ all:
 
 run-pc:
 	@echo "🦕 啟動 FSE: PC — 史前文明 (Prehistoric Civilization) on port 9091..."
-	@$(OUT)/fsmud -mudlib mudlib -master master.c --hub none -port 9091
+	@$(OUT)/fsmud -mudlib mudlib -data ../../data/pc -runtime ../../runtime -master master.c --hub none -port 9091
 
 test-pc:
 	@echo "🧪 運行 PC 最小啟動測試..."
-	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib -master master.c --hub none 2>&1
+	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib -data ../../data/pc -runtime ../../runtime -master master.c --hub none 2>&1
 
 clean:
-	@rm -f mudlib/data/state/players/*.o
-	@rm -f mudlib/data/state/system/*.o
+	@rm -f ../../data/pc/state/players/*.o
+	@rm -f ../../data/pc/state/system/*.o

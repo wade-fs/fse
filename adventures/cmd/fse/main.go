@@ -19,6 +19,8 @@ func main() {
 	hubURL := flag.String("hub", "wss://wade-fs-fsmud-hub.hf.space/ws", "Signaling hub URL (set to 'none' to run in isolation)")
 	port := flag.String("port", "8080", "HTTP server port")
 	mudlib := flag.String("mudlib", "mudlib", "mudlib directory")
+	dataPath := flag.String("data", "data", "External data directory path")
+	runtimePath := flag.String("runtime", "runtime", "Core runtime directory path")
 	master := flag.String("master", "master.c", "Master of world in mudlib directory")
 	simul := flag.String("simul", "", "SimulEfun file path (optional, master's get_simul_efun takes precedence)")
 	gInclude := flag.String("ginclude", "", "Global include file (e.g. globals.h)")
@@ -30,6 +32,8 @@ func main() {
 	// 1. 準備 MUD 引擎配置
 	config := driver.DriverConfig{
 		MudLibPath:      *mudlib,
+		DataPath:        *dataPath,
+		RuntimePath:     *runtimePath,
 		MasterFile:      *master,
 		SimulEfunFile:   *simul,
 		GlobalInclude:   *gInclude,

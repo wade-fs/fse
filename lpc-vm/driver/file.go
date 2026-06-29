@@ -71,8 +71,12 @@ func (d *Driver) ResolvePath(basePath, relPath string) string {
 // 🚀 新增：取得對應實體硬碟的路徑 (處理 /runtime/ 和 /data/ 映射)
 func (d *Driver) GetPhysicalPath(resolvedPath string) string {
 	cleanPath := strings.TrimPrefix(resolvedPath, "/")
-	if strings.HasPrefix(resolvedPath, "/runtime/") || strings.HasPrefix(resolvedPath, "/data/") {
-		return filepath.Join(d.Config.MudLibPath, "../../..", cleanPath)
+	if strings.HasPrefix(resolvedPath, "/runtime/") {
+		// 將 /runtime/ 映射到命令列參數指定的 runtime 目錄
+		return filepath.Join(d.Config.RuntimePath, strings.TrimPrefix(cleanPath, "runtime/"))
+	} else if strings.HasPrefix(resolvedPath, "/data/") {
+		// 將 /data/ 映射到命令列參數指定的 data 目錄
+		return filepath.Join(d.Config.DataPath, strings.TrimPrefix(cleanPath, "data/"))
 	}
 	return filepath.Join(d.Config.MudLibPath, cleanPath)
 }
@@ -90,14 +94,12 @@ func (d *Driver) ReadFile(filename string) ([]byte, error) {
 
 		// 1. 優先從實體磁碟讀取
 		// 🚀 關鍵：確保路徑不會逃脫 MudLibPath (Virtual Chroot)，但特別允許 /runtime/ 和 /data/ 對應到專案根目錄
-		var fullPath string
+		fullPath := d.GetPhysicalPath(f)
+		
 		isCoreRuntime := strings.HasPrefix(f, "/runtime/")
 		isDataPath := strings.HasPrefix(f, "/data/")
-		if isCoreRuntime || isDataPath {
-			// 由於 MudLibPath 是 "adventures/pw/mudlib"，將其往上三層後與 runtime 或 data 拼合
-			fullPath = filepath.Join(d.Config.MudLibPath, "../../..", relPath)
-		} else {
-			fullPath = filepath.Join(d.Config.MudLibPath, relPath)
+		
+		if !isCoreRuntime && !isDataPath {
 			cleanMudLib := filepath.Clean(d.Config.MudLibPath)
 			cleanFull := filepath.Clean(fullPath)
 			if !strings.HasPrefix(cleanFull, cleanMudLib) {
