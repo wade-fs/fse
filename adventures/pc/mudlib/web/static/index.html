@@ -122,7 +122,7 @@
             socket.onmessage = function(event) {
                 try {
                     const data = JSON.parse(event.data);
-                    if (data.type === 'sys' || data.type === 'log') {
+                    if (data.type === 'mud_text' || data.type === 'mud_html') {
                         processText(data.payload);
                     }
                 } catch(e) {
