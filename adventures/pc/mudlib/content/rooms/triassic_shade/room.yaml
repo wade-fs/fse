@@ -2,6 +2,10 @@ short: "背光洞窟陰影"
 long: "你躲入了一處陡峭岩壁下方的深邃陰影中。\n這裡沒有陽光直射，溫度驟降至舒適的 25°C，陰涼的空氣讓你的灼燒感漸漸褪去。\n微風從洞穴深處吹來，帶有一絲濕潤的氣息。\n這裡是你建立臨時避難所的絕佳位置。"
 monsters: []
 
+environmental_multipliers:
+  thirst_decay: 0.5
+  hunger_decay: 0.8
+
 exits:
   out: "/rooms/desert_canyon/room"
   riverbed: "/rooms/triassic_riverbed/room"

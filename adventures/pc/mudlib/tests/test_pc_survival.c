@@ -212,7 +212,7 @@ int run_all_tests() {
     // 移至非安全區乾燥峽谷
     move_object(player, dcanyon);
     player->set_hunger(99);
-    player->set_thirst(99);
+    player->set_thirst(94);
     player->set_temp("hb_count", 14); // 模擬已累積 14 次心跳
     player->set_hp(100);
     

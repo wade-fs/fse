@@ -142,8 +142,22 @@ void heart_beat() {
         // 為了測試與體驗，每 15 個心跳（30秒）增加飢餓與口渴
         if (hb_count >= 15) {
             set_temp("hb_count", 0);
-            add_hunger(1);
-            add_thirst(2); // 口渴速度是飢餓的兩倍
+            
+            // 讀取當前房間的環境消耗加成 (預設為 1.0)
+            float hunger_mult = 1.0;
+            float thirst_mult = 1.0;
+            
+            if (function_exists("query_virtual_config", room)) {
+                mapping r_cfg = room->query_virtual_config();
+                if (r_cfg && r_cfg["environmental_multipliers"]) {
+                    mapping mults = r_cfg["environmental_multipliers"];
+                    if (!undefinedp(mults["hunger_decay"])) hunger_mult = to_float(mults["hunger_decay"]);
+                    if (!undefinedp(mults["thirst_decay"])) thirst_mult = to_float(mults["thirst_decay"]);
+                }
+            }
+            
+            add_hunger(to_int(1 * hunger_mult));
+            add_thirst(to_int(2 * thirst_mult)); // 口渴基礎速度是飢餓的兩倍
             
             if (hunger >= 80) {
                 tell_object(this_object(), RED + "⚠️ 你感到極度飢餓，胃部劇烈抽搐...\n" + NOR);

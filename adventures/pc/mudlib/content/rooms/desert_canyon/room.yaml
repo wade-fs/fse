@@ -2,6 +2,10 @@ short: "乾燥峽谷"
 long: "你置身於一處壓抑而炎熱的紅色地熱峽谷底。\n四周是高聳的紅砂岩峭壁，將空氣緊緊鎖在谷底，熱浪滾滾。\n大氣十分稀薄，每一次呼吸都顯得極為沉重，頭腦微微發昏。\n太陽直射在裸露的岩石上，溫度高達 55°C，地表彷彿在燃燒。"
 monsters: []
 
+environmental_multipliers:
+  thirst_decay: 3.0
+  hunger_decay: 1.0
+
 exits: {}
 
 reveal_exits:
