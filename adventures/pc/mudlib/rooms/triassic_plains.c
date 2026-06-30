@@ -7,5 +7,5 @@ private object proto_chicken;  // 場內的小型鳥類生物
 
 void create() {
     ::create();
-    initialize_from_yaml("/content/rooms/triassic_plains.yaml");
 }
+
