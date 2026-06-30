@@ -1,0 +1,26 @@
+short: "背光洞窟陰影"
+long: "你躲入了一處陡峭岩壁下方的深邃陰影中。\n這裡沒有陽光直射，溫度驟降至舒適的 25°C，陰涼的空氣讓你的灼燒感漸漸褪去。\n微風從洞穴深處吹來，帶有一絲濕潤的氣息。\n這裡是你建立臨時避難所的絕佳位置。"
+monsters: []
+
+exits:
+  out: "/rooms/desert_canyon/room"
+  riverbed: "/rooms/triassic_riverbed/room"
+
+sensory_signals:
+  smell: "空氣中帶有些許濕土與岩石苔蘚的青澀氣息。"
+  sound: "風在狹窄岩縫中穿梭，發出如同口哨般的低鳴聲。"
+  wind: "涼爽的東風從山谷深處吹來，撫平了地表的燥熱。"
+  ground:
+    default_msg: "陰涼而堅實的灰色岩地，地面上覆蓋著一層薄薄的落塵與乾枯的蕨類葉片。"
+    discovery:
+      requires_no_factor: "first_fire"
+      set_temp: "cave_shelter"
+      msg: "【 🔍 發現 】這裡的環境安全而穩定。你可以選擇在這裡進行短暫修整，建立基本遮蔽以完成第一天的求生考驗。（rest）"
+
+interactions:
+  - action: "rest"
+    success_msg: "你坐在涼爽的岩洞內，放慢了呼吸。你在日落前成功建立了基本遮蔽，擺脫了第一天的熱浪與窒息威脅！"
+    complete_quest: "survive_day_zero"
+    fatigue: -20
+    hp_change: 20
+    repeat_msg: "你在避難所內安靜修整，體力正在逐漸恢復。"

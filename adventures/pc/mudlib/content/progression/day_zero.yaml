@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "day_zero"
+name: "第零天"
+description: "你置身於極端酷熱且低氧的三疊紀乾燥峽谷。學會如何維持體溫、尋找陰影並呼吸是生存的第一步。"
+spawn_node: ""
+requires:
+  quests:
+    - "survive_day_zero"
+next: "first_night"

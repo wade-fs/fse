@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "co2_toxicity"
+name: "二氧化碳耐受與避險"
+description: "你發現三疊紀低窪地區積聚著高於現代數倍的二氧化碳，長時間停留會中毒窒息。"
+category: "survival"
+level: 1

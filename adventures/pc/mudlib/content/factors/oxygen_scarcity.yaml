@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "oxygen_scarcity"
+name: "低氧環境適應"
+description: "你體會到三疊紀大氣氧氣含量極低，劇烈奔跑會導致大腦迅速缺氧昏厥。"
+category: "survival"
+level: 1

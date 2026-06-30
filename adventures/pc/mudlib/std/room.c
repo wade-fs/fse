@@ -252,7 +252,11 @@ int resolve_interaction(object player, string action, string target) {
         mixed t_cfg = act["target"];
         
         if (act["action"] == action) {
-            if (stringp(t_cfg) && t_cfg == target) {
+            if (undefinedp(t_cfg) || !t_cfg || t_cfg == "") {
+                if (undefinedp(target) || !target || target == "") {
+                    target_matched = 1;
+                }
+            } else if (stringp(t_cfg) && t_cfg == target) {
                 target_matched = 1;
             } else if (arrayp(t_cfg) && member_array(target, t_cfg) != -1) {
                 target_matched = 1;

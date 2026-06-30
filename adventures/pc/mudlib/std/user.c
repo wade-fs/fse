@@ -90,7 +90,7 @@ void on_death(string reason) {
     fatigue = 0;
     save_state();
 
-    object room = load_object("/rooms/triassic_plains/room");
+    object room = load_object("/rooms/desert_canyon/room");
     if (room) {
         move_object(this_object(), room);
     }
@@ -158,19 +158,19 @@ void new_password(string pwd) {
     set_living_name(get_id());
 
     object pm = load_object("/runtime/services/progress_manager.c");
-    if (pm) pm->set_initial_stage(this_object(), "novice", "main");
+    if (pm) pm->set_initial_stage(this_object(), "day_zero", "main");
 
     write(HIG + "註冊成功！世界已載入。\n" + NOR);
     _enter_world();
 }
 
 void _enter_world() {
-    object room = load_object("/rooms/triassic_plains/room");
+    object room = load_object("/rooms/desert_canyon/room");
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());
         // 初始提示
-        tell_object(this_object(), YEL + "\n💡 你在一片炎熱的荒原甦醒。在這裡，直接觀察 (look) 或許不是最好的主意。\n" +
+        tell_object(this_object(), YEL + "\n💡 你在一片炙熱乾燥的峽谷中甦醒。在這裡，高溫與稀薄的空氣隨時會奪去你的性命。\n" +
             "你可以集中注意力去感知環境: focus [smell/sound/wind/ground]\n" + NOR);
     }
 }

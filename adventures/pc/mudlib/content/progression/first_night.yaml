@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "first_night"
+name: "第一夜"
+description: "夜幕降臨，氣溫急劇下降。在溫差高達 50 度的史前荒原中，你必須生起篝火以防失溫。"
+spawn_node: ""
+requires:
+  quests:
+    - "first_fire"
+next: "survivor"

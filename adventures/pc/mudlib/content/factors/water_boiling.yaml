@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "water_boiling"
+name: "沸水殺菌"
+description: "你意識到史前的水源含有有害的微生物或藍藻毒素，直接飲用會導致嚴重腹瀉，煮沸是唯一淨化手段。"
+category: "survival"
+level: 1

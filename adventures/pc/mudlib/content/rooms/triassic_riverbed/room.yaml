@@ -1,0 +1,37 @@
+short: "史前河床"
+long: "一條乾涸的史前河谷底，紅褐色的卵石遍布河床。\n在幾處低窪的岩縫中積聚著渾濁的水窪，水面泛著詭異的藍綠色藍藻光澤。\n空氣中有一股刺鼻的有機物腐爛味。"
+monsters: []
+
+exits:
+  shade: "/rooms/triassic_shade/room"
+  plains: "/rooms/triassic_plains/room"
+
+sensory_signals:
+  smell: "一陣微風吹過，夾雜著水窪中藻類與腐爛植物的強烈腥臭味。"
+  sound: "除了偶爾有碎石滑落的聲音外，周圍十分安靜。"
+  wind: "東南風吹拂，將渾濁的水汽吹向河谷上方。"
+  ground:
+    default_msg: "乾涸開裂的河泥與散落的卵石，邊緣長有一些帶有厚重蠟質的史前蕨類植物。"
+    discovery:
+      requires_no_factor: "water_boiling"
+      set_temp: "observed_water"
+      msg: "【 🔍 發現 】水窪 (water) 看起來非常誘人，你感到口乾舌燥。但奇怪的藍綠色藻類提醒你：這水可能不安全。你想嚐嚐看嗎？（lick water）"
+
+interactions:
+  - action: "lick"
+    target: "water"
+    success_msg: "你用舌尖稍微舔了舔帶有藍綠色澤的河水。\n一股辛辣、苦澀且夾雜著腐敗有機物的異味瞬間直衝腦門，你忍不住乾嘔起來！\n💡 警告：這水顯然含有嚴重的毒素，絕不能直接飲用。需要高溫加熱..."
+    trigger_confusion: "poisonous_water"
+    hp_change: -10
+    fatigue: 10
+    discover_factor: "water_boiling"
+    repeat_msg: "你已經知道這水含有劇毒，不能直接飲用。需要生火將其煮沸。"
+
+  - action: "drink"
+    target: "water"
+    success_msg: "你捧起河水喝了一口。\n一股辛辣、苦澀且夾雜著腐敗有機物的異味瞬間直衝腦門，你忍不住乾嘔起來！\n💡 警告：這水顯然含有嚴重的毒素，絕不能直接飲用。需要高溫加熱..."
+    trigger_confusion: "poisonous_water"
+    hp_change: -15
+    fatigue: 15
+    discover_factor: "water_boiling"
+    repeat_msg: "你已經知道這水含有劇毒，不能直接飲用。需要生火將其煮沸。"

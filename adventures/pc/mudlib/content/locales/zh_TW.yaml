@@ -4,3 +4,16 @@ core.progress.stage_shifted: "$HIC$🗺️ 進入新階段：{name}{track_displa
 core.factor.missing_prerequisite: "$HIR$❌ 你必須先解鎖前置概念：{pre_names}$NOR$\n"
 core.executor.confusion: "$HIY$🌀 【困惑】 事情沒有照預期發展，這讓你開始思索...$NOR$\n"
 core.factor.insight_transition: "\n$HIC$🌟 【領悟】 之前的疑惑瞬間有了答案！$NOR$\n"
+
+# 自然災害 (Disasters) 廣播與事件描述
+disasters.volcanic_eruption.warning: "$YEL$⚠️ 【自然異變前兆】 大地開始發出低沉的悶雷聲，腳下傳來微弱的顫動，空氣中的硫磺氣味驟然濃郁...$NOR$\n"
+disasters.volcanic_eruption.active: "$RED$🌋 【火山爆發】 遠方的火山頂端噴發出蔽日的濃煙與赤紅岩漿，地表開始劇烈撕裂，岩漿隨時可能蔓延！$NOR$\n"
+disasters.ash_storm.warning: "$YEL$⚠️ 【氣象異變前兆】 天空開始被滾滾的灰色塵埃遮蔽，陽光漸漸失去溫度，四周空氣變得粗糙而刺鼻...$NOR$\n"
+disasters.ash_storm.active: "$RED$🌪️ 【火山灰暴】 鋪天蓋地的二氧化硫與細碎火山灰暴降臨！每一次呼吸都讓肺部劇烈灼痛，你需要尋求掩蔽並用濕布掩住口鼻！$NOR$\n"
+disasters.forest_fire.warning: "$YEL$⚠️ 【林火異變前兆】 空氣中傳來焦木的氣味，夾雜著木材燃燒的嗶啵碎裂聲，遠方林線上方泛著不祥的橘紅火光...$NOR$\n"
+disasters.forest_fire.active: "$RED$🔥 【森林大火】 在高氧（30%）的大氣助燃下，熊熊野火失控地蔓延開來！熊熊烈焰正將一切化為灰燼！$NOR$\n"
+disasters.tsunami.warning: "$YEL$⚠️ 【海嘯異變前兆】 海岸線的海水以不可思議的速度倒退退潮，露出了大片潮濕的淤泥與掙扎的魚群，海浪聲突然消失了...$NOR$\n"
+disasters.tsunami.active: "$RED$🌊 【海嘯來襲】 數層樓高的滔天巨浪如同黑色高牆般朝海岸平原席捲而來！立刻往高處逃命！$NOR$\n"
+disasters.impact_event.warning: "$YEL$⚠️ 【末日天象】 天空中出現了第二顆白熾的太陽，它正在逐漸變大、變亮，將整片天空染成了熔爐般的金色...$NOR$\n"
+disasters.impact_event.active: "$RED$☄️ 【小行星撞擊】 刺眼的光芒將黑夜照亮如白晝。衝擊波與遮天蔽日的塵埃席捲了整片史前大陸。一個時代終結了。$NOR$\n"
+

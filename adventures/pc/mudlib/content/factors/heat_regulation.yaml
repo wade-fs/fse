@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "heat_regulation"
+name: "熱調節規律"
+description: "你學會了避開直射的地表岩石高溫，並學會尋找遮蔭以維持體溫平衡。"
+category: "survival"
+level: 1

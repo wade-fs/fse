@@ -1,0 +1,66 @@
+short: "乾燥峽谷"
+long: "你置身於一處壓抑而炎熱的紅色地熱峽谷底。\n四周是高聳的紅砂岩峭壁，將空氣緊緊鎖在谷底，熱浪滾滾。\n大氣十分稀薄，每一次呼吸都顯得極為沉重，頭腦微微發昏。\n太陽直射在裸露的岩石上，溫度高達 55°C，地表彷彿在燃燒。"
+monsters: []
+
+exits: {}
+
+reveal_exits:
+  shade:
+    dest: "/rooms/triassic_shade/room"
+    requires_factor: "heat_regulation"
+    reveal_msg: "你掌握了熱調節規律，峭壁深處的「背光洞窟陰影 (shade)」現在看來是個安全的去處了！"
+
+sensory_signals:
+  smell: "空氣中瀰漫著刺鼻的硫磺味與乾焦的熱石氣息。"
+  sound: "四周只有熱風吹拂砂礫的沙沙聲，寂靜得讓人喘不過氣。"
+  wind: "滾燙的熱風迎面吹來，正在快速帶走你體內的水分。"
+  ground:
+    default_msg: "紅砂岩地面在高溫下呈現焦灼的紅褐色，地面微微有低頻的熱氣流升騰。"
+    discovery:
+      requires_no_factor: "heat_regulation"
+      set_temp: "observed_rocks"
+      msg: "【 🔍 發現 】在高溫烘烤下，岩石反射出滾燙的光芒。你想觸摸看看嗎？（touch ground）\n或者在如此缺氧與悶熱的環境下奔跑？（run）\n還是待在原地急促呼吸？（wait）"
+
+interactions:
+  - action: "run"
+    success_msg: "你試圖邁開腳步大步奔跑。但這裡的大氣含氧量極低（僅 16%），你瞬間感到肺部像火燒一樣，眼前一片漆黑，無力地昏厥倒地..."
+    hp_change: -100
+    discover_factor: "oxygen_scarcity"
+
+  - action: "dash"
+    success_msg: "你試圖邁開腳步大步奔跑。但這裡的大氣含氧量極低（僅 16%），你瞬間感到肺部像火燒一樣，眼前一片漆黑，無力地昏厥倒地..."
+    hp_change: -100
+    discover_factor: "oxygen_scarcity"
+
+  - action: "jog"
+    success_msg: "你試圖邁開腳步大步奔跑。但這裡的大氣含氧量極低（僅 16%），你瞬間感到肺部像火燒一樣，眼前一片漆黑，無力地昏厥倒地..."
+    hp_change: -100
+    discover_factor: "oxygen_scarcity"
+
+  - action: "touch"
+    target: "ground"
+    success_msg: "你用赤裸的雙手直接碰觸地面上被太陽曝曬的紅砂岩。高達 55°C 的高溫瞬間將你的手掌灼傷，起泡的劇痛讓你慘叫出聲，熱量大量侵入，你痛苦地力竭倒地..."
+    hp_change: -100
+    discover_factor: "heat_regulation"
+
+  - action: "touch"
+    target: "rock"
+    success_msg: "你用赤裸的雙手直接碰觸地面上被太陽曝曬的紅砂岩。高達 55°C 的高溫瞬間將你的手掌灼傷，起泡的劇痛讓你慘叫出聲，熱量大量侵入，你痛苦地力竭倒地..."
+    hp_change: -100
+    discover_factor: "heat_regulation"
+
+  - action: "touch"
+    target: "stone"
+    success_msg: "你用赤裸的雙手直接碰觸地面上被太陽曝曬的紅砂岩。高達 55°C 的高溫瞬間將你的手掌灼傷，起泡的劇痛讓你慘叫出聲，熱量大量侵入，你痛苦地力竭倒地..."
+    hp_change: -100
+    discover_factor: "heat_regulation"
+
+  - action: "wait"
+    success_msg: "你停留在低窪的峽谷中急促呼吸。三疊紀的大氣中二氧化碳濃度是現代的 6 倍，低窪處更是致命的積聚區。你感到頭部爆裂般劇痛，四肢無力，漸漸失去知覺..."
+    hp_change: -100
+    discover_factor: "co2_toxicity"
+
+  - action: "breathe"
+    success_msg: "你停留在低窪的峽谷中急促呼吸。三疊紀的大氣中二氧化碳濃度是現代的 6 倍，低窪處更是致命的積聚區。你感到頭部爆裂般劇痛，四肢無力，漸漸失去知覺..."
+    hp_change: -100
+    discover_factor: "co2_toxicity"
