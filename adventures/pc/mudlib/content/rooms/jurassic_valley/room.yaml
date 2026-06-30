@@ -6,8 +6,52 @@ exits:
   quarry: "/rooms/obsidian_quarry/room"
   trail: "/rooms/migration_trail/room"
 
+reveal_exits:
+  up:
+    dest: "/rooms/canopy_refuge/room"
+    requires_factor: "canopy_climbing"
+    reveal_msg: "你現在可以使用抓鉤攀爬到高處的「樹冠避難所 (up)」了！"
+
 sensory_signals:
   smell: "濃郁的青草香、濕潤泥土，以及大型草食恐龍糞便散發出的溫熱氣息。"
   sound: "潺潺的流水聲，伴隨著遠方巨獸腳步落地時傳來的低沉悶響。"
   wind: "溫暖而濕潤的微風迎面吹來，夾雜著水蒸氣。"
-  ground: "鬆軟的青苔地毯，踩上去像海綿一樣，地面踩踏出了許多巨大的網格狀植物根系。"
+  ground:
+    default_msg: "鬆軟的青苔地毯，踩上去像海綿一樣，地面踩踏出了許多巨大的網格狀植物根系。"
+    discovery:
+      requires_no_factor: "canopy_climbing"
+      set_temp: "observed_roots"
+      msg: "【 🔍 發現 】在桫欏樹根旁，纏繞著許多極為堅韌的植物纖維 (fibers)。\n如果你有鋒利的石刃，可以割下它們來製作工具。（focus ground / cut fibers）"
+
+interactions:
+  - action: "cut"
+    target: "fibers"
+    prerequisites:
+      factor: "flint_knapping"
+    success_msg: "你用鋒利的黑曜石石片割下了大量堅韌的樹皮與藤蔓纖維。這些纖維強度很高，是製作繩索的完美材料。"
+    set_temp: "has_fibers"
+    fatigue: 5
+
+  - action: "make"
+    target:
+      - "hook"
+      - "grappling_hook"
+    prerequisites:
+      temp_state: "has_fibers"
+      factor: "flint_knapping"
+    success_msg: "你將堅韌的植物纖維擰成強韌的繩索，並將一根堅硬的松枝削成三叉彎鉤，緊緊綁在繩端，製成了簡易的抓鉤！"
+    give_item:
+      id: "grappling_hook"
+      name: "簡易抓鉤"
+      desc: "利用植物纖維繩索與堅硬樹枝製成的抓鉤，可用於攀登高大樹木。"
+    set_temp: "has_grapple"
+    fatigue: 10
+
+  - action: "climb"
+    target: "tree"
+    prerequisites:
+      temp_state: "has_grapple"
+    discover_factor: "canopy_climbing"
+    complete_quest: "find_high_ground"
+    success_msg: "你奮力將抓鉤甩向桫欏巨樹的高處。抓鉤牢牢咬住了粗壯的枝椏。\n你抓緊繩索，雙腳蹬在巨大的樹幹上，一步一步敏捷地爬上了高空中的樹冠層！\n💡 避難通道顯現！現在可以 go up 了。"
+    fatigue: 15

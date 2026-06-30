@@ -250,6 +250,249 @@ int run_all_tests() {
     player->force_me("god difficulty normal");
     write(HIG "  ✓ 通過: 難度切換與 Nightmare 乘數傷害放大驗證成功。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 13：驗證 bug_eater 階段任務（巨蜈蚣獵捕、生火與蟲肉烹飪食）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 13] 測試 bug_eater 階段 (triassic_shade / triassic_riverbed)...\n" NOR);
+    // 確保回到陰影處，且進度正確前進至 first_night
+    move_object(player, shade);
+    
+    // 觸發進度檢查（因為 first_fire 在 novice 已解鎖，這會直接讓玩家晉升至 bug_eater）
+    player->force_me("light campfire"); // 觸發 check_player_stage_advancement
+    
+    if (pm->query_current_stage(player, "main") != "bug_eater") {
+        write(HIR "❌ 測試 13 失敗: 玩家未正確晉升至 bug_eater 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    
+    // 模擬獵捕巨蜈蚣
+    player->force_me("hunt megapede");
+    if (!player->has_factor("arthropod_warning")) {
+        write(HIR "❌ 測試 13 失敗: 獵捕巨蜈蚣後未能解鎖 arthropod_warning！\n" NOR);
+        return 1;
+    }
+    
+    // 烹飪並食用蟲肉
+    player->force_me("roast meat");
+    if (!player->has_factor("arthropod_nutrition")) {
+        write(HIR "❌ 測試 13 失敗: 烘烤蟲肉後未能解鎖 arthropod_nutrition！\n" NOR);
+        return 1;
+    }
+    player->force_me("eat cooked_meat");
+    
+    // 手動觸發進度檢查以鏈接升級（因為 wind_stalker 需要的 first_escape 已經在先前完成了）
+    pm->check_player_stage_advancement(player, "main");
+    
+    // 驗證是否前進至 wind_stalker (因為 first_escape 在 novice 完成，這會進一步連帶升級至 jurassic_arrival)
+    if (pm->query_current_stage(player, "main") != "jurassic_arrival") {
+        write(HIR "❌ 測試 13 失敗: 完成第一頓飯後未晉升至 jurassic_arrival 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功獵捕巨蜈蚣、生火烘烤與食用熟肉，順利晉級侏羅紀階段。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 14：驗證 jurassic_arrival 階段（製作抓鉤並爬樹）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 14] 測試 jurassic_arrival 階段 (jurassic_valley)...\n" NOR);
+    object valley = load_object("/rooms/jurassic_valley/room");
+    move_object(player, valley);
+    valley->enter(player);
+    
+    player->force_me("focus ground");
+    player->force_me("cut fibers");
+    player->force_me("make hook");
+    player->force_me("climb tree");
+    
+    if (!player->has_factor("canopy_climbing")) {
+        write(HIR "❌ 測試 14 失敗: 攀爬樹木後未解鎖 canopy_climbing！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("go up");
+    if (strsrch(base_name(environment(player)), "canopy_refuge") == -1) {
+        write(HIR "❌ 測試 14 失敗: go up 未能進入樹冠避難所房間！目前位置: " + base_name(environment(player)) + "\n" NOR);
+        return 1;
+    }
+    
+    // 觸發進度檢驗
+    player->force_me("look");
+    if (pm->query_current_stage(player, "main") != "canopy_builder") {
+        write(HIR "❌ 測試 14 失敗: 未正確升級至 canopy_builder 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功在侏羅紀河谷採集纖維、編織抓鉤並攀爬至樹冠避難所。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 15：驗證 canopy_builder 階段（構築高空木屋避難所）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 15] 測試 canopy_builder 階段 (canopy_refuge)...\n" NOR);
+    player->force_me("focus wind");
+    player->force_me("focus ground");
+    write("DEBUG: has flint_knapping = " + player->has_factor("flint_knapping") + "\n");
+    write("DEBUG: has found_vines = " + player->query_temp("found_vines") + "\n");
+    player->force_me("twist vines");
+    write("DEBUG: after twist vines, has fiber_strength = " + player->has_factor("fiber_strength") + "\n");
+    player->force_me("build platform");
+    write("DEBUG: after build platform, has structural_load = " + player->has_factor("structural_load") + "\n");
+    player->force_me("build shelter");
+    
+    if (!player->has_factor("altitude_wind") || !player->has_factor("fiber_strength") || !player->has_factor("structural_load")) {
+        write(HIR "❌ 測試 15 失敗: 未能解鎖全部樹冠建築 Factors (altitude_wind/fiber_strength/structural_load)！\n" NOR);
+        return 1;
+    }
+    
+    // 觸發進度檢驗
+    player->force_me("look");
+    if (pm->query_current_stage(player, "main") != "allosaurus_gauntlet") {
+        write(HIR "❌ 測試 15 失敗: 未正確升級至 allosaurus_gauntlet 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功在高空樹冠層完成防風觀測、繩索編織、平台搭架與避難所搭建。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 16：驗證 allosaurus_gauntlet 階段（靜止避開異特龍與遷徙規律解讀）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 16] 測試 allosaurus_gauntlet 階段 (migration_trail)...\n" NOR);
+    object trail = load_object("/rooms/migration_trail/room");
+    move_object(player, trail);
+    trail->enter(player);
+    
+    // 先嘗試跟隨足跡（應失敗，因為異特龍擋著）
+    player->force_me("follow tracks");
+    
+    player->force_me("freeze");
+    write("DEBUG 16: after freeze, has bypassed_allosaurus = " + player->query_temp("bypassed_allosaurus") + "\n");
+    if (!player->has_factor("motion_stillness")) {
+        write(HIR "❌ 測試 16 失敗: 靜止不動後未能領悟 motion_stillness！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("sneak");
+    write("DEBUG 16: after sneak, has passed_gauntlet = " + player->query_temp("passed_gauntlet") + "\n");
+    player->force_me("follow tracks");
+    
+    if (!player->has_factor("migration_cycle")) {
+        write(HIR "❌ 測試 16 失敗: 跟隨足跡後未領悟 migration_cycle！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("go cliff");
+    if (strsrch(base_name(environment(player)), "pterosaur_cliff") == -1) {
+        write(HIR "❌ 測試 16 失敗: 進入 cliff 出口失敗！目前位置: " + base_name(environment(player)) + "\n" NOR);
+        return 1;
+    }
+    
+    // 檢驗進度
+    player->force_me("look");
+    if (pm->query_current_stage(player, "main") != "fire_master") {
+        write(HIR "❌ 測試 16 失敗: 未能正確升級至 fire_master 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功運用靜止偽裝避開異特龍，繞行穿越並解讀恐龍遷徙走廊。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 17：驗證 fire_master 階段（石圈防風控火與熟食餵養翼龍）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 17] 測試 fire_master 階段 (pterosaur_cliff)...\n" NOR);
+    player->force_me("build fire_ring");
+    player->force_me("light fire");
+    player->force_me("hunt lizard");
+    player->force_me("roast raw_meat");
+    
+    if (!player->has_factor("fire_control")) {
+        write(HIR "❌ 測試 17 失敗: 築起石圈後未能解鎖 fire_control！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("feed pterosaur");
+    if (!player->has_factor("pterosaur_bond")) {
+        write(HIR "❌ 測試 17 失敗: 餵養翼龍後未能解鎖 pterosaur_bond！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("go shore");
+    if (strsrch(base_name(environment(player)), "cretaceous_shore") == -1) {
+        write(HIR "❌ 測試 17 失敗: 飛越峭壁進入白堊紀海岸失敗！目前位置: " + base_name(environment(player)) + "\n" NOR);
+        return 1;
+    }
+    
+    // 檢驗進度
+    player->force_me("look");
+    if (pm->query_current_stage(player, "main") != "cretaceous_dawn") {
+        write(HIR "❌ 測試 17 失敗: 未能正確升級至 cretaceous_dawn 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功在狂風峭壁建立石圈控火，烹煮蜥蜴肉餵養翼龍，順利飛抵白堊紀海岸。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 18：驗證 cretaceous_dawn 階段（直面霸王龍與感知極限）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 18] 測試 cretaceous_dawn 階段 (cretaceous_shore)...\n" NOR);
+    player->force_me("freeze");
+    
+    if (!player->has_factor("tyrex_senses")) {
+        write(HIR "❌ 測試 18 失敗: 避開霸王龍後未能領悟 tyrex_senses！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("go ridge");
+    if (strsrch(base_name(environment(player)), "settlement_ridge") == -1) {
+        write(HIR "❌ 測試 18 失敗: 前往聚落山脊失敗！目前位置: " + base_name(environment(player)) + "\n" NOR);
+        return 1;
+    }
+    
+    // 檢驗進度
+    player->force_me("look");
+    if (pm->query_current_stage(player, "main") != "last_stand") {
+        write(HIR "❌ 測試 18 失敗: 未能正確升級至 last_stand 終局階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功以極限靜止偽裝避開霸王龍，繞行抵達黃土山脊聚落。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 19：驗證 last_stand 終局（陶器燒製、文字刻畫與文明遺產）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 19] 測試 last_stand 終局階段 (settlement_ridge / ancestor_cave)...\n" NOR);
+    // 製作陶器
+    player->force_me("bake clay");
+    if (!player->has_factor("pottery_craft")) {
+        write(HIR "❌ 測試 19 失敗: 燒製黏土未能領悟 pottery_craft！\n" NOR);
+        return 1;
+    }
+    
+    // 前往祖先溶洞
+    player->force_me("go cave");
+    if (strsrch(base_name(environment(player)), "ancestor_cave") == -1) {
+        write(HIR "❌ 測試 19 失敗: 進入祖先洞穴失敗！\n" NOR);
+        return 1;
+    }
+    
+    // 模擬獲得黑曜石獵刀 (obsidian_knife)
+    object knife = clone_object("/std/item.c");
+    knife->set_item_id("obsidian_knife");
+    knife->set_name("精製黑曜石獵刀");
+    move_object(knife, player);
+    
+    player->force_me("draw wall");
+    if (!player->has_factor("symbol_abstraction")) {
+        write(HIR "❌ 測試 19 失敗: 刻寫岩壁未能領悟 symbol_abstraction！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("build altar");
+    if (!player->has_factor("ritual_altar")) {
+        write(HIR "❌ 測試 19 失敗: 構築祭壇未能領悟 ritual_altar！\n" NOR);
+        return 1;
+    }
+    
+    player->force_me("write legacy");
+    if (!player->has_factor("civilization_meaning")) {
+        write(HIR "❌ 測試 19 失敗: 刻下文明遺產未能領悟 civilization_meaning！\n" NOR);
+        return 1;
+    }
+    
+    write(HIG "  ✓ 通過: 成功在末日前夕燒製陶罐、在溶洞中建立祭壇並刻下文明符號記憶，終局挑戰圓滿完成。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +

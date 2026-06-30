@@ -1,6 +1,9 @@
 short: "史前河床"
 long: "一條乾涸的史前河谷底，紅褐色的卵石遍布河床。\n在幾處低窪的岩縫中積聚著渾濁的水窪，水面泛著詭異的藍綠色藍藻光澤。\n空氣中有一股刺鼻的有機物腐爛味。"
-monsters: []
+monsters:
+  - id: "/monsters/meganeura/monster"
+    count: 2
+    respawn: true
 
 exits:
   shade: "/rooms/triassic_shade/room"
@@ -15,7 +18,7 @@ sensory_signals:
     discovery:
       requires_no_factor: "water_boiling"
       set_temp: "observed_water"
-      msg: "【 🔍 發現 】水窪 (water) 看起來非常誘人，你感到口乾舌燥。但奇怪的藍綠色藻類提醒你：這水可能不安全。你想嚐嚐看嗎？（lick water）"
+      msg: "【 🔍 發現 】這裡的河水看似有毒，但低窪處有著天然凹陷的「石坑 (stone pit)」積蓄著雨水。\n如果你掌握了熱學（thermodynamics），也許可以把地上的「卵石 (rocks/stones)」放在火堆中「加熱 (heat rocks)」，然後投進石坑裡將水煮沸！"
 
 interactions:
   - action: "lick"
@@ -37,3 +40,45 @@ interactions:
     fatigue: 15
     discover_factor: "water_boiling"
     repeat_msg: "你已經知道這水含有劇毒，不能直接飲用。需要生火將其煮沸。"
+
+  - action: "heat"
+    target:
+      - "rocks"
+      - "stones"
+    prerequisites:
+      factor: "thermodynamics"
+    success_msg: "你利用身邊的火源或火種將幾顆卵石堆疊火上。不久，岩石被烤得通紅發亮，熱浪逼人。（已獲得紅熱的卵石）"
+    set_temp: "hot_rocks"
+    fatigue: 10
+
+  - action: "drop"
+    target:
+      - "rocks water"
+      - "stones pit"
+      - "rocks pit"
+    prerequisites:
+      temp_state: "hot_rocks"
+    discover_factor: "water_boiling"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】熱量投入與水沸騰淨化！\n==================================================\n你用乾木枝夾起通紅的熱卵石投進積水的石坑中。只聽「嘶嘶」巨響，水流翻滾沸騰，有害藍藻與寄生蟲被瞬間消滅！你喝下了乾淨的熟水。"
+    thirst_change: -80
+    fatigue: 5
+
+  - action: "boil"
+    target: "water"
+    prerequisites:
+      temp_state: "hot_rocks"
+    discover_factor: "water_boiling"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】熱量投入與水沸騰淨化！\n==================================================\n你用乾木枝夾起通紅的熱卵石投進積水的石坑中。只聽「嘶嘶」巨響，水流翻滾沸騰，有害藍藻與寄生蟲被瞬間消滅！你喝下了乾淨的熟水。"
+    thirst_change: -80
+    fatigue: 5
+
+  - action: "hunt"
+    target: "meganeura"
+    prerequisites:
+      factor: "flint_knapping"
+    success_msg: "你趁著超大蜻蜓低飛掠過水面時，用茂密的蕨類枝條在空中精準一揮，將其擊落並用石片迅速殺死。你獲得了史前昆蟲肉。"
+    give_item:
+      id: "bug_meat"
+      name: "生蟲肉"
+      desc: "一塊從超大蜻蜓身上割下的生蟲肉，需要烤熟才能吃。"
+    fatigue: 10

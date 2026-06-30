@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "motion_stillness"
+name: "靜止偽裝"
+description: "領悟到某些史前掠食者的視覺是基於動作偵測的。保持完全靜止不動，能使牠們對你視而不見。"
+category: "survival"
+level: 1

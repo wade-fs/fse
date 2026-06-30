@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "vibration_reading"
+name: "地表震動讀取"
+description: "對地面震動強度的敏銳感知，能夠精準對應出附近史前巨獸的體型與距離。"
+category: "survival"
+level: 1

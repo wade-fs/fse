@@ -1,0 +1,10 @@
+name: "超大蜻蜓"
+max_hp: 5
+attack: 3
+defense: 0
+level: 1
+exp_value: 15
+respawn_delay: 15
+combat_interval: 2
+short_desc: "一隻翼展達 70 公分的史前超大蜻蜓。"
+long_desc: "這是一隻翼展寬闊的巨蜻蜓，複眼在陽光下閃爍著複合金屬光澤，飛行極為快速敏捷，會試圖叼走地面上的食物。"

@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "vibration_translation"
+name: "震動感知轉譯"
+description: "領悟到低頻震動的頻率與規律，使你能夠分辨腳步聲與地表震動，解讀恐龍的足跡與動向。"
+category: "ecology"
+level: 1

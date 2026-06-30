@@ -181,6 +181,13 @@ string query_sensory_signal(object player, string sense) {
                 string set_temp = disc["set_temp"];
                 if (set_temp) player->set_temp(set_temp, 1);
                 
+                // 支援直接解鎖 Factor 知識點
+                string disc_factor = disc["discover_factor"];
+                if (disc_factor) {
+                    object factor_svc = load_object("/runtime/services/factor_service.c");
+                    if (factor_svc) factor_svc->discover_factor(player, disc_factor);
+                }
+
                 // 附加發現的文字提示
                 string disc_msg = disc["msg"] || "";
                 if (disc_msg != "") {
@@ -284,6 +291,20 @@ int resolve_interaction(object player, string action, string target) {
                 // 2. 檢查必要因素 factor
                 string req_factor = prereqs["factor"];
                 if (req_factor && !player->has_factor(req_factor)) passed = 0;
+
+                // 3. 檢查必要物品 item
+                string req_item = prereqs["item"];
+                if (req_item) {
+                    object *inv = all_inventory(player);
+                    int has_it = 0;
+                    foreach (object ob in inv) {
+                        if (ob->query_item_id() == req_item) {
+                            has_it = 1;
+                            break;
+                        }
+                    }
+                    if (!has_it) passed = 0;
+                }
             }
 
             if (passed) {

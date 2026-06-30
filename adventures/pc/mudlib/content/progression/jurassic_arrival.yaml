@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "jurassic_arrival"
+name: "侏羅紀降臨"
+description: "你來到了潮濕茂密的侏羅紀雨林。地表巨獸橫行，你必須設法製造工具爬上高處。"
+spawn_node: "/rooms/jurassic_valley/room"
+requires:
+  quests:
+    - "find_high_ground"
+next: "canopy_builder"

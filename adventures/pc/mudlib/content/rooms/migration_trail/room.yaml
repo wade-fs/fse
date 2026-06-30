@@ -1,19 +1,21 @@
 short: "遷徙走廊"
-long: "這是一條夾在茂密針葉林之間的開闊泥地通道。\n泥地上縱橫交錯著無數巨大的獸類足跡，有些足跡甚至像小水坑一樣深。\n這是恐龍前往水源與避冬地的古老遷徙走廊。"
-monsters: []
+long: "這是一條夾在茂密針葉林之間的開闊泥地通道。\n泥地上縱橫交錯著無數巨大的獸類足跡，有些足跡甚至像小水坑一樣深。\n這是恐龍前往水源與避冬地的古老遷徙走廊。\n此時，一隻巨大的異特龍正堵在通道中央，不時低頭嗅探，極為警惕。"
+monsters:
+  - id: "/monsters/allosaurus/monster"
+    count: 1
+    respawn: true
 exits:
   back: "/rooms/jurassic_valley/room"
 
 reveal_exits:
-  # 觀察並解鎖遷徙規律後，得知往懸崖方向是翼龍的棲息巢穴，開啟 cliff 出口
   cliff:
     dest: "/rooms/pterosaur_cliff/room"
     requires_factor: "migration_cycle"
 
 sensory_signals:
-  smell: "混雜著多種恐龍體味與新鮮排泄物的泥土腥氣。"
-  sound: "林間傳來不知名小型生物恐慌的尖叫，隨即被一聲沉悶的巨響切斷。"
-  wind: "微風拂過，被森林葉片過濾後變得涼爽。"
+  smell: "混雜著多種恐龍體味與新鮮排泄物的泥土腥氣，還有異特龍口中散發出的強烈血腥味。"
+  sound: "異特龍粗重的呼吸聲，與牠巨大爪子抓撓泥地的聲音。"
+  wind: "涼爽的風正朝向你吹來（逆風），這對隱蔽你的體味極為有利。"
   ground:
     default_msg: "泥濘不堪的地面。在各種混亂的足跡中，有一排巨大的三趾足跡明顯朝向懸崖方向。"
     discovery:
@@ -25,7 +27,22 @@ interactions:
   - action: "follow"
     target: "tracks"
     prerequisites:
-      temp_state: "observed_tracks"
+      temp_state: "passed_gauntlet"
     discover_factor: "migration_cycle"
     success_msg: "你順著那些巨大的三趾足跡，在茂密的針葉林與棘藤中穿行。\n你逐漸看清了牠們踩踏出的規律路徑，前方的樹木漸漸稀疏，視野開始變得開闊。\n【 🌲 顯現 (Reveal) 】你來到了懸崖邊緣，上方巨大的翼龍峭壁清晰地展現在眼前！"
+    fatigue: 10
+    failure_msg: "異特龍正擋在路中央！你現在試圖跟隨足跡，會立刻被牠敏銳的感官發現！你需要先設法避開牠（例如靜止不動 freeze）。"
+
+  - action: "freeze"
+    discover_factor: "motion_stillness"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】動作敏感與靜止偽裝！\n==================================================\n你立刻放慢呼吸，全身緊繃如石雕般站在原地一動也不動。\n異特龍巨大的頭顱在你面前嗅了嗅，熱烘烘的鼻息撲面而來，但由於你完全靜止且逆風，牠並未鎖定你，隨後轉身走向一旁。"
+    set_temp: "bypassed_allosaurus"
+    fatigue: 5
+
+  - action: "sneak"
+    prerequisites:
+      temp_state: "bypassed_allosaurus"
+    success_msg: "你趁著異特龍轉移注意力的空檔，在下風處悄無聲息地繞過了牠。你成功穿過了這片危險的走廊！\n（現在你可以安全地觀察地面 follow tracks 了）"
+    set_temp: "passed_gauntlet"
+    complete_quest: "cross_allosaurus_territory"
     fatigue: 10

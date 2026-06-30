@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "canopy_climbing"
+name: "樹冠攀爬技術"
+description: "掌握利用植物纖維與抓鉤攀爬至史前巨樹頂端的技巧，避開地表巨獸踩踏與掠食的威脅。"
+category: "tools"
+level: 1

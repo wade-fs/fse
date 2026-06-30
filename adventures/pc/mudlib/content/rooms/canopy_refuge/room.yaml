@@ -1,0 +1,52 @@
+short: "樹冠避難所"
+long: "你攀爬到了巨大的桫欏樹頂端。\n周圍是茂密的枝幹與巨大的葉片，腳下的樹幹粗壯如人抱。\n這裡高出地面數十米，視野極佳，能遠眺整個河谷，且避開了地表的意外踩踏威脅。\n然而，高空中的風勢明顯比地面猛烈得多，發出呼呼的嘯聲。"
+monsters: []
+exits:
+  down: "/rooms/jurassic_valley/room"
+
+sensory_signals:
+  smell: "空氣清新，夾雜著高空樹葉的苦澀香氣與水汽。"
+  sound: "風吹過林梢的呼嘯聲，遠方翼龍高亢的啼鳴。"
+  wind:
+    default_msg: "強烈的高空風從西北方刮來，吹得樹梢微微搖晃。"
+    discovery:
+      requires_no_factor: "altitude_wind"
+      set_temp: "observed_wind_altitude"
+      discover_factor: "altitude_wind"
+      msg: "【 🔍 發現 】你靜靜站在高處迎著風，觀察葉片在強風下的彎曲規律。你領悟了『高空風向特徵』！"
+  ground:
+    default_msg: "粗壯的巨樹枝幹，表面覆蓋著厚實的寄生蕨類與垂下的粗藤。"
+    discovery:
+      requires_no_factor: "fiber_strength"
+      set_temp: "found_vines"
+      msg: "【 🔍 發現 】這些垂下的粗藤 (vines) 富含長纖維。你可以將其割下並擰成麻繩以承受巨大重量。（twist vines）"
+
+interactions:
+
+  - action: "twist"
+    target: "vines"
+    prerequisites:
+      temp_state: "found_vines"
+      factor: "flint_knapping"
+    discover_factor: "fiber_strength"
+    success_msg: "你用石刃割下藤蔓，將其表皮剝開取出強韌纖維，然後兩股交錯反向擰緊，編織成了一根極具拉力、粗壯的繩索。你領悟了『纖維編織強度』！"
+    set_temp: "has_strong_rope"
+    fatigue: 10
+
+  - action: "build"
+    target: "platform"
+    prerequisites:
+      temp_state: "has_strong_rope"
+    discover_factor: "structural_load"
+    success_msg: "你挑選了三根呈三角夾角的粗壯主幹，利用編織繩索將橫木緊緊綁定，並鋪設粗枝，完成了一個能承載人體重量的穩固懸空平台。你領悟了『結構承載能力』！"
+    set_temp: "has_platform"
+    fatigue: 15
+
+  - action: "build"
+    target: "shelter"
+    prerequisites:
+      temp_state: "has_platform"
+      factor: "altitude_wind"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】防風力學與避難所建成！\n==================================================\n你在木平台上搭起三角形的抗風框架，並用巨大的桫欏樹葉層層重疊成斜面屋頂，順著西北風向降低風阻。你成功建成了一個安全舒適的避難所！"
+    complete_quest: "build_canopy_shelter"
+    fatigue: 20

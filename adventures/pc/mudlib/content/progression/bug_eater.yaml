@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "bug_eater"
+name: "吃蟲人"
+description: "史前蟲子是唯一的蛋白質來源。你必須學會淨化水源、獵捕巨蟲並將其烤熟食用。"
+spawn_node: "/rooms/triassic_shade/room"
+requires:
+  quests:
+    - "first_meal"
+next: "wind_stalker"

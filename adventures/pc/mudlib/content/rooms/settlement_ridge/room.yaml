@@ -8,7 +8,8 @@ reveal_exits:
   # 領悟符號抽象與文字的雛形後，開啟通往記載歷史的祖先洞穴路徑
   cave:
     dest: "/rooms/ancestor_cave/room"
-    requires_factor: "symbol_abstraction"
+    requires_factor: "pottery_craft"
+    reveal_msg: "你烘烤陶器的裊裊青煙升騰，照亮並指引了通往山頂「祖先洞穴 (cave)」的安全山路！"
 
 sensory_signals:
   smell: "草木灰燼、皮革，以及泥土在火烤後散發出的特有陶土芬芳。"

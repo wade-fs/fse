@@ -6,4 +6,4 @@ spawn_node: "/rooms/triassic_shade/room"
 requires:
   quests:
     - "first_fire"
-next: "survivor"
+next: "bug_eater"

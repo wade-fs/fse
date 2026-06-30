@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "fire_master"
+name: "火的主人"
+description: "你在高聳的翼龍峭壁。你必須學會如何在狂風中構築石圈控制火候，並烹製食物以與翼龍建立信賴關係。"
+spawn_node: "/rooms/pterosaur_cliff/room"
+requires:
+  quests:
+    - "controlled_cooking"
+next: "cretaceous_dawn"

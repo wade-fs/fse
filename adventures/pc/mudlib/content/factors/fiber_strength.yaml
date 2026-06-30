@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "fiber_strength"
+name: "纖維編織強度"
+description: "掌握了通過對多股植物纖維進行編織與扭轉來成倍提升其拉力與承重強度的工藝。"
+category: "tools"
+level: 1

@@ -1,6 +1,9 @@
 short: "背光洞窟陰影"
 long: "你躲入了一處陡峭岩壁下方的深邃陰影中。\n這裡沒有陽光直射，溫度驟降至舒適的 25°C，陰涼的空氣讓你的灼燒感漸漸褪去。\n微風從洞穴深處吹來，帶有一絲濕潤的氣息。\n這裡是你建立臨時避難所的絕佳位置。"
-monsters: []
+monsters:
+  - id: "/monsters/megapede/monster"
+    count: 1
+    respawn: true
 
 environmental_multipliers:
   thirst_decay: 0.5
@@ -28,3 +31,57 @@ interactions:
     fatigue: -20
     hp_change: 20
     repeat_msg: "你在避難所內安靜修整，體力正在逐漸恢復。"
+
+  - action: "rub"
+    target:
+      - "branches roots"
+      - "roots branches"
+    discover_factor: "thermodynamics"
+    success_msg: "你用乾燥的耐旱蕨類根部作為火絨，將松科樹枝摩擦。一堆溫暖的營火生起來了！"
+    set_temp: "has_campfire"
+    fatigue: 10
+
+  - action: "light"
+    target: "campfire"
+    prerequisites:
+      factor: "thermodynamics"
+    success_msg: "你用攜帶的火種點燃了乾枯的蕨類與樹枝，在岩影下升起了一堆溫暖的營火。"
+    set_temp: "has_campfire"
+    fatigue: 5
+
+  - action: "hunt"
+    target: "megapede"
+    prerequisites:
+      factor: "flint_knapping"
+    discover_factor: "arthropod_warning"
+    success_msg: "你注意到巨蜈蚣鮮豔的警戒色，小心地用粗樹枝將其按住，然後用大石遠遠地將其砸死。你安全地避開了毒液，並用石片割下了肥美的蟲肉。"
+    give_item:
+      id: "bug_meat"
+      name: "生蟲肉"
+      desc: "一塊從史前巨蜈蚣身上割下的生蟲肉，看起來肥美多汁，但似乎含有寄生蟲，需要烤熟才能吃。"
+    fatigue: 15
+
+  - action: "roast"
+    target:
+      - "meat"
+      - "bug_meat"
+    prerequisites:
+      temp_state: "has_campfire"
+      factor: "thermodynamics"
+    discover_factor: "arthropod_nutrition"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】蟲肉烤熟與寄生蟲消滅！\n==================================================\n你將生蟲肉穿在木枝上，放在營火上方炙烤。高溫徹底殺死了寄生蟲，油脂的焦香撲鼻而來！"
+    give_item:
+      id: "cooked_meat"
+      name: "烤熟的蟲肉"
+      desc: "一塊烤得金黃焦脆的史前昆蟲肉，香氣撲鼻，安全可食用。"
+    fatigue: 5
+
+  - action: "eat"
+    target:
+      - "cooked_meat"
+      - "meat"
+    prerequisites:
+      factor: "arthropod_nutrition"
+    success_msg: "你咬了一口烤熟的蟲肉，口感爽脆，富含高蛋白質！你的飢餓感瞬間一掃而空。"
+    hunger_change: -80
+    complete_quest: "first_meal"

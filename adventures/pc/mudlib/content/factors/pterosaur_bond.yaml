@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "pterosaur_bond"
+name: "翼龍信賴連結"
+description: "通過熟食餵養與溫和接觸，成功與無齒翼龍建立情感羈絆，並獲得乘坐其飛行的許可。"
+category: "survival"
+level: 2

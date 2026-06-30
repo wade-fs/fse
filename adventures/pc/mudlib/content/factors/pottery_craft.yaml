@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "pottery_craft"
+name: "陶器烘烤工藝"
+description: "掌握了利用高溫將濕黏土焙燒成不溶於水的硬質陶器的物理物理相變規律。"
+category: "tools"
+level: 2

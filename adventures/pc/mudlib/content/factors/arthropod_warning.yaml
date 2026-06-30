@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "arthropod_warning"
+name: "節肢動物警戒色"
+description: "被巨蜈蚣毒液攻擊後領悟。高氧時代節肢動物體型巨大，鮮豔色彩是代表有毒的演化訊號。"
+category: "survival"
+level: 1

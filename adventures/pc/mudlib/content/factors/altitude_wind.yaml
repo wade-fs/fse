@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "altitude_wind"
+name: "高空風向特徵"
+description: "領悟到高空中的風速與風向特徵與地面完全不同，這對搭建防風的高空避難所至關重要。"
+category: "tools"
+level: 1

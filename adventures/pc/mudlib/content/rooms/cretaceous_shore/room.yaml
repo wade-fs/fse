@@ -1,13 +1,35 @@
 short: "白堊紀海岸"
-long: "你從高空降落在一片開闊的白堊紀沙灘上。\n天空呈現出明亮的湛藍色，空氣無比清澈，每一口呼吸都讓你感到神清氣爽。\n沙灘一側延伸至無垠的古地中海，另一側則是生機勃勃的被子植物灌木叢，開滿了史前最早的原始花朵。"
-monsters: []
+long: "你從高空降落在一片開闊的白堊紀沙灘上。\n天空呈現出明亮的湛藍色，空氣無比清澈，每一口呼吸都讓你感到神清氣爽。\n此時，一隻龐大如山的霸王龍正在前方沙灘上徘徊，震耳欲聾的低吼聲在海岸迴盪。\n沙灘一側延伸至無垠的古地中海，另一側則是開滿原始花朵的灌木叢。"
+monsters:
+  - id: "/monsters/tyrannosaurus/monster"
+    count: 1
+    respawn: true
 exits:
   back: "/rooms/pterosaur_cliff/room"
-  flats: "/rooms/salt_flats/room"
-  ridge: "/rooms/settlement_ridge/room"
+
+reveal_exits:
+  flats:
+    dest: "/rooms/salt_flats/room"
+    requires_factor: "tyrex_senses"
+    reveal_msg: "避開了霸王龍的注意後，通往「鹽灘 (flats)」的路徑安全地展現了出來！"
+  ridge:
+    dest: "/rooms/settlement_ridge/room"
+    requires_factor: "tyrex_senses"
+    reveal_msg: "避開了霸王龍的注意後，通往「聚落山脊 (ridge)」的安全通道展現了出來！"
 
 sensory_signals:
-  smell: "微鹹的海風，混雜著大量針葉林與原始花卉散發出的淡淡花香。"
-  sound: "規律的浪濤拍擊沙灘的聲音，遠處叢林傳來陣陣清脆的鳥鳴。"
-  wind: "溫和的海陸風交替吹拂，令人感到十分舒適。"
-  ground: "細軟且潔白如雪的沙灘，混雜著許多貝殼殘骸與被沖上岸的巨型木炭碎片。"
+  smell: "微鹹的海風，夾雜著霸王龍口中噴出的令人窒息的血腥惡臭。"
+  sound: "霸王龍每一步落在沙灘上時，地表傳來的劇烈震動與沙沙聲。"
+  wind: "海陸風猛烈吹拂，海風自海面吹向內陸（此處正好為下風處，有利於隱蔽氣味）。"
+  ground:
+    default_msg: "細軟且潔白如雪的沙灘，混雜著被海水沖刷的貝殼與巨型木炭碎片。"
+    discovery:
+      requires_no_factor: "tyrex_senses"
+      msg: "【 🔍 發現 】沙灘上留有霸王龍無比巨大的足跡。\n在空氣含氧量高達 30% 的白堊紀，掠食者的體量達到了演化頂峰。\n💡 提示：霸王龍的動作敏感度極高，你需要比面對異特龍時更加靜止，且絕不能處於上風處！（freeze）"
+
+interactions:
+  - action: "freeze"
+    discover_factor: "tyrex_senses"
+    complete_quest: "survive_tyrex"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】動作敏感與霸王龍感知矛盾！\n==================================================\n你屏住呼吸，完全靜止，如同一塊死木般矗立在下風處的岩影中。\n霸王龍龐大的陰影掠過你，巨大的腳掌擦過你身邊，但牠動作敏感的視覺完全忽視了你的存在，隨後緩緩咆哮著走向別處。"
+    fatigue: 10

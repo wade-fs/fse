@@ -1,24 +1,73 @@
 short: "翼龍峭壁"
-long: "你站在高聳入雲的紅色砂岩峭壁邊緣。\n強烈的高空氣流在此呼嘯，發出震耳欲聾的怒吼聲。\n峭壁的岩縫中築有許多巨大的巢穴，幾隻翼展超過 8 米的翼龍（Pteranodon）在空中盤旋盤旋，偶爾落在崖邊打量著你。"
+long: "你站在高聳入雲的紅色砂岩峭壁邊緣。\n強烈的高空氣流在此呼嘯，發出震耳欲聾的怒吼聲。\n峭壁的岩縫中築有許多巨大的巢穴，幾隻翼展超過 8 米的翼龍（Pteranodon）在空中盤盤旋，偶爾落在崖邊打量著你。"
 monsters: []
 exits:
   back: "/rooms/migration_trail/room"
 
 reveal_exits:
-  # 與翼龍建立信賴關係後，藉由牠的雙翼滑翔，越過廣袤荒原，降落至白堊紀海岸
   shore:
     dest: "/rooms/cretaceous_shore/room"
     requires_factor: "pterosaur_bond"
+    reveal_msg: "你與翼龍建立了深厚的信賴，翼龍展翅俯下身，示意你坐上牠的脊背，帶領你乘風飛躍深谷，進入了「白堊紀海岸 (shore)」！"
 
 sensory_signals:
   smell: "刺鼻的鳥糞石氣味，夾雜著高空冷冽而乾淨的空氣。"
   sound: "風在耳邊尖銳地呼嘯，伴隨著翼龍掠過頭頂時雙翼震動空氣的啪啪聲。"
   wind: "極其猛烈的高空強風，幾乎要把你吹落懸崖。"
-  ground: "光滑且被風蝕嚴重的岩石邊緣，地面殘留著幾根粗糙發灰的巨大羽毛與吃剩的魚骨。"
+  ground:
+    default_msg: "光滑且被風蝕嚴重的岩石邊緣，地面殘留著幾根粗糙發灰的巨大羽毛與吃剩的魚骨。"
+    discovery:
+      requires_no_factor: "fire_control"
+      set_temp: "observed_cliff"
+      msg: "【 🔍 發現 】在峭壁的避風岩縫中，有許多碎石 (stones) 與幾隻快速爬行的小型蜥蜴 (lizard)。\n在高空狂風中生火極易失控或熄滅，你需要利用石塊搭建一個安全的控火圈（build fire_ring）。"
 
 interactions:
+  - action: "build"
+    target: "fire_ring"
+    discover_factor: "fire_control"
+    success_msg: "你收集了幾塊沉重的砂岩石，在避風處圍成一個圓圈，清除了圈內的所有易燃羽毛與碎屑。一個安全的「石圈控火營地 (fire_ring)」建成了！你領悟了『控火與熱隔離』。"
+    set_temp: "has_fire_ring"
+    fatigue: 10
+
+  - action: "light"
+    target: "fire"
+    prerequisites:
+      temp_state: "has_fire_ring"
+      factor: "thermodynamics"
+    success_msg: "你用火種將松枝引燃並置於石圈中央，營火在石塊遮擋下穩定燃燒，熱量被完美局限在石圈內。"
+    set_temp: "has_safe_fire"
+    fatigue: 5
+
+  - action: "hunt"
+    target: "lizard"
+    prerequisites:
+      factor: "flint_knapping"
+    success_msg: "你放輕腳步，猛地用石刃將一隻爬行的蜥蜴擊殺，割下了生蜥蜴肉。"
+    give_item:
+      id: "raw_meat"
+      name: "生蜥蜴肉"
+      desc: "一塊新鮮的蜥蜴肉，需要烤熟才能食用。"
+    fatigue: 10
+
+  - action: "roast"
+    target:
+      - "meat"
+      - "raw_meat"
+    prerequisites:
+      temp_state: "has_safe_fire"
+      factor: "thermodynamics"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】控火烹飪與熟食安全！\n==================================================\n你將蜥蜴肉串在細枝上，置於石圈營火旁慢火烘烤。肉香四溢，高溫將所有寄生菌徹底滅殺！你掌握了在狂風中控制火候的烹飪技術。"
+    complete_quest: "controlled_cooking"
+    give_item:
+      id: "cooked_meat"
+      name: "烤熟的蜥蜴肉"
+      desc: "烤得金黃焦脆的史前蜥蜴肉，香氣撲鼻，可以用來食用或餵食翼龍。"
+    fatigue: 10
+
   - action: "feed"
     target: "pterosaur"
-    success_msg: "你從背包中拿出在河谷捕獲的新鮮史前魚類，緩步走近一隻落單的年輕翼龍。\n翼龍警惕地歪了歪頭，隨後快速啄走魚肉吞下。牠收起雙翼，發出一聲溫和的鳴叫，甚至允許你輕輕撫摸牠粗糙的皮質雙翼！\n💡 成功建立信賴！這隻翼龍願意帶你越過原本無法逾越的深谷峭壁。"
+    prerequisites:
+      factor: "fire_control"
     discover_factor: "pterosaur_bond"
+    success_msg: "你拿著烤得焦香的蜥蜴肉緩步走近崖邊的無齒翼龍。\n翼龍聳了聳鼻子，被這奇特的熟食香氣深深吸引，興奮地一伸脖子將肉叼走吞下！\n牠發出歡快的鳴叫，溫順地低下頭貼在你的身側，示意你爬上牠的脊背。"
     fatigue: 15

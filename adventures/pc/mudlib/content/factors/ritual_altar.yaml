@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "ritual_altar"
+name: "儀式祭壇構築"
+description: "建立了聚集族人凝聚共識與傳承記憶的祭祀場所，象徵著秩序在混亂的自然熵增中誕生。"
+category: "survival"
+level: 3

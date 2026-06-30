@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "cretaceous_dawn"
+name: "白堊紀黎明"
+description: "你成功抵達了白堊紀。在這裡，大氣氧氣含量達到了失控的 30%，終極掠食者霸王龍主宰著一切。你必須學會如何在牠的眼皮底下生存。"
+spawn_node: "/rooms/cretaceous_shore/room"
+requires:
+  quests:
+    - "survive_tyrex"
+next: "last_stand"

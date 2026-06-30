@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "structural_load"
+name: "結構承載能力"
+description: "領悟到搭建平台時的支撐力學與重量承載極限，避免避難所因結構脆弱而發生斷裂墜毀。"
+category: "tools"
+level: 1

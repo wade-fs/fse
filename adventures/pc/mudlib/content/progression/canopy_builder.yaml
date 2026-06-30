@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "canopy_builder"
+name: "樹冠建築師"
+description: "你在高聳的巨樹頂部。你必須掌握防風力學與結構承重，搭建一個安全的樹冠避難所。"
+spawn_node: "/rooms/canopy_refuge/room"
+requires:
+  quests:
+    - "build_canopy_shelter"
+next: "allosaurus_gauntlet"

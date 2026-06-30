@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "last_stand"
+name: "最後的文明"
+description: "天空中亮起了第二顆太陽。末日即將降臨，世界面臨重置。你必須在洞穴內築起祭壇並刻下最後的記憶，對抗大自然無情的熵增。"
+spawn_node: "/rooms/ancestor_cave/room"
+requires:
+  quests:
+    - "against_entropy"
+next: ""

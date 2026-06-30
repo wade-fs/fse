@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "fire_control"
+name: "控火與熱隔离"
+description: "領悟到火具有蔓延引燃的熵增危險，學會使用石圈與隔離帶將火控制在安全範圍內。"
+category: "tools"
+level: 2

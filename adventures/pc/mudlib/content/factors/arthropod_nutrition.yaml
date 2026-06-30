@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "arthropod_nutrition"
+name: "昆蟲蛋白質"
+description: "烤熟並吃下第一隻蟲後領悟。史前昆蟲是唯一可靠的蛋白質來源，但必須加熱以殺死寄生蟲。"
+category: "survival"
+level: 1

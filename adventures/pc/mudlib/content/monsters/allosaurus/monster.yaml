@@ -1,0 +1,10 @@
+name: "異特龍"
+max_hp: 200
+attack: 35
+defense: 5
+level: 5
+exp_value: 100
+respawn_delay: 60
+combat_interval: 2
+short_desc: "一隻體型龐大且極度危險的侏羅紀掠食者——異特龍。"
+long_desc: "這是一隻身形矯健、長著雙頜利齒與發達後肢的異特龍。牠的雙眼緊盯著任何晃動的物體，敏銳的雙耳捕捉著地表的微小震動，嗅覺也極其靈敏。正面戰鬥必死無疑。"

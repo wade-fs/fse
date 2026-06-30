@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: "allosaurus_gauntlet"
+name: "異特龍考驗"
+description: "異特龍在走廊中巡邏。你必須靈活運用逆風與靜止偽裝，安全繞過牠的領地。"
+spawn_node: "/rooms/migration_trail/room"
+requires:
+  quests:
+    - "cross_allosaurus_territory"
+next: "fire_master"
