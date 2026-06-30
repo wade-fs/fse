@@ -8,6 +8,7 @@ reveal_exits:
   canyon:
     dest: "/rooms/predator_canyon/room"
     requires_factor: "flint_knapping"
+    reveal_msg: "在森林深處，一堵由粗壯荊棘組成的天然屏障擋在路前。\n現在，你可以用手中鋒利的黑曜石片將其割開了！"
 
 sensory_signals:
   smell: "濃厚的腐植土氣味中，隱隱有一絲雨水的清新。"

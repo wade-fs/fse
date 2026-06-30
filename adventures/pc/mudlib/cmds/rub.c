@@ -70,8 +70,7 @@ void main(object me, string arg) {
         tell_object(me, YEL + "🔥 一堆小小的營火在你面前升起，驅散了黑暗與寒冷。\n" + NOR);
         room->set_long(room->query_long() + "\n" + YEL + "🔥 一堆營火在中央跳動著，照亮了原本黑暗的世界邊緣。" + NOR);
 
-        // 營火 Reveal 了新路徑（由 YAML 動態計算，這裡只印出提示）
-        tell_object(me, GRN + "\n【 🌲 顯現 (Reveal) 】在營火跳躍的火光下，遠方原本漆黑模糊的「蕨類森林 (forest)」路徑清晰地展現了出來！\n" + NOR);
+        // 營火 Reveal 了新路徑（由 YAML 動態計算與 user.c 自動輸出，這裡只提供後續引導）
         tell_object(me, YEL + "\n💡 你可以輸入 [ look ] 查看目前狀態與出口，或輸入 [ go forest ] 向蕨類森林前進。\n" +
             "   ⚠️  但是——你先前 focus smell 感知到了腥臭氣味，還有風向的問題...\n" +
             "   也許你應該先弄清楚：風在把你的氣味帶往哪裡？(focus wind)\n" + NOR);

@@ -200,4 +200,23 @@ string query_sensory_signal(object player, string sense) {
     return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
 }
 
+// 🌟 FSE 核心 Reveal 機制：主動檢索是否有新出口因解鎖 factor 而顯現，並回傳其配置的提示字句
+string *check_new_reveals(object player, string newly_discovered_factor) {
+    mapping config = query_virtual_config();
+    string *msgs = ({});
+    if (config) {
+        mapping reveal_exits = config["reveal_exits"];
+        if (reveal_exits) {
+            foreach (string dir, mapping data in reveal_exits) {
+                if (data["requires_factor"] == newly_discovered_factor) {
+                    string msg = data["reveal_msg"] || ("通往「" + dir + "」的路徑顯現了出來！");
+                    msgs += ({ msg });
+                }
+            }
+        }
+    }
+    return msgs;
+}
+
+
 

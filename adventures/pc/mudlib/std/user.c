@@ -55,6 +55,17 @@ void discover_factor(string fid, mapping metadata) {
     if (!factors) factors = ([]);
     factors[fid] = metadata;
     save_state();
+
+    // 🌟 FSE 核心機制：自動檢測當前房間是否因為這個 factor 的解鎖而產生了新 Reveal 出口
+    object room = environment(this_object());
+    if (room && function_exists("check_new_reveals", room)) {
+        string *reveals = room->check_new_reveals(this_object(), fid);
+        if (sizeof(reveals) > 0) {
+            foreach (string msg in reveals) {
+                tell_object(this_object(), GRN + "\n【 🌲 顯現 (Reveal) 】" + msg + "\n" + NOR);
+            }
+        }
+    }
 }
 
 // 疲勞與 Entropy 控制

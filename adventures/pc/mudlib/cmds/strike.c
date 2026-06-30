@@ -61,9 +61,7 @@ void main(object me, string arg) {
         me->set_temp("has_sharp_obsidian", 1);
         tell_object(me, YEL + "🔪 你獲得了 [ 鋒利的黑曜石片 ]。它可以用來切割堅韌的史前植物藤蔓。\n" + NOR);
 
-        // 揭示通往峽谷的路徑（由 YAML 動態計算，這裡只印出提示）
-        tell_object(me, GRN + "\n【 🌲 顯現 (Reveal) 】在森林深處，一堵由粗壯荊棘組成的天然屏障擋在路前。\n" +
-            "現在，你可以用手中鋒利的黑曜石片將其割開了！\n" + NOR);
+        // 揭示通往峽谷的路徑（由 YAML 動態計算與 user.c 自動輸出，這裡只提供後續引導）
         tell_object(me, YEL + "💡 輸入 [ go canyon ] 前往捕食者峽谷。\n" + NOR);
 
     } else {

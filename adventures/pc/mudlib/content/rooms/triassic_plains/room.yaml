@@ -11,6 +11,7 @@ reveal_exits:
   forest:
     dest: "/rooms/fern_forest/room"
     requires_factor: "thermodynamics"
+    reveal_msg: "在營火跳躍的火光下，遠方原本漆黑模糊的「蕨類森林 (forest)」路徑清晰地展現了出來！"
 
 sensory_signals:
   smell: "一陣潮濕的風吹來，夾雜著令人作嘔的腥臭味，彷彿是某種腐肉與巨獸口水混合的氣息。"
