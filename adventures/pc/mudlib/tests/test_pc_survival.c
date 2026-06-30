@@ -280,15 +280,31 @@ int run_all_tests() {
     }
     player->force_me("eat cooked_meat");
     
-    // 手動觸發進度檢查以鏈接升級（因為 wind_stalker 需要的 first_escape 已經在先前完成了）
+    // 食用熟肉後進度檢查，晉升至 wind_stalker
     pm->check_player_stage_advancement(player, "main");
-    
-    // 驗證是否前進至 wind_stalker (因為 first_escape 在 novice 完成，這會進一步連帶升級至 jurassic_arrival)
-    if (pm->query_current_stage(player, "main") != "jurassic_arrival") {
-        write(HIR "❌ 測試 13 失敗: 完成第一頓飯後未晉升至 jurassic_arrival 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+    if (pm->query_current_stage(player, "main") != "wind_stalker") {
+        write(HIR "❌ 測試 13 失敗: 完成第一頓飯後未晉升至 wind_stalker 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
         return 1;
     }
-    write(HIG "  ✓ 通過: 成功獵捕巨蜈蚣、生火烘烤與食用熟肉，順利晉級侏羅紀階段。\n" NOR);
+    
+    // 前往史前河床，透過專注聲音 (focus sound) 領悟 vibration_translation
+    object riverbed = load_object("/rooms/triassic_riverbed/room");
+    move_object(player, riverbed);
+    riverbed->enter(player);
+    player->force_me("focus sound");
+    
+    if (!player->has_factor("vibration_translation")) {
+        write(HIR "❌ 測試 13 失敗: 專注聲音後未能領悟 vibration_translation！\n" NOR);
+        return 1;
+    }
+    
+    // 領悟後進度檢查，晉升至 jurassic_arrival
+    pm->check_player_stage_advancement(player, "main");
+    if (pm->query_current_stage(player, "main") != "jurassic_arrival") {
+        write(HIR "❌ 測試 13 失敗: 領悟震動翻譯後未晉升至 jurassic_arrival 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功獵捕巨蜈蚣、食熟肉，並前往河床觀察地鳴震動，順利解鎖震動翻譯並晉級侏羅紀階段。\n" NOR);
 
     // ----------------------------------------------------
     // 🧪 測試 14：驗證 jurassic_arrival 階段（製作抓鉤並爬樹）

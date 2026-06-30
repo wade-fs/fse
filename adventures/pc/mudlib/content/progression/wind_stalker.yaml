@@ -1,9 +1,9 @@
 version: "1.0"
 stage_id: "wind_stalker"
 name: "風中潛行者"
-description: "你遭遇了大型捕食者赫氏翼龍/赫氏鱷。利用風向與地面震動特徵，你必須成功逃過獵殺。"
+description: "遭遇了大型捕食者赫氏翼龍/赫氏鱷。利用風向與地面震動特徵，你必須成功逃過獵殺。"
 spawn_node: "/rooms/predator_canyon/room"
 requires:
-  quests:
-    - "first_escape"
+  factors:
+    - "vibration_translation"
 next: "jurassic_arrival"

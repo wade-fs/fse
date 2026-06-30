@@ -98,11 +98,19 @@ mudlib/cmds/player/(若有 kill.c / combat 指令)  → 移除
 
 ## 待辦
 
-- [ ] 撰寫 `std/creature.c`
-- [ ] 將 `herrerasaurus` 從 monster.yaml 遷移到 creature.yaml
-- [ ] 確認 `proto_chicken` 的教學用途，決定保留或移除
-- [ ] 移除 `cmds/player/` 下任何戰鬥相關指令（若存在）
-- [ ] 更新 `mudlib/tests/test_pc_survival.c`，移除戰鬥測試案例，改測偵測/閃避流程
+- [x] 撰寫 `std/presence.c` (原規劃 `creature.c`)
+- [x] 將所有掠食者從 monster 遷移至 presence 結構與 yaml
+- [x] 確認並移除無教學用途的裝飾性生物 `proto_chicken`
+- [x] 移除或停用所有戰鬥與傷害指令
+- [x] 更新 `mudlib/tests/test_pc_survival.c` 涵蓋非戰鬥偵測/避讓流程
+
+## 補充：即死危害（Instakill）與 FSE 試錯學習之協調
+
+在 `presence.yaml` 配置中，某些極端掠食者（例如霸王龍 `tyrannosaurus`）的偵測失敗後果被設定為 `hp_change: -100`（即死）。
+這與 FSE 「失敗是用來學習（Fail to Learn）」的精神並不衝突，其背後的協調機制如下：
+1. **物理合理性**：在此類壓倒性威脅面前，正面暴露等同於物理上的絕對毀滅。
+2. **仍會觸發困惑**：即使一擊必殺，Presence 偵測失敗仍會向玩家標記對應的 `Confusion` 狀態（如 `caught_by_predator`）。
+3. **墓地重置與反思**：配合資料驅動的階段性墓地復活（Stage Respawn），玩家在當前地質時代的起點重生並帶有該「困惑」提示。這促使玩家停止採用「強行試錯扣血」的蠻幹打法，轉而尋求徹底規避偵測（例如透過靜止偽裝 `freeze` 獲得 `tyrex_senses`）的正確發現路徑。
 
 ## 相關文件
 

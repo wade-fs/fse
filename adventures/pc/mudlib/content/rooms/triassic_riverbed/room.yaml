@@ -10,7 +10,12 @@ exits:
 
 sensory_signals:
   smell: "一陣微風吹過，夾雜著水窪中藻類與腐爛植物的強烈腥臭味。"
-  sound: "除了偶爾有碎石滑落的聲音外，周圍十分安靜。"
+  sound:
+    default_msg: "除了偶爾有碎石滑落的聲音外，周圍十分安靜。"
+    discovery:
+      requires_no_factor: "vibration_translation"
+      discover_factor: "vibration_translation"
+      msg: "【 🔍 發現 】你靜靜趴在乾涸的河床上，閉上雙眼。透過堅硬的卵石地表，你感知到了微弱而規律的低頻震動。你領悟了『地面震動翻譯 (vibration_translation)』！"
   wind: "東南風吹拂，將渾濁的水汽吹向河谷上方。"
   ground:
     default_msg: "乾涸開裂的河泥與散落的卵石，邊緣長有一些帶有厚重蠟質的史前蕨類植物。"
