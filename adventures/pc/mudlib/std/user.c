@@ -79,12 +79,7 @@ void on_death(string reason) {
     fatigue = 0;
     save_state();
 
-<<<<<<< HEAD
     object room = load_object("/rooms/triassic_plains/room");
-
-=======
-    object room = load_object("/rooms/triassic_plains");
->>>>>>> e123877
     if (room) {
         move_object(this_object(), room);
     }
@@ -159,12 +154,7 @@ void new_password(string pwd) {
 }
 
 void _enter_world() {
-<<<<<<< HEAD
     object room = load_object("/rooms/triassic_plains/room");
-
-=======
-    object room = load_object("/rooms/triassic_plains");
->>>>>>> e123877
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());
@@ -195,14 +185,16 @@ mixed process_input(string cmd) {
         return 1;
     }
 
-    object cmd_ob = load_object("/cmds/" + verb + ".c");
-    if (cmd_ob) {
-        cmd_ob->main(this_object(), arg);
-        return 1;
+    string cmd_path = "/cmds/" + verb + ".c";
+    if (file_size(cmd_path) > 0) {
+        object cmd_ob = load_object(cmd_path);
+        if (cmd_ob) {
+            cmd_ob->main(this_object(), arg);
+            return 1;
+        }
     }
     write("你感到迷茫，不知道如何做出這個動作。(" + verb + ")\n");
     return 0;
 }
 
 int force_me(string cmd) { return process_input(cmd); }
-

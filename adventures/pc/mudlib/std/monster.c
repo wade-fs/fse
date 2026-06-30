@@ -87,10 +87,12 @@ void on_death(object killer) {
         }
         room->leave(this_object());
     }
-    // 通知殺手
+    // 戰鬥求生領悟邏輯
     if (killer && objectp(killer)) {
-        killer->gain_exp(exp_value, this_object());
+        // 在新 FSE 精神下，戰鬥結束僅發送事件，或扣減疲勞，不使用傳統 EXP
+        killer->add_fatigue(10); // 戰鬥消耗疲勞
     }
+
     // 排程重生
     if (respawn_room != "") {
         call_out("respawn", respawn_delay);

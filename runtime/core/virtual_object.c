@@ -23,6 +23,9 @@ void setup_virtual(string prefix, string config_file) {
         if (strsrch(base_name, "#") != -1) {
             base_name = explode(base_name, "#")[0];
         }
+        // 去除可能的 .c 後綴
+        if (sscanf(base_name, "%s.c", base_name)) {}
+
 
         // 如果傳入了特定的 config_file (例如 node.yaml)，且檔案名稱等於 config_file (例如 /nodes/loop_swamp/node)
         // 則 ID 取上一層目錄名稱
@@ -38,7 +41,6 @@ void setup_virtual(string prefix, string config_file) {
         }
 
         string yaml_content = read_file(yaml_path);
-        
         if (yaml_content) {
             mixed err = catch(virtual_config = yaml_decode(yaml_content));
             if (err) {
@@ -47,6 +49,8 @@ void setup_virtual(string prefix, string config_file) {
         }
     }
 }
+
+
 
 mapping query_virtual_config() { return virtual_config; }
 string query_virtual_dir() { return virtual_dir; }

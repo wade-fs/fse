@@ -21,9 +21,9 @@ void create() {
     setup_virtual("rooms", "room.yaml");
     
     mapping config = query_virtual_config();
-    write("DEBUG: loaded config is " + sprintf("%O", config) + "\n");
     if (config) {
         if (config["short"]) set_short(config["short"]);
+
         if (config["long"]) set_long(config["long"]);
 
 
@@ -160,8 +160,9 @@ string query_sensory_signal(object player, string sense) {
         player->set_temp("found_roots", 1);
         return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
                YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
-               "這些根部極度乾燥且富含纖維，或許是絕佳的引火火種 (kindling)！" + NOR;
+               "這些根部極度乾燥且富含纖維。你可以嘗試將它們與這片荒野隨處可見的松科樹枝 (branches) 劇烈摩擦 (rub) 來產生火花！" + NOR;
     }
+
 
     return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
 }
