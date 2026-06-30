@@ -79,8 +79,12 @@ void on_death(string reason) {
     fatigue = 0;
     save_state();
 
+<<<<<<< HEAD
     object room = load_object("/rooms/triassic_plains/room");
 
+=======
+    object room = load_object("/rooms/triassic_plains");
+>>>>>>> e123877
     if (room) {
         move_object(this_object(), room);
     }
@@ -155,8 +159,12 @@ void new_password(string pwd) {
 }
 
 void _enter_world() {
+<<<<<<< HEAD
     object room = load_object("/rooms/triassic_plains/room");
 
+=======
+    object room = load_object("/rooms/triassic_plains");
+>>>>>>> e123877
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());

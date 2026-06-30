@@ -21,9 +21,11 @@ void create() {
     setup_virtual("rooms", "room.yaml");
     
     mapping config = query_virtual_config();
+    write("DEBUG: loaded config is " + sprintf("%O", config) + "\n");
     if (config) {
         if (config["short"]) set_short(config["short"]);
         if (config["long"]) set_long(config["long"]);
+
 
         // 解析出口
         mapping ex = config["exits"];

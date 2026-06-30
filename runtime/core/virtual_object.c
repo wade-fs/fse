@@ -5,7 +5,8 @@
 // 提供虛擬路徑解析與資料驅動 (YAML) 的通用基礎
 
 private string virtual_dir;
-private mapping virtual_config;
+protected mapping virtual_config;
+
 
 // 初始化虛擬物件 (解析路徑、讀取 yaml 等)
 // prefix: 虛擬路徑的類型，例如 "nodes", "monsters"
