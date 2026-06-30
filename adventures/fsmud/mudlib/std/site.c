@@ -33,6 +33,7 @@ private string settlement_id;        // 所屬聚落 id
 private int    is_heritage;          // 1=歷史保護區，禁止破壞性操作
 private mapping neighbors;           // 鄰近可 travel 的地點
                                      // ([ "方向描述": "site_or_settlement_id" ])
+private nosave mixed *interactions;   // 🚀 新增：離散互動宣告層
 
 // ── 玩家追蹤 ──────────────────────────────────────────
 private nosave mapping occupants;    // ([ player_id: player_ob ])
@@ -43,6 +44,7 @@ void create() {
     reveal_layer::create();
     occupants  = ([]);
     neighbors  = ([]);
+    interactions = ({});
     is_heritage = 0;
     era_id     = "modern";
     set_entity_type("site");
@@ -104,6 +106,11 @@ void setup_from_yaml(mapping data) {
         foreach (mapping layer in data["reveal_layers"]) {
             add_reveal_layer(layer);
         }
+    }
+
+    // 🚀 核心修改：載入 YAML 離散互動定義
+    if (pointerp(data["interactions"])) {
+        interactions = data["interactions"];
     }
 }
 
@@ -530,6 +537,143 @@ int npc_visible_to_player(object player, string npc_id) {
     mapping revealed = resolve_reveals(player);
     if (revealed && pointerp(revealed["npcs"])) {
         return member_array(npc_id, revealed["npcs"]) != -1;
+    }
+    return 0;
+}
+
+// ── 🚀 新增：離散物理宣告交互引擎 ───────────────────────────
+void init() {
+    add_action("do_site_interaction", "");
+}
+
+int do_site_interaction(string arg) {
+    string action = query_verb();
+    if (!interactions || !sizeof(interactions)) return 0;
+    
+    int has_action = 0;
+    foreach (mapping act in interactions) {
+        if (act["action"] == action) {
+            has_action = 1;
+            break;
+        }
+    }
+    
+    if (!has_action) return 0;
+    
+    if (arg) {
+        while (strlen(arg) > 0 && arg[0] == ' ') arg = arg[1..];
+        while (strlen(arg) > 0 && arg[strlen(arg)-1] == ' ') arg = arg[0..strlen(arg)-2];
+    } else {
+        arg = "";
+    }
+    
+    return resolve_interaction(this_player(), action, arg);
+}
+
+int resolve_interaction(object player, string action, string target) {
+    if (!interactions || !sizeof(interactions) || !player) return 0;
+
+    foreach (mapping act in interactions) {
+        int target_matched = 0;
+        mixed t_cfg = act["target"];
+
+        if (act["action"] == action) {
+            if (undefinedp(t_cfg) || !t_cfg || t_cfg == "") {
+                if (undefinedp(target) || !target || target == "") {
+                    target_matched = 1;
+                }
+            } else if (stringp(t_cfg) && t_cfg == target) {
+                target_matched = 1;
+            } else if (arrayp(t_cfg) && member_array(target, t_cfg) != -1) {
+                target_matched = 1;
+            }
+        }
+
+        if (target_matched) {
+            string success_factor = act["discover_factor"];
+            if (success_factor && FOOTPRINT_D->has_footprint(player, success_factor)) {
+                string repeat_msg = act["repeat_msg"] || "你已經熟練地掌握了這個動作的要領，不需要再重試。";
+                tell_object(player, YEL + repeat_msg + "\n" + NOR);
+                return 1;
+            }
+
+            mapping prereqs = act["prerequisites"];
+            int passed = 1;
+            if (prereqs) {
+                string req_temp = prereqs["temp_state"];
+                if (req_temp && !player->query_temp(req_temp)) passed = 0;
+
+                string req_factor = prereqs["factor"];
+                if (req_factor && !FOOTPRINT_D->has_footprint(player, req_factor)) passed = 0;
+
+                string req_item = prereqs["item"];
+                if (req_item) {
+                    object *inv = all_inventory(player);
+                    int has_it = 0;
+                    foreach (object ob in inv) {
+                        if (ob->query_key_id() == req_item || ob->query_id() == req_item) {
+                            has_it = 1;
+                            break;
+                        }
+                    }
+                    if (!has_it) passed = 0;
+                }
+            }
+
+            if (passed) {
+                if (act["success_msg"]) {
+                    tell_object(player, HIG + act["success_msg"] + "\n" + NOR);
+                }
+
+                string set_temp = act["set_temp"];
+                if (set_temp) player->set_temp(set_temp, 1);
+
+                if (success_factor) {
+                    FOOTPRINT_D->grant_footprint(player, success_factor);
+                }
+
+                string comp_quest = act["complete_quest"];
+                if (comp_quest) {
+                    QUEST_D->complete_quest(player, comp_quest);
+                }
+
+                int hp_change = act["hp_change"];
+                if (hp_change) {
+                    if (hp_change < 0) player->take_damage(-hp_change);
+                    else player->heal_hp(hp_change);
+                }
+
+                mapping give_item = act["give_item"];
+                if (give_item) {
+                    object ob = clone_object("/std/item.c");
+                    if (ob) {
+                        ob->set_key_id(give_item["id"] || "item");
+                        ob->set_name(give_item["name"] || "未知物品");
+                        ob->set_long(give_item["desc"] || "無詳細描述。");
+                        int base_dur = give_item["durability"];
+                        if (base_dur > 0) {
+                            ob->set_durability(base_dur);
+                        }
+                        ob->move(player);
+                        tell_object(player, HIY + "🎁 你獲得了物品：[" + ob->query_name() + "]。\n" + NOR);
+                    }
+                }
+
+            } else {
+                if (act["failure_msg"]) {
+                    tell_object(player, RED + act["failure_msg"] + "\n" + NOR);
+                }
+
+                string conf = act["trigger_confusion"];
+                if (conf) player->player_confused(conf);
+
+                int fail_hp = act["fail_hp"];
+                if (fail_hp && fail_hp < 0) {
+                    player->take_damage(-fail_hp);
+                }
+            }
+            return 1;
+        }
     }
     return 0;
 }
