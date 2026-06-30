@@ -1,7 +1,7 @@
 // std/living.c - 所有活物（玩家、NPC）的基底類別
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/container.c";
 inherit "/std/interactive.c";

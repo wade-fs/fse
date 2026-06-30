@@ -1,6 +1,6 @@
 // /cmds/admin/cmd_rmdir.c
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 int main(object me, string verb, string arg) {

@@ -1,6 +1,6 @@
 // /cmds/score.c  (史前文明 PC)
 // score — 顯示玩家目前的狀態 (符合 FSE 精神)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

@@ -1,7 +1,7 @@
 // /cmds/cmd_learn.c
 // 學習指令：向 NPC 學習技能
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

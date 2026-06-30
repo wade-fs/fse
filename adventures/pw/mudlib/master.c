@@ -1,5 +1,5 @@
 // /master.c (PW 冒險總管)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/secure/valid.c";
 

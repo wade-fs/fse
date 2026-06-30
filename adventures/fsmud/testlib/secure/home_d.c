@@ -2,7 +2,7 @@
 // Home Daemon: 管理玩家的個人空間 ($HOME)
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

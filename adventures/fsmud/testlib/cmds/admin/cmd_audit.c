@@ -5,7 +5,7 @@
 //   audit errors              (查詢系統錯誤日誌)
 //   audit status              (查詢當前 MUD 記憶體與執行狀態)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

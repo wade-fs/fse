@@ -1,7 +1,7 @@
 // /cmds/cmd_sleep.c
 // 延遲指令，常用於自動化測試中的時間停頓
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 int main(object me, string verb, string arg) {

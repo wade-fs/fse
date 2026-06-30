@@ -1,7 +1,7 @@
 // /std/living.c  (史前文明 PC)
 // 所有生命體（玩家、怪物）的共用基底
 // 提供：名稱、HP、攻擊、防禦、戰鬥狀態
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 private string name;         // 顯示名稱

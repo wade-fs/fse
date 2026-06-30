@@ -1,7 +1,7 @@
 // /std/test_case.c
 // 測試案例基底類別
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object.c";
 

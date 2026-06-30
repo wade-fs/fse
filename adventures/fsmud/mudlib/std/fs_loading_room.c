@@ -2,7 +2,7 @@
 // 玩家進入遠端出口時，等待遠端 room 資料的臨時房間
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/room.c";
 

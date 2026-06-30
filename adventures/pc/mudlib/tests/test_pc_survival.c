@@ -1,6 +1,6 @@
 // /adventures/pc/mudlib/tests/test_pc_survival.c
 // PC (史前文明) 生存閉環整合測試套件
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 int run_all_tests() {

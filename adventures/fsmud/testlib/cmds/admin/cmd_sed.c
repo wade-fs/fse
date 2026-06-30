@@ -2,7 +2,7 @@
 // 檔案內容替換指令：sed <檔案> <舊字串> <新字串>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

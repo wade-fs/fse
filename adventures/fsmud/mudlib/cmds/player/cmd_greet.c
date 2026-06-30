@@ -5,7 +5,7 @@
 // 用法：
 //   greet <NPC名稱>    主動向 NPC 打招呼，增加 +2 好感度
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

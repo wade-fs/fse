@@ -1,7 +1,7 @@
 // /cmds/admin/cmd_rename_world.c
 // 管理指令：為世界重新命名
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

@@ -2,7 +2,7 @@
 // 批次上傳檔案內容指令
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

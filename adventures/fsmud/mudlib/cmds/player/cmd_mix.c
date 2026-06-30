@@ -1,7 +1,7 @@
 // /cmds/cmd_mix.c
 // 合成指令：將多種物品混合成新物品
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

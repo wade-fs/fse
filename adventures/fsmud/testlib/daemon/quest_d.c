@@ -1,7 +1,7 @@
 // /daemon/quest_d.c
 // 任務守護進程 (Quest Daemon)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

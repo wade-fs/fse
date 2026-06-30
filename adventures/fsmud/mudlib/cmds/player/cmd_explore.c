@@ -2,7 +2,7 @@
 //
 // 探索指令：查看地標與聚落探索度 (P18)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

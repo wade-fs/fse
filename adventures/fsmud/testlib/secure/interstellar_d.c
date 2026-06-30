@@ -3,7 +3,7 @@
 // 星際網路守護進程 (Interstellar Daemon)
 // 負責處理跨伺服器 (P2P) 的通訊，具備重複訊息過濾功能
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

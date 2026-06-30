@@ -2,7 +2,7 @@
 // 列表檔案指令：ls <路徑>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

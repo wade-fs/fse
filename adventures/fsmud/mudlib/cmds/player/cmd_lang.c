@@ -3,7 +3,7 @@
 
 inherit "/std/object";
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 int main(object me, string verb, string arg) {
     if (!arg || arg == "") {

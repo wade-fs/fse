@@ -8,7 +8,7 @@
 //   faction         — 查看可加入的勢力清單
 //   faction join <id> — 加入指定勢力
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

@@ -2,7 +2,7 @@
 // 複製物件指令：clone <路徑>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

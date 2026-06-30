@@ -1,6 +1,6 @@
 // /cmds/look.c  (史前文明 PC)
 // look [目標] — 觀察房間或特定生物，符合 FSE 精神 (感知層過濾)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

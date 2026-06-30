@@ -2,7 +2,7 @@
 // 合成守護進程 (Crafting Daemon)
 // 負責處理 鑲嵌 (Socketing)、鍛造 (Forging) 與 製藥 (Alchemy) 的配方與邏輯
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 mapping recipes;
 

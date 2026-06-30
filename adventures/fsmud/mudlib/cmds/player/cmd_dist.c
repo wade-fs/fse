@@ -1,5 +1,5 @@
 // /cmds/cmd_dist.c
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

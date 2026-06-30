@@ -4,7 +4,7 @@
 // 此物件代替他們出現在房間的 inventory 中，讓本地玩家看得到他們。
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

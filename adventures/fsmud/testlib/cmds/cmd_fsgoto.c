@@ -4,7 +4,7 @@
 //        所有指令送遠端的 shadow_player 執行，結果傳回本機顯示。
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

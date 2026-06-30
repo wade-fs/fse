@@ -1,5 +1,5 @@
 // /adventures/pc/mudlib/cmds/focus.c
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

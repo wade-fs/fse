@@ -1,7 +1,7 @@
 // /tests/test_pw_loop.c
 // PW (編程世界) 擴展測試套件
 // 包含：單元測試、屬性測試、整合測試
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

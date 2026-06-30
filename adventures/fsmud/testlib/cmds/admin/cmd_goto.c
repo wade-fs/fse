@@ -2,7 +2,7 @@
 // 傳送指令：goto <路徑 | 玩家ID>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

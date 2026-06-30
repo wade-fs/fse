@@ -2,7 +2,7 @@
 // 銷毀物件指令：destruct <ID | 路徑>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

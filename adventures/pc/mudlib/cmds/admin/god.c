@@ -1,5 +1,5 @@
 // /cmds/god.c (Wizard/GM 難度管理指令)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

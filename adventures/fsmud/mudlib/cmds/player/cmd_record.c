@@ -8,7 +8,7 @@
 //   record list            - 列出當前聚落的所有地方誌。
 //   record read <編號>     - 閱讀特定地方誌，獲得文史涵養與點數獎勵。
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

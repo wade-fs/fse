@@ -10,7 +10,7 @@
 //   * tell_room 避免重複通知自己
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/room.c";

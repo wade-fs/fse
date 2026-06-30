@@ -2,7 +2,7 @@
 // 物品指令守護進程：inventory / i / get / drop / wear / wield / remove
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

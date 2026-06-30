@@ -1,7 +1,7 @@
 // /secure/simul_efun.c
 // 全域模擬內建函式 (SimulEfuns)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 // 讓物件名稱更漂亮
 string get_name(object ob) {

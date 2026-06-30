@@ -1,7 +1,7 @@
 // mudlib/std/user.c
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/race.h"
 #include "/include/formosa.h"
 

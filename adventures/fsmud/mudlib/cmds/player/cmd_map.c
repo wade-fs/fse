@@ -1,7 +1,7 @@
 // /cmds/cmd_map.c
 // 地圖指令
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

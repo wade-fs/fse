@@ -2,7 +2,7 @@
 // 祈願所：玩家死亡後的靈魂暫留地
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/room.c";
 

@@ -1,5 +1,5 @@
 // /cmds/inventory.c  (史前文明背包/持有物品查詢)
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

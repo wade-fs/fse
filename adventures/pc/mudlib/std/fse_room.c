@@ -1,6 +1,6 @@
 // /std/fse_room.c  (FSE Engine Core Room Base Class)
 // 通用 FSE 遊戲引擎房間基座：管理感知、物理交互、Reveal機制與基礎描述
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 inherit "/runtime/core/virtual_object";
 

@@ -1,6 +1,6 @@
 // /std/room.c  (史前文明 PC 房間底層類別)
 // 繼承自 FSE Engine 核心並實作冒險專屬物理/難度副作用
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/fse_room";
 
 float query_difficulty_modifier(string type);

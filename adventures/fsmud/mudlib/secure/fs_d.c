@@ -7,7 +7,7 @@
 //   action: enter / leave / say / emote / look_reply
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

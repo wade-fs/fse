@@ -2,7 +2,7 @@
 // Shadow Player: 遠端玩家在本機的代理實體
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/living";
 

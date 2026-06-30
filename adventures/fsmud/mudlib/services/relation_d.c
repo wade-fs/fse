@@ -17,7 +17,7 @@
 //
 // Canon 參照：docs/TODO.md § P20
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

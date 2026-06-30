@@ -1,4 +1,4 @@
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/test_case.c";
 
 void run_tests(object me) {

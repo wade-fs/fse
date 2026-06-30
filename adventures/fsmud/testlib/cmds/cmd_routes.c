@@ -2,7 +2,7 @@
 // 路線與地名查詢指令 (Routes and Era Names Query)
 // 提供給玩家或巫師查詢特定聚落地標連通路線，以及不同時代名稱變遷的工具。
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

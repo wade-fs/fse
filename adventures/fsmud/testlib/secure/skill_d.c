@@ -1,7 +1,7 @@
 // /secure/skill_d.c
 // 技能守護進程 (Skill Daemon)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 mapping skill_list;
 

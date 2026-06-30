@@ -4,7 +4,7 @@
 inherit "/std/object";
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 int main(object me, string verb, string arg) {
     if (arg != "-f") {

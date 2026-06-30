@@ -1,6 +1,6 @@
 // /cmds/admin/cmd_tests.c
 // 極簡單元測試啟動指令
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

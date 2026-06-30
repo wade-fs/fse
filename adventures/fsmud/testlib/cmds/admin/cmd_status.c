@@ -2,7 +2,7 @@
 // 系統狀態查詢指令：status
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

@@ -1,7 +1,7 @@
 // /cmds/cmd_p2p.c
 // 星際聊天指令
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

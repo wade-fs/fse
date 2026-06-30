@@ -1,6 +1,6 @@
 // std/room.c - 所有房間的基底類別
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/config.h"
 
 inherit "/std/container.c";

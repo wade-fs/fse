@@ -1,7 +1,7 @@
 // mudlib/cmds/cmd_info.c
 // 資訊指令守護進程：score / status
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 int main(object me, string verb, string arg) {

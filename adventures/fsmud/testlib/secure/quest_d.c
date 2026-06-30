@@ -1,7 +1,7 @@
 // /secure/quest_d.c
 // 任務守護進程 (Quest Daemon)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

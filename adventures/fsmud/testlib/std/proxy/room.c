@@ -2,7 +2,7 @@
 // Proxy Room: 遠端房間在本地的代理
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

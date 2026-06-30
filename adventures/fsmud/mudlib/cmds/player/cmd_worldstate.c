@@ -8,7 +8,7 @@
 //   worldstate advance <chain> <state>   (管理員) 手動推進
 //   worldstate reset <chain>             (管理員) 重置狀態鏈
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

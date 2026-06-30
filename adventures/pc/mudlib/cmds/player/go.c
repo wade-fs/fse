@@ -1,6 +1,6 @@
 // /adventures/pc/mudlib/cmds/go.c
 // go [方向] — 移動到指定出口
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/object";
 
 void create() { ::create(); }

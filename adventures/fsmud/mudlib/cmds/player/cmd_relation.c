@@ -6,7 +6,7 @@
 //   relations               顯示所有認識的 NPC 好感度列表
 //   relations <NPC名稱>     顯示特定 NPC 的好感度詳情
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

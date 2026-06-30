@@ -1,5 +1,5 @@
 // /area/lm/center_world.c
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/area/lm/world.c";
 
 void create() {

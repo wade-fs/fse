@@ -2,7 +2,7 @@
 // 社交動作守護進程 (Social Daemon)
 // 管理遊戲中預設的社交動作與描述
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

@@ -2,7 +2,7 @@
 // 重新拉取遠端 Fantasy Space mudlib 的緩存
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

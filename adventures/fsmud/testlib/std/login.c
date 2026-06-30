@@ -1,5 +1,5 @@
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/race.h"
 
 inherit "/std/object";

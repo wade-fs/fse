@@ -4,7 +4,7 @@
 //
 // 指令：memory / 記憶
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

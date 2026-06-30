@@ -1,7 +1,7 @@
 // /secure/nature_d.c
 // 氣候與時間守護進程 (Nature Daemon)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

@@ -2,7 +2,7 @@
 // 查詢目前遊戲時間、氣候與動態事件狀態
 
 #include "/include/formosa.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

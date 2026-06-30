@@ -3,7 +3,7 @@
 // 語法：yamllint [目錄/檔案]
 // 範例：yamllint /data/yaml/settlements/
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

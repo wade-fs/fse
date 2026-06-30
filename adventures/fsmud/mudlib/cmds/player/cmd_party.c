@@ -1,7 +1,7 @@
 // /cmds/cmd_party.c
 // 組隊指令
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

@@ -8,7 +8,7 @@
 //   - 允許玩家查詢編年史與地方誌文獻。
 //   - 提供地方誌閱讀機制，讓讀者可從中獲得聚落記憶值回升與職涯修練點。
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

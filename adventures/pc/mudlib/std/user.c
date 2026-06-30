@@ -1,6 +1,6 @@
 // /std/user.c  (史前文明 PC)
 // 玩家載體：移除 RPG 等級，加入 FSE 狀態與感官感知
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/living";
 
 private string id;

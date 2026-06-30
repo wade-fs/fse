@@ -2,7 +2,7 @@
 // 檢視檔案內容指令：cat <路徑>
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

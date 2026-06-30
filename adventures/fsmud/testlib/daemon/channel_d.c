@@ -1,7 +1,7 @@
 // /daemon/channel_d.c
 // 頻道守護進程 (Channel Daemon)
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/config.h"
 
 mapping friend_channels; // 🚀 新增：自建/好友頻道 ([ "cid": ({ member_ids }) ])

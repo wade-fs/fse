@@ -1,6 +1,6 @@
 // /std/presence.c  (史前文明 PC)
 // 環境偵測與交互實體 (Presence) 基底
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 inherit "/std/living";
 inherit "/runtime/core/virtual_object";
 

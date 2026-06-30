@@ -1,7 +1,7 @@
 // /master.c  (史前文明 PC)
 // Prehistoric Civilization — Adventure Master
 // 驗證 FSE runtime 跨 Adventure 共用能力
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/secure/valid.c";
 

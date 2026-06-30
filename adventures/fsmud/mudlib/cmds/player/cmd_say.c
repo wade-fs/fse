@@ -3,7 +3,7 @@
 // 當玩家在跨服房間說話時，同時廣播給遠端伺服器。
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

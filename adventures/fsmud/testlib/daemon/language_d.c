@@ -2,7 +2,7 @@
 // 語系守護進程 (Language Daemon)
 // 集中管理系統性關鍵字與 UI 標籤，具備高共用性
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

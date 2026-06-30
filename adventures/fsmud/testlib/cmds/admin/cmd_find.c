@@ -2,7 +2,7 @@
 // 搜尋檔案指令：find <關鍵字> [目錄]
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

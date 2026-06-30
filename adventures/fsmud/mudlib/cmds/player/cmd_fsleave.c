@@ -2,7 +2,7 @@
 // 離開遠端伺服器，返回本機
 
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 inherit "/std/object";
 

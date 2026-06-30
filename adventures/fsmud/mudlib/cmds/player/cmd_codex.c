@@ -9,7 +9,7 @@
 //   codex incident    列出已解開的歷史事件條目
 //   codex <id>        顯示特定條目的詳細資訊（跨分類搜尋）
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";

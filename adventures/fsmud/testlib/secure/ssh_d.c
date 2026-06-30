@@ -1,5 +1,5 @@
 #include "/include/config.h"
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 
 // /secure/ssh_d.c
 // SSH Daemon (Interstellar Network SSH-like Sessions)

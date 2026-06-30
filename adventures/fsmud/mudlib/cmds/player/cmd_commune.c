@@ -7,7 +7,7 @@
 //   commune status    — 查看全島記憶危機狀況
 //   resolve           — 解除當前地標的失源者
 
-#include "/include/ansi.h"
+#include "/runtime/include/ansi.h"
 #include "/include/formosa.h"
 
 inherit "/std/object";
