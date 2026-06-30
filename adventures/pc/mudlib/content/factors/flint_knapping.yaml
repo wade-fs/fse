@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "flint_knapping"
+name: "燧石打製技術"
+description: "你明白了以特定角度敲擊脆性硬礦石（如黑曜石），會使其呈貝殼狀斷裂並形成極鋒利的邊緣。"
+category: "tools"
+level: 1

@@ -4,6 +4,10 @@ monsters: []
 exits:
   back: "/rooms/triassic_plains/room"
 
+reveal_exits:
+  canyon:
+    dest: "/rooms/predator_canyon/room"
+    requires_factor: "flint_knapping"
 
 sensory_signals:
   smell: "濃厚的腐植土氣味中，隱隱有一絲雨水的清新。"

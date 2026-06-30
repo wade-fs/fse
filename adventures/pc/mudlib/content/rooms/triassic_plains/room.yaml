@@ -6,9 +6,14 @@ monsters:
     respawn: true
 
 exits: {}
+
+reveal_exits:
+  forest:
+    dest: "/rooms/fern_forest/room"
+    requires_factor: "thermodynamics"
+
 sensory_signals:
   smell: "一陣潮濕的風吹來，夾雜著令人作嘔的腥臭味，彷彿是某種腐肉與巨獸口水混合的氣息。"
   sound: "一陣低頻的震動聲從遠處灌木叢傳來，地面沙礫隨之微微抖動。"
   wind: "東南風呼嘯，將你身上的氣味帶往了森林深處。"
   ground: "紅棕色的乾硬砂岩，留有一排深陷的、呈三趾狀的巨大腳印殘跡。"
-
