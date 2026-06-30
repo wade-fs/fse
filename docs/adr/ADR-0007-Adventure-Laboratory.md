@@ -132,3 +132,13 @@ PW 自然地驗證了 Discovery-First Progression 的正確性。
 被否決原因：Unit Test 只能驗證邏輯正確，無法驗證「設計是否合理」。只有真實的 Adventure 能告訴我們「這個 API 用起來順不順手」。
 
 **最終決策**：PW 作為 Adventure Laboratory，用真實的 Adventure 設計來驗證 Runtime，同時保持 PW 本身作為獨立 Adventure 的完整性。
+
+---
+
+## Related
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — Laboratory 的主體
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — Large-Scale Adventure，與 Laboratory 互補
+
+→ **Reflection**: [Why PC Changed Runtime](../reflection/Why-PC-Changed-Runtime.md) — Laboratory 角色如何產生雙向影響

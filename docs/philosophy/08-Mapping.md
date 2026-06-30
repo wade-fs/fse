@@ -159,3 +159,15 @@ Runtime 被 Adventure 污染了。
 回到 Mapping，找到正確的翻譯，
 
 讓 Runtime 只看見通用概念。
+
+---
+
+## Related
+
+→ **ADR**: [ADR-0004 Adventure Mapping](../adr/ADR-0004-Adventure-Mapping.md) — 為什麼 Runtime 不能知道 Settlement
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — Settlement → World 的完整 Mapping 範例
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — Lesson Node → Node 的 Mapping 範例
+
+→ **Adventure**: [Prehistoric Civilization](../adventures/Prehistoric-Civilization.md) — Biome → Node 的 Mapping 範例

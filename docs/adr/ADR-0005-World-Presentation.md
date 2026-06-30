@@ -140,3 +140,13 @@ Formosa 用文字，PW 用積木，Dinosaur 用環境訊號——
 被否決原因：Reveal 的觸發條件（Factor 檢查）需要 Runtime 的支援，完全繞開 Runtime 會造成重複邏輯。
 
 **最終決策**：Runtime 處理 Semantic Layer（哪些 reveal_block 該展示），Adventure 處理 Medium Layer（怎麼展示）。
+
+---
+
+## Related
+
+→ **Philosophy**: [07-Presentation](../philosophy/07-Presentation.md) — Presentation 的哲學層定義
+
+→ **Pattern**: [Progressive Reveal](../patterns/Progressive-Reveal.md) — Presentation 分離後的核心設計模式
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — 積木工具箱作為 Presentation 媒介，驗證了分離設計的正確性

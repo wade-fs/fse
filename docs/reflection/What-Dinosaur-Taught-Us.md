@@ -166,3 +166,13 @@ PC 留給我們的問題：
 
 4. 在你的世界裡，「什麼都不做，只是觀察」是有意義的行動嗎？
 ```
+
+---
+
+## Related
+
+→ **Philosophy**: [06-World-Model](../philosophy/06-World-Model.md) — 探討世界「自己活著」的狀態模型
+
+→ **Pattern**: [Environmental Teaching](../patterns/Environmental-Teaching.md) — 「觀察作為行動」與環境的互動教學
+
+→ **Adventure**: [Prehistoric-Civilization](../adventures/Prehistoric-Civilization.md) — 恐龍世界的概念設計與 Mapping

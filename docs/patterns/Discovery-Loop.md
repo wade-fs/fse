@@ -170,3 +170,13 @@ Reveal：工具箱新增 break 積木
 - **Progressive Reveal**：Discovery Loop 驅動 Reveal 的更新
 - **Hidden Knowledge**：Loop 的 Confusion 來自「知識被隱藏」
 - **Environmental Teaching**：Loop 的 Consequence 透過環境傳遞
+
+---
+
+## Related
+
+→ **Philosophy**: [04-Discovery](../philosophy/04-Discovery.md) — Discovery 的本質定義
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — 無窮迴圈沼澤是 Discovery Loop 最乾淨的實例
+
+→ **Adventure**: [Prehistoric Civilization](../adventures/Prehistoric-Civilization.md) — 死亡作為 Consequence，Loop 最真實的體現

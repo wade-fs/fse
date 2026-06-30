@@ -138,3 +138,13 @@ Adventure 和 Runtime 之間的溝通，只透過 Mapping 進行。
 **方案 C：Adventure Mapping（最終採用）**
 
 Runtime 保持通用，Mapping 作為唯一的介面。每個 Adventure 完全負責自己的翻譯。
+
+---
+
+## Related
+
+→ **Philosophy**: [08-Mapping](../philosophy/08-Mapping.md) — Mapping 的哲學層定義
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — Settlement → World 的 Mapping 範例
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — Executor 插件機制作為 Mapping 的延伸

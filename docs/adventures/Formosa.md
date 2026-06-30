@@ -182,3 +182,15 @@ YAML 內容：部分完成
 
 FSE Runtime 整合：進行中
 ```
+
+---
+
+## Related
+
+→ **Philosophy**: [08-Mapping](../philosophy/08-Mapping.md) — Formosa 的 Mapping 設計原則
+
+→ **Pattern**: [Progressive Reveal](../patterns/Progressive-Reveal.md) — 時間層是 Formosa 最獨特的 Reveal 維度
+
+→ **ADR**: [ADR-0007 Adventure Laboratory](../adr/ADR-0007-Adventure-Laboratory.md) — Formosa 作為 Large-Scale Adventure 的定位
+
+→ **Reflection**: [Lessons from Formosa](../reflection/Lessons-from-Formosa.md) — Formosa 教會了 FSE 什麼

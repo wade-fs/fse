@@ -205,3 +205,15 @@ Web 前端（Blockly UI）：已完整
   index.html             ✓
   pw-blockly-adapter.js  ✓
 ```
+
+---
+
+## Related
+
+→ **Philosophy**: [08-Mapping](../philosophy/08-Mapping.md) — PW 的 Mapping 設計原則
+
+→ **Pattern**: [Discovery Loop](../patterns/Discovery-Loop.md) — 無窮迴圈沼澤是 Discovery Loop 最乾淨的範例
+
+→ **ADR**: [ADR-0007 Adventure Laboratory](../adr/ADR-0007-Adventure-Laboratory.md) — PW 作為 Adventure Laboratory 的定位
+
+→ **Reflection**: [Why PC Changed Runtime](../reflection/Why-PC-Changed-Runtime.md) — PW 如何反過來改變了 Runtime 的設計

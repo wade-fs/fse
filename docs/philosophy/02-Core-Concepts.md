@@ -209,3 +209,15 @@ NPC         → 各 Adventure 自行定義
 Core 只保留跨所有 Adventure 都成立的概念。
 
 其餘的，交給各 Adventure 自己定義。
+
+---
+
+## Related
+
+→ **Philosophy**: [04-Discovery](04-Discovery.md) — Discovery 的完整定義
+
+→ **Philosophy**: [05-Progress](05-Progress.md) — Progress 的三個維度
+
+→ **Philosophy**: [08-Mapping](08-Mapping.md) — Core 概念如何映射到各 Adventure
+
+→ **Philosophy**: [10-Glossary](10-Glossary.md) — 快速查閱所有術語

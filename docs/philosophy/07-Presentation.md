@@ -208,3 +208,13 @@ Presentation 和 Discovery 是互相驅動的。
 沒有 Reveal，Discovery 失去前因。
 
 沒有 Discovery，Reveal 沒有後果。
+
+---
+
+## Related
+
+→ **Pattern**: [Progressive Reveal](../patterns/Progressive-Reveal.md) — Presentation 的核心設計模式
+
+→ **ADR**: [ADR-0005 World Presentation](../adr/ADR-0005-World-Presentation.md) — Semantic Layer 與 Medium Layer 分離的決策記錄
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — 積木工具箱作為 Presentation 媒介的特殊實例

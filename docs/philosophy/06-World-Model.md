@@ -236,3 +236,15 @@ Entropy：
 如果以上五個問題都有好的答案，
 
 這個 World 就能產生 Discovery。
+
+---
+
+## Related
+
+→ **Pattern**: [Environmental Teaching](../patterns/Environmental-Teaching.md) — 讓環境本身成為知識的載體
+
+→ **Pattern**: [Hidden Knowledge](../patterns/Hidden-Knowledge.md) — 知識如何藏在世界的規則裡
+
+→ **Adventure**: [Prehistoric Civilization](../adventures/Prehistoric-Civilization.md) — 環境訊號作為 World 媒介的極致實例
+
+→ **Reflection**: [What Dinosaur Taught Us](../reflection/What-Dinosaur-Taught-Us.md) — 設計 PC 如何改變我們對 World 的理解

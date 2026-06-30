@@ -176,3 +176,13 @@ Runtime 在最底層，
 承接所有上層的思想，
 
 把它們變成真實可執行的世界。
+
+---
+
+## Related
+
+→ **Architecture**: [FSE Architecture](../architecture/fse-architecture.md) — Runtime 的完整實作說明
+
+→ **ADR**: [ADR-0004 Adventure Mapping](../adr/ADR-0004-Adventure-Mapping.md) — Runtime 為什麼保持 Adventure-Agnostic
+
+→ **Reflection**: [Why PC Changed Runtime](../reflection/Why-PC-Changed-Runtime.md) — PW 如何改變了 Runtime 的設計

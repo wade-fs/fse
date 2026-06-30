@@ -614,3 +614,13 @@ Formosa 繼續做，不改架構，不改名字。
   - 歷史結果（Formosa 的歷史事件不可改變）
   - 完美的生態系統（Dinosaur 是簡化模型）
   - 真實的程式執行（Programming 是概念層的模擬）
+
+---
+
+## Related
+
+→ **Philosophy**: [08-Mapping](08-Mapping.md) — 通用語言如何映射到各 Adventure 的語言
+
+→ **Philosophy**: [10-Glossary](10-Glossary.md) — 所有術語的一頁速查
+
+→ **ADR**: [ADR-0002 Ubiquitous Language](../adr/ADR-0002-Ubiquitous-Language.md) — 這份語言體系的決策記錄

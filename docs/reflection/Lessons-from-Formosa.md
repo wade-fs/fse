@@ -153,3 +153,13 @@ Formosa 最獨特的設計，是把「歷史時代」作為 Reveal 的維度：
 
 4. 你的世界的名字，有沒有誤導你的設計？
 ```
+
+---
+
+## Related
+
+→ **Philosophy**: [00-Why-FSE-Exists](../philosophy/00-Why-FSE-Exists.md) — 探尋歷史對抗遺忘的哲學起點
+
+→ **Philosophy**: [04-Discovery](../philosophy/04-Discovery.md) — 重新定義「記憶收集」為「瞬間領悟」
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — Formosa 冒險的實作與 Mapping 結構

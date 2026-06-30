@@ -112,3 +112,13 @@ Quest：「找到老站長」
 被否決原因：沒有任何結構，玩家可能不知道往哪裡走，反而無法觸發 Discovery。
 
 **最終決策**：Discovery 驅動，Quest 輔助結構。兩者不矛盾，但主從關係明確。
+
+---
+
+## Related
+
+→ **Philosophy**: [04-Discovery](../philosophy/04-Discovery.md) — Discovery 的本質
+
+→ **Philosophy**: [05-Progress](../philosophy/05-Progress.md) — Progress 的三個維度
+
+→ **Adventure**: [Programming World](../adventures/Programming-World.md) — 失敗觸發 Discovery 的驗證實例

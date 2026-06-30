@@ -124,3 +124,13 @@ FSE 的存在理由，不因技術改變：
 以下這件事永遠成立：
 
 > **人不是先知道才去走，而是走過之後才開始知道。**
+
+---
+
+## Related
+
+→ **Philosophy**: [01-First-Principles](01-First-Principles.md) — 從「為什麼」到「不可逆的公理」
+
+→ **ADR**: [ADR-0006 Curiosity Before Knowledge](../adr/ADR-0006-Curiosity-Before-Knowledge.md) — 好奇心先於知識的設計決策
+
+→ **Reflection**: [Lessons from Formosa](../reflection/Lessons-from-Formosa.md) — Formosa 先存在，FSE 後命名

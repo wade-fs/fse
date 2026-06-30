@@ -198,3 +198,13 @@ FSE 的 Progress 成功了，是指：
 如果第 4 題的答案是「不是」，
 
 那麼 Progress 系統設計得太窄了。
+
+---
+
+## Related
+
+→ **Pattern**: [Progressive Reveal](../patterns/Progressive-Reveal.md) — Capability Progress 如何透過 Reveal 體現
+
+→ **ADR**: [ADR-0003 Discovery-First Progression](../adr/ADR-0003-Discovery-First-Progression.md) — Progress 設計的決策記錄
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — Progress 三個維度最豐富的實例（踏印 / 記憶值 / 歷史層可見性）

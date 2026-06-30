@@ -148,3 +148,11 @@ reveal_layers:
 - **Discovery Loop**：每次 Discovery 都驅動新的 Reveal 更新
 - **Hidden Knowledge**：Progressive Reveal 是 Hidden Knowledge 的呈現機制
 - **Environmental Teaching**：環境本身也能做 Progressive Reveal（風、聲音、光線）
+
+---
+
+## Related
+
+→ **Philosophy**: [07-Presentation](../philosophy/07-Presentation.md) — Reveal 的哲學層定義
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — 時間層作為 Reveal 維度，最豐富的 Progressive Reveal 實例

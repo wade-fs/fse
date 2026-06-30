@@ -159,3 +159,13 @@ Hidden Knowledge 不是「刻意刁難玩家」。
 - **Discovery Loop**：Hidden Knowledge 是 Loop 中 Confusion 的來源
 - **Progressive Reveal**：知識被發現後，Reveal 更新，讓玩家看見更多
 - **Environmental Teaching**：環境本身就是隱藏知識的容器
+
+---
+
+## Related
+
+→ **Philosophy**: [04-Discovery](../philosophy/04-Discovery.md) — 知識被隱藏，才能被發現
+
+→ **Adventure**: [Prehistoric Civilization](../adventures/Prehistoric-Civilization.md) — 生態知識完全藏在環境行為裡，Hidden Knowledge 的極致
+
+→ **Adventure**: [Formosa](../adventures/Formosa.md) — 歷史知識藏在地景與地名裡

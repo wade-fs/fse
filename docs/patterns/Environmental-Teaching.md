@@ -165,3 +165,13 @@ NPC 提出問題 = Environmental Teaching 成功。
 - **Discovery Loop**：環境觸發 Consequence，啟動 Discovery Loop
 - **Hidden Knowledge**：Environmental Teaching 是 Hidden Knowledge 的主要載體
 - **Progressive Reveal**：隨著玩家理解加深，環境展示的細節也增加
+
+---
+
+## Related
+
+→ **Philosophy**: [06-World-Model](../philosophy/06-World-Model.md) — 世界本身是老師的哲學基礎
+
+→ **Adventure**: [Prehistoric Civilization](../adventures/Prehistoric-Civilization.md) — 風向、聲音、氣味作為教學媒介的完整實例
+
+→ **Reflection**: [What Dinosaur Taught Us](../reflection/What-Dinosaur-Taught-Us.md) — 設計 PC 如何讓我們理解「觀察是行動」

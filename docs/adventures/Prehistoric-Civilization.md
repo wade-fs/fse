@@ -203,3 +203,15 @@ Runtime 驗證：尚未開始
 YAML 內容：尚未設計
 實作：待 Formosa 和 PW 穩定後開始
 ```
+
+---
+
+## Related
+
+→ **Philosophy**: [08-Mapping](../philosophy/08-Mapping.md) — PC 的 Mapping 設計原則
+
+→ **Pattern**: [Environmental Teaching](../patterns/Environmental-Teaching.md) — 環境訊號作為媒介的設計模式
+
+→ **Pattern**: [Hidden Knowledge](../patterns/Hidden-Knowledge.md) — 生態知識完全藏在環境行為裡
+
+→ **Reflection**: [What Dinosaur Taught Us](../reflection/What-Dinosaur-Taught-Us.md) — 設計 PC 改變了我們對 FSE 的哪些理解

@@ -70,3 +70,15 @@ Version: v1.0
 狀態：不可逆公理（Frozen）
 
 後續所有 FSE 系統設計、runtime、world model、adventure injection，都不得違反此公理。
+
+---
+
+## Related
+
+→ **Philosophy**: [00-Why-FSE-Exists](00-Why-FSE-Exists.md) — 公理的來源
+
+→ **ADR**: [ADR-0006 Curiosity Before Knowledge](../adr/ADR-0006-Curiosity-Before-Knowledge.md) — 這個公理的設計決策記錄
+
+→ **ADR**: [ADR-0003 Discovery-First Progression](../adr/ADR-0003-Discovery-First-Progression.md) — 公理如何轉化為 Progress 設計
+
+→ **Reflection**: [Lessons from Formosa](../reflection/Lessons-from-Formosa.md) — 公理在真實 Adventure 裡的驗證
