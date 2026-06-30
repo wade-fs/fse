@@ -20,7 +20,7 @@ sensory_signals:
   
   # 宣告式感官發現
   ground:
-    default_msg: "紅棕色的乾硬砂岩，留有一排深陷 of 呈三趾狀的巨大腳印殘跡。"
+    default_msg: "紅棕色的乾硬砂岩，留有一排深陷的、呈三趾狀的巨大腳印殘跡。"
     discovery:
       requires_no_factor: "thermodynamics"
       set_temp: "found_roots"
@@ -29,25 +29,16 @@ sensory_signals:
 # 🌟 萬用實體互動宣告
 interactions:
   - action: "rub"
-    target: "branches roots"
-    prerequisites:
-      temp_state: "found_roots"
-    discover_factor: "thermodynamics"
-    complete_quest: "first_fire"
-    success_msg: "你用乾燥的耐旱蕨類根部作為火絨，將質地堅硬的松科樹枝急速旋轉摩擦。\n一縷青煙冒出，伴隨著微小的火星，火被點燃了！"
-    give_item:
-      id: "embers"
-      name: "乾燥的火種"
-      desc: "一團由耐旱蕨類根部點燃的火種，正散發著微弱的熱量與紅光，可以在黑暗中引導方向。"
-      durability: 5
-    repeat_msg: "你嫻熟地用耐旱蕨類根部與樹枝摩擦，火苗輕易地跳躍而出。\n🔥 營火已在燃燒中。"
-    fatigue: 10
-    failure_msg: "【 🌀 產生困惑 】你用力拿樹枝去磨擦普通的岩石與濕土，除了一身汗之外，什麼也沒發生。\n大雨將至，寒風吹過，你的體溫正在迅速流失！\n💡 這裡有乾燥的引火介質嗎？也許你應該觀察地面 (focus ground)..."
-    trigger_confusion: "rub_without_kindling"
-    fail_fatigue: 15
-
-  - action: "rub"
-    target: "roots branches" # 支援顛倒的輸入順序
+    # 合併多種輸入順序與單複數形式，交由 List 動態解析
+    target:
+      - "branches roots"
+      - "roots branches"
+      - "branch roots"
+      - "roots branch"
+      - "branches root"
+      - "root branches"
+      - "branch root"
+      - "root branch"
     prerequisites:
       temp_state: "found_roots"
     discover_factor: "thermodynamics"
@@ -71,7 +62,7 @@ interactions:
     success_msg: "你狠狠踹了碎石堆一腳！滾落的砂岩後方露出了更多乾枯粗壯的蕨類根部。\n💡 現在這片地面到處都是引火物了。"
     set_temp: "found_roots_easy"
     fatigue: 5
-    failure_msg: "幕猛力踹在堅硬的紅砂岩上，痛得你當場抱腳倒地，岩石紋絲不動。\n💡 或許你得先找到目標物，或者先專注觀察地面 (focus ground)。"
+    failure_msg: "你一腳猛力踹在堅硬的紅砂岩上，痛得你當場抱腳倒地，岩石紋絲不動。\n💡 或許你得先找到目標物，或者先專注觀察地面 (focus ground)。"
     fail_fatigue: 10
     fail_hp: -5
 
