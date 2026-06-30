@@ -27,8 +27,17 @@ void main(object me, string arg) {
     item2 = trim(item2);
 
     if ((item1 == "branches" && item2 == "roots") || (item1 == "roots" && item2 == "branches")) {
-        // 檢查玩家是否攜帶/在場有這些東西
-        // 史前文明簡化版：玩家在三疊紀荒野可以隨地撿起 branches (樹枝)，但 roots (耐旱蕨類乾枯根部) 需要玩家 focus ground 獲得
+
+        // ── 守衛：first_fire 已完成，禁止重複觸發 ──
+        // thermodynamics factor 是 first_fire 閉環唯一的成功憑證。
+        // 有它代表玩家已學過，重複操作只會讓火燒得更旺，不會再次領悟。
+        if (me->has_factor("thermodynamics")) {
+            tell_object(me, "你嫻熟地用耐旱蕨類根部與樹枝摩擦，火苗輕易地跳躍而出。\n" +
+                YEL + "🔥 營火已在燃燒中。\n" + NOR);
+            return;
+        }
+
+        // ── 前置守衛：必須先 focus ground 找到乾燥根部 ──
         if (!me->query_temp("found_roots")) {
             // 失敗，產生 Confusion
             me->player_confused("rub_without_kindling");
@@ -39,20 +48,20 @@ void main(object me, string arg) {
             return;
         }
 
-        // 成功！觸發 Discovery 與 Quest 完成
+        // ── 成功！觸發 Discovery 與 Quest 完成（只會發生一次）──
         tell_object(me, HIG + "==================================================\n" +
             "  🌟【 困惑 ➔ 領悟 (Insight) 】摩擦生熱與引火！\n" +
             "==================================================\n" +
             "你用乾燥的耐旱蕨類根部作為火絨，將質地堅硬的松科樹枝急速旋轉摩擦。\n" +
             "一縷青煙冒出，伴隨著微小的火星，火被點燃了！\n" + NOR);
 
-        // 授與 Factor (Discovery)
+        // 授與 Factor（此後 has_factor("thermodynamics") == true，守衛生效）
         object factor_svc = load_object("/runtime/services/factor_service.c");
         if (factor_svc) {
             factor_svc->discover_factor(me, "thermodynamics");
         }
 
-        // 推進進度
+        // 推進進度（progress_manager 內部也有防重複，雙重保護）
         object pm = load_object("/runtime/services/progress_manager.c");
         if (pm) {
             pm->complete_player_quest(me, "first_fire", "main", 100);
@@ -60,10 +69,13 @@ void main(object me, string arg) {
 
         tell_object(me, YEL + "🔥 一堆小小的營火在你面前升起，驅散了黑暗與寒冷。\n" + NOR);
         room->set_long(room->query_long() + "\n" + YEL + "🔥 一堆營火在中央跳動著，照亮了原本黑暗的世界邊緣。" + NOR);
-        
-        // 營火 Reveal 了新路徑
+
+        // 營火 Reveal 了新路徑（只在第一次成功時執行）
         room->add_exit("forest", "/rooms/fern_forest/room");
         tell_object(me, GRN + "\n【 🌲 顯現 (Reveal) 】在營火跳躍的火光下，遠方原本漆黑模糊的「蕨類森林 (forest)」路徑清晰地展現了出來！\n" + NOR);
+        tell_object(me, YEL + "\n💡 你可以輸入 [ look ] 查看目前狀態與出口，或輸入 [ go forest ] 向蕨類森林前進。\n" +
+            "   ⚠️  但是——你先前 focus smell 感知到了腥臭氣味，還有風向的問題...\n" +
+            "   也許你應該先弄清楚：風在把你的氣味帶往哪裡？(focus wind)\n" + NOR);
 
     } else {
         tell_object(me, "你試圖摩擦 " + item1 + " 與 " + item2 + "，但這兩者無法產生足夠的摩擦生熱效果。\n");

@@ -179,6 +179,10 @@ mixed process_input(string cmd) {
         arg  = "";
     }
 
+    // 支援常用簡短指令別名映射
+    if (verb == "l") verb = "look";
+    if (verb == "f") verb = "focus";
+
     // 史前文明廢除傳統 MUD 戰鬥指令
     if (verb == "kill" || verb == "attack") {
         write("在史前文明，赤手空拳去攻擊恐龍無異於自殺。\n");

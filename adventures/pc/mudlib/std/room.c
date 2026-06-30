@@ -157,12 +157,25 @@ string query_sensory_signal(object player, string sense) {
     }
 
     if (sense == "ground") {
-        player->set_temp("found_roots", 1);
-        return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
-               YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
-               "這些根部極度乾燥且富含纖維。你可以嘗試將它們與這片荒野隨處可見的松科樹枝 (branches) 劇烈摩擦 (rub) 來產生火花！" + NOR;
-    }
+        string bname = base_name(this_object());
+        // 如果是三疊紀荒野且尚未獲得 thermodynamics (鑽木取火) 概念，則引導玩家尋找 root
+        if ((bname == "/rooms/triassic_plains/room" || bname == "/content/rooms/triassic_plains/room") && !player->has_factor("thermodynamics")) {
+            player->set_temp("found_roots", 1);
+            return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
+                   YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
+                   "這些根部極度乾燥且富含纖維。你可以嘗試將它們與這片荒野隨處可見的松科樹枝 (branches) 劇烈摩擦 (rub) 來產生火花！" + NOR;
+        }
+        
+        // 如果是巨型蕨類森林，專注地面則引導發現黑曜石，提示敲擊 strike 指令的物理機制
+        if (bname == "/rooms/fern_forest/room" || bname == "/content/rooms/fern_forest/room") {
+            player->set_temp("found_obsidian", 1);
+            return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
+                   YEL + "【 🔍 發現 】在鬆軟的落葉堆下，露出了幾塊質地極為堅硬且邊緣銳利的黑曜石 (obsidian)。\n" +
+                   "這似乎是打製石器的絕佳材料。你可以嘗試敲擊 (strike) 它們，看看會發生什麼。" + NOR;
+        }
 
+        return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg;
+    }
 
     return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
 }

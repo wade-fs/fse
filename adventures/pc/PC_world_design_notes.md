@@ -1,400 +1,421 @@
-# 《史前文明》(PC) — FSE 完整規劃案
+# 《史前文明》(PC) — FSE 完整規劃案 v2
+## 「地獄難度」升級版
 
-> 本文件依循 FSE 設計哲學（Discovery-First Progression）與 `adventures/pw` 的架構慣例撰寫。
+> 「你以為人類智慧能輕鬆活下來？這是一場地獄級的求生考驗。」
+> — 影片核心論點
 
 ---
 
-## 一、世界核心理念
+## 〇、設計哲學的根本修正
 
-### 1.1 世界的教學本質
-在 FSE 中，**World 本身就是老師**。史前文明世界的「老師」是：
+原版規劃將「恐龍」視為主要威脅。**這個假設是錯的。**
 
-- **大自然的物理法則**（熵增、氣壓、燃燒三要素、槓桿）
-- **生態的殘酷規律**（捕食者感知、獵物行為模式、食物腐敗）
-- **人類群體的集體記憶**（符號、儀式、傳承的誕生）
+影片揭示的真相是：
 
-玩家從一無所有的智人開始，**不是透過說明書學知識，而是透過痛苦的代價逼出理解**。
+> **真正的殺手是環境本身。恐龍只是環境的一部分。**
 
-### 1.2 探索循環（Discovery Loop）
+### 新的三大設計原則
+
+**原則一：「剪掌房子」（Stacked Difficulty）**
+每個時代疊加上一個時代的殺手，不會因為玩家「升級」而消失：
 ```
-World（三疊紀荒原）
-↓ 提供感官訊號：氣味、震動、溫度、風向
-Actor 採取行動（rub branches / focus ground / smell wind）
-↓
-Consequence（失溫 / 被捕食者鎖定 / 食物腐爛）
-↓
-Confusion（「為什麼下雨火就熄了？」「為什麼我跑兩步就喘？」）
-↓
-Discovery（「乾燥介質是燃燒的必要條件」「大氣氧氣濃度 15%」）
-↓
-New Path（解鎖「營火」→ 照亮黑暗邊界 → 進入下一區域）
-↓
-回到 World（新感知能力 → 新探索空間）
+三疊紀：低氧 + 乾燥高熱 + 史前巨蟲
+侏羅紀：低氧（略改善）+ 潮濕雨林 + 巨型草食獸的踩踏 + 頂級掠食者
+白堊紀：高氧（火災） + 海嘯 + 火山 + T-Rex + 最後的小行星
 ```
+玩家永遠不能「輕鬆」。
+
+**原則二：「現實自然不導演」（No Safe Choreography）**
+自然事件（火山、海嘯、地震）不會等玩家準備好。  
+它們是**隨機觸發的 Entropy 爆發**，玩家只能透過 Discovery 降低傷害。
+
+**原則三：「實際歷史韌長」（Time is the Real Enemy）**
+文明不是靠一個人的智慧，而是靠**無數次失敗和死亡的積累**。  
+玩家的每一次死亡（`@death`）都會留下「骸骨記憶」，成為後人的 Discovery 觸發點。
 
 ---
 
-## 二、地質時代三幕結構
+## 一、三幕結構（大幅升級）
 
-PC 世界橫跨三個地質時代，每個時代即一個完整的 **Stage 族群**，對應不同的生存挑戰層次：
-
-| 時代 | 年代 | 氧氣濃度 | 主要捕食者 | 主題 |
-|------|------|----------|-----------|------|
-| 三疊紀 | ~2.5億年前 | 15%（低） | Herrerasaurus、大型蜻蜓 | 蠻荒求生：感知 + 火 |
-| 侏羅紀 | ~2億年前 | 19%（接近現代） | 蠻龍（Torvosaurus）、Diplodocus | 工具與馴化：石器 + 生態鏈 |
-| 白堊紀 | ~1.4億年前 | 30%（高，火災頻繁） | 暴龍（T-Rex）、Spinosaurus | 聚落與文字：保存 + 傳承 |
-
-> 玩家的 Stage 推進透過 **Factor 的累積** 驅動，而非直接的時代切換。
+| 時代 | 年代 | 大氣 | 氣候 | 主要殺手（依危險性排序） |
+|------|------|------|------|------------------------|
+| **三疊紀** | ~2.5億年前 | O₂ 16%，CO₂ 6× | 烤爐式乾燥，最高 55°C | ① 低氧昏厥 ② 脫水 ③ 史前巨蟲（蜈蚣、蜻蜓） ④ 二疊紀末火山餘威 ⑤ 小型快速捕食者 |
+| **侏羅紀** | ~2億年前 | O₂ 19%，高濕 | 熱帶雨林，日均 40°C | ① 踩踏（草食巨獸意外殺死） ② 致命微生物（傷口感染） ③ 落樹 ④ 異特龍（Allosaurus） ⑤ 毒素植物 |
+| **白堊紀** | ~1.4億年前 | O₂ 30%（失控火災） | 不穩定，火山頻繁 | ① 野火（任何火源 = 森林大火） ② 海嘯 ③ 火山噴發 ④ 霸王龍 ⑤ 6600萬年前的終局 |
 
 ---
 
-## 三、Stages（進度階段）完整規劃
+## 二、Stages（進度階段）地獄難度版
 
-### Stage 1：`novice` — 初來乍到（三疊紀）
+### Stage 1：`day_zero` — 第零天（三疊紀）
+> *「睜開眼，空氣像稀薄的高山，地表像烤盤。你有大約三秒鐘的時間搞清楚狀況。」*
 
-**情境**：玩家甦醒在三疊紀荒原，徒手、無知。大雨將至，氣溫驟降。
+**情境**：玩家甦醒在三疊紀荒原，頭痛欲裂（CO₂中毒初期），皮膚灼燒（55°C地表）。
+
+**死亡方式（教學設計）**：
+- 站起來嘗試跑動 → 低氧昏厥 → 死亡（Discovery：`oxygen_scarcity`）
+- 用手接觸地面岩石 → 高溫灼傷 → 死亡（Discovery：`heat_regulation`）
+- 呼吸時間過長 → CO₂頭暈 → 無法行動（Discovery：`co2_toxicity`）
+
+**核心 Quest**：`survive_day_zero`（撐過第一個小時）
+- 找到陰影
+- 找到水源（但史前水源充滿有機毒素，直接喝會病）
+- 在日落前建立基本遮蔽
+
+**推進至**：`first_night`
+
+---
+
+### Stage 2：`first_night` — 第一夜（三疊紀）
+> *「黑暗比恐龍更危險。你看不見，但你聞得到。」*
+
+**情境**：夜晚氣溫驟降至 5°C（晝夜溫差 50°C），史前巨型蜈蚣在黑暗中移動。
+
+**死亡方式**：
+- 嘗試生火但材料潮濕 → 火不起 → 失溫死亡（Discovery：`thermodynamics`）
+- 在黑暗中移動 → 踩到巨蜈蚣 → 毒液攻擊（Discovery：`arthropod_warning`）
+- 火生起後不控制大小 → 旱季乾草引燃 → 林火（教學`fire_control`）
+
+**核心 Quest**：`first_fire`（鑽木取火）
+- 必須找到乾枯蕨類根部（`focus ground`）
+- 必須製造擋風石牆（`move rocks`）
+- 火焰大小必須控制
+
+**推進至**：`bug_eater`
+
+---
+
+### Stage 3：`bug_eater` — 吃蟲人（三疊紀中期）
+> *「史前蟲子什麼味？答案：高蛋白，沒有選擇。」*
+
+**情境**：玩家首次面對食物危機。三疊紀幾乎沒有可食用的果實，蟲子是唯一蛋白質。
 
 **核心困惑**：
-- 「為什麼我跑兩步就喘？」
-- 「為什麼遠處震動我就必須趴下？」
-- 「為什麼下雨火就熄了？」
+- 「河水有奇怪氣味，能喝嗎？」（不行，含藍藻毒素）
+- 「那隻大蜈蚣能吃嗎？」（能，但先得殺死它）
+- 「植物的葉子為什麼有蠟質？」（防止水分散失，Discovery：`triassic_flora`）
 
-**需要完成的 Quest**：
-- `first_fire`（鑽木取火）
+**新增的巨蟲威脅**：
+- `megapede`（史前巨蜈蚣）：毒液攻擊，夜行，不可正面搏鬥
+- `meganeura`（超大蜻蜓，翼展 70cm）：快速飛行，可以叼走食物
 
-**推進至**：`survivor`
+**核心 Quest**：`first_meal`（第一頓飯）
+- 必須先解決水問題（加熱沸騰殺菌）
+- 必須獵殺或誘捕昆蟲
+- 必須用火烤熟（避免寄生蟲）
+
+**推進至**：`wind_stalker`
 
 ---
 
-### Stage 2：`survivor` — 初級生還者（三疊紀後期）
+### Stage 4：`wind_stalker` — 風中潛行者（三疊紀後期）
+> *「你的寵物在兩秒內被吞噬。你做了什麼都沒有用。」*
 
-**情境**：玩家已能生火，開始嘗試主動狩獵與探索黑暗邊境。
+**情境**：玩家第一次真正遭遇史前大型捕食者（Herrerasaurus），並目睹牠秒殺了玩家試圖接近的小動物。
+
+**核心 Discovery**：
+- 捕食者用嗅覺而非視覺鎖定獵物 → `predator_scent`
+- 風向決定氣味傳播方向 → `wind_direction`
+- 震動強度對應體型 → `vibration_reading`
+
+**新的「逃跑」指令系統**（不是戰鬥，是逃脫）：
+- `freeze` — 靜止不動（降低震動訊號）
+- `hide downwind` — 逆風移動
+- `mask scent with <material>` — 用泥土或糞便掩蓋氣味
+
+**核心 Quest**：`first_escape`（第一次成功逃脫）
+- 玩家不能殺死 Herrerasaurus
+- 玩家必須利用風向 + 震動判斷成功穿越峽谷
+
+**推進至**：`jurassic_arrival`（時代轉換）
+
+---
+
+### Stage 5：`jurassic_arrival` — 侏羅紀降臨
+> *「你以為氧氣夠了就安全了？這裡的草食恐龍一隻比一隻大。踩死你不需要理由。」*
+
+**情境**：侏羅紀的雨林環境是感官的大重置。一切都更茂密、更濕、更響。
+
+**新的環境威脅**：
+- `accidental_trampling`（意外踩踏）：Diplodocus 不是在攻擊你，牠只是沒看到你
+- `infected_wound`（傷口感染）：任何出血傷口在潮濕環境下會快速感染
+- `toxic_plant`（毒素植物）：侏羅紀植物有許多防禦性毒素，不能隨便碰
+
+**核心 Quest**：`find_high_ground`（找到高處）
+- 樹冠層是相對安全的
+- 但爬樹需要工具（製作抓鉤），需要先完成 `flint_knapping`
+
+**推進至**：`canopy_builder`
+
+---
+
+### Stage 6：`canopy_builder` — 樹冠建築師
+> *「在樹冠上搭個窩。最危險的決定是定居在地面。」*
+
+**情境**：玩家在樹冠層建立第一個真正的避難所。
+
+**核心 Discovery**：
+- 高處的風向不同於地面 → `altitude_wind`
+- 樹木可以承受多少重量 → `structural_load`
+- 不同植物的纖維強度 → `fiber_strength`
+
+**核心 Quest**：`build_canopy_shelter`
+- 選擇正確的樹種（需要 `observe` 多棵樹）
+- 製作纖維繩索（`twist fiber`）
+- 完成遮蔽結構（抵抗風壓）
+
+**推進至**：`allosaurus_gauntlet`
+
+---
+
+### Stage 7：`allosaurus_gauntlet` — 異特龍考驗
+> *「驚險躲避異特龍。你沒有選擇。你必須過去。」*
+
+**情境**：玩家必須穿越一片異特龍的領域才能到達更安全的區域。
+
+**異特龍的感知系統**（比 Herrerasaurus 更複雜）：
+- 嗅覺（30%）：逆風可以減弱
+- 聽覺（40%）：震動、聲音（最重要的感知）
+- 視覺（30%）：動作偵測（靜止 = 不可見）
+
+**玩家必須綜合運用所有前期學到的 Factors**：
+- `wind_direction` + `vibration_reading` + `predator_scent`
+- 加上新 Discovery：`motion_stillness`（靜止偽裝）
+
+**核心 Quest**：`cross_allosaurus_territory`
+- 不能戰勝，只能繞過或潛行穿越
+- 失敗 = 追逐序列（需要利用地形甩開）
+
+**推進至**：`fire_master`
+
+---
+
+### Stage 8：`fire_master` — 火的主人（侏羅紀後期）
+> *「終於吃上烤肉了。但在侏羅紀，這是一個危險的文明時刻。」*
+
+**情境**：玩家第一次成功獵殺大型獵物並烹調。但這標誌著重大轉折點。
 
 **核心困惑**：
-- 「石頭為什麼砸不碎骨頭？」
-- 「怎麼讓小動物靠近而不逃跑？」
-- 「那隻始祖巨獸主要靠嗅覺還是視覺？」
+- 「火能做什麼？」（烹煮、驅趕、照明）
+- 「火的代價是什麼？」（煙霧 = 暴露位置）
+- 「如何控制火的大小？」（石圍、水源、隔離帶）
 
-**需要完成的 Quest**：
-- `first_hunt`（第一次狩獵）
-- `wind_stealth`（利用風向隱蔽）
+**核心 Quest**：`controlled_cooking`
+- 建立安全的火圈（防止蔓延）
+- 狩獵小型草食恐龍
+- 正確處理肉品（避免病菌）
 
-**推進至**：`tool_maker`
-
----
-
-### Stage 3：`tool_maker` — 工具製造者（侏羅紀前期）
-
-**情境**：玩家進入侏羅紀，生態更複雜，必須以工具超越純粹的體能。
-
-**核心困惑**：
-- 「槓桿怎麼用？」
-- 「什麼樣的石頭最適合敲砸？」
-- 「動物的遷徙有規律嗎？」
-
-**需要完成的 Quest**：
-- `stone_tool_craft`（打製石器）
-- `migration_pattern`（觀察動物遷徙）
-
-**推進至**：`domesticator`
+**推進至**：`cretaceous_dawn`（時代轉換）
 
 ---
 
-### Stage 4：`domesticator` — 馴化者（侏羅紀後期）
+### Stage 9：`cretaceous_dawn` — 白堊紀黎明
+> *「正面撞見霸王龍。此刻你意識到：人類在史前霸主面前究竟有多渺小。」*
 
-**情境**：玩家開始不再只是獵殺，而是嘗試與生態共生。
+**情境**：白堊紀的大氣含氧 30%。任何一個火花都可能引發林火。
 
-**核心困惑**：
-- 「翼龍的哨兵能力怎麼借用？」
-- 「怎麼讓動物不逃跑？」
+**全新的環境威脅**：
+- `oxygen_fire_chain`：點火 → 火焰比預期猛烈 3 倍 → 失控
+- `seismic_event`：板塊撕裂導致地裂，沿海地區海嘯警報
+- `volcanic_ash_fall`：火山噴發後數天的落灰，呼吸系統受損
 
-**需要完成的 Quest**：
-- `pterosaur_bond`（與翼龍建立信任）
-- `first_trap`（設置陷阱）
+**T-Rex 設計**（與所有之前的捕食者根本不同）：
+| 特性 | Herrerasaurus | Allosaurus | T-Rex |
+|------|---------------|------------|-------|
+| 嗅覺 | 強 | 強 | **極強（幾公里外）** |
+| 聽覺 | 中 | 強 | 強 |
+| 視覺 | 弱 | 中 | **動作敏感（靜止時幾乎看不見）** |
+| 奔跑速度 | 快 | 快 | **中（但耐力極強）** |
+| 應對策略 | 逆風潛行 | 靜止 + 繞路 | **沒有完美策略，只有「比較不死的選擇」** |
 
-**推進至**：`settler`
+**核心 Discovery**：`tyrex_senses`（T-Rex 感知矛盾）
+- 視覺基於動作偵測，但嗅覺極強
+- 唯一生存方案：完全靜止 + 逆風 + 等待（時間會讓牠離去）
 
----
-
-### Stage 5：`settler` — 聚落者（白堊紀前期）
-
-**情境**：玩家開始定居，但食物保存與知識傳承成為新的瓶頸。
-
-**核心困惑**：
-- 「為什麼食物會腐爛？」
-- 「鹽分是從哪裡來的？」
-- 「怎麼讓火在大氣含氧量高的白堊紀不引發失控火災？」
-
-**需要完成的 Quest**：
-- `food_preservation`（食物保存）
-- `pottery_craft`（製作陶器）
-
-**推進至**：`chronicler`
+**推進至**：`last_stand`
 
 ---
 
-### Stage 6：`chronicler` — 文明記錄者（白堊紀後期）
+### Stage 10：`last_stand` — 最後的文明（白堊紀末期）
+> *「天上多了個太陽。恐龍時代的終結。生存的終極反思。」*
 
-**情境**：玩家達到史前文明的巔峰——知識可以跨世代傳遞。
+**情境**：6600 萬年前，玩家看到天空中出現一個越來越亮的光點。
 
-**核心困惑**：
-- 「如何讓後代知道危險在哪裡？」
-- 「符號能代表規律嗎？」
-- 「記憶如何對抗遺忘的 Entropy？」
+**這是遊戲的終局事件**，不可阻止，但玩家留下的 Discovery 決定了「遺產」：
 
-**需要完成的 Quest**：
-- `cave_painting`（壁畫繪製）
-- `ritual_altar`（祭壇儀式）
+**終局倒計時（實際時間機制）**：
+- `T-72小時`：地平線出現亮光（Focus sky 可以觀察）
+- `T-24小時`：地震頻率增加
+- `T-1小時`：天空燃燒，溫度急劇上升
+- `T=0`：衝擊波，黑暗降臨
 
-**推進至**：`（結局 / 開放延伸）`
+**玩家無法阻止終局，但可以選擇：**
+1. `write_legacy`：把所有 Discovery 刻在深洞石壁上（「文明的種子」結局）
+2. `observe_end`：靜靜地目擊這一切（「見證者」結局）
+3. `run`：跑到地下洞穴（「存活者」結局，發現洞穴裡還有其他生物活下來）
+
+**核心 Quest**：`against_entropy`（對抗遺忘）
+- 玩家必須在撞擊前完成 `symbol_abstraction` + `ritual_altar`
+- 符號刻在石壁上的 Discovery 永遠留在世界中
 
 ---
 
-## 四、Factors（知識因子）完整規劃
+## 三、Factors 升級版（新增自然災害類）
 
-### Category: `survival`（生存感知）
+### Category: `environment`（環境物理）【新增】
 
 | factor_id | 名稱 | 觸發條件 | 描述 |
 |-----------|------|---------|------|
-| `predator_scent` | 捕食者氣味解讀 | 在荒原中被攻擊後 focus smell | 從腥臭風中辨識捕食者威脅等級與距離 |
-| `thermodynamics` | 摩擦生熱與引火 | 完成 first_fire 閉環 | 乾燥介質 + 劇烈摩擦 = 熱能引燃 |
-| `oxygen_scarcity` | 低氧呼吸節律 | 三疊紀中奔跑後喘不過氣 | 三疊紀大氣氧濃度 15%，過度耗氧會窒息 |
-| `vibration_reading` | 地震波解讀 | focus ground 時觀察大型生物腳步 | 地表震動頻率與強度對應捕食者體型與距離 |
-| `wind_direction` | 風向掌控 | 被嗅覺型捕食者發現後 | 獵手的氣味會被風帶走，與風向同行等於自殺 |
+| `co2_toxicity` | CO₂中毒感知 | 長時間在峽谷停留後頭暈 | 三疊紀 CO₂ 是現代 6 倍，低窪處濃度更高，長時間暴露致命 |
+| `heat_regulation` | 熱調節 | 在地表停留超過 5 分鐘後灼傷 | 陰影、泥土覆蓋、水分蒸發是降溫的唯一手段 |
+| `water_boiling` | 沸水殺菌 | 直接喝水後腹痛 | 史前水源含藍藻毒素，沸騰是唯一淨化方式 |
+| `seismic_reading` | 地震前兆解讀 | 在地裂事件前 focus ground | 板塊運動前有特定頻率的微震，動物在此之前會逃跑 |
+| `ash_fall_survival` | 火山灰存活 | 火山噴發後在戶外待太久 | 火山灰含二氧化硫，需要濕布掩蔽口鼻 |
+| `tsunami_reading` | 海嘯前兆識別 | 海岸海水突然退潮時 | 海嘯來臨前海水倒退，動物大量往內陸跑，這是唯一預警 |
 
-### Category: `tools`（工具製造）
-
-| factor_id | 名稱 | 觸發條件 | 描述 |
-|-----------|------|---------|------|
-| `lever_principle` | 槓桿原理 | 搬不動大石頭後嘗試分叉樹枝 | 支點 + 施力 = 倍增力量，改變工具設計 |
-| `hardness_index` | 硬度差異 | 用軟石砸骨頭失敗後 | 莫氏硬度高的材質才能切削低硬度材質 |
-| `flint_knapping` | 燧石打製 | 發現黑曜石後嘗試敲擊 | 特定角度施力使石材貝殼狀斷裂形成刃口 |
-| `fiber_binding` | 纖維綑綁 | 工具頭脫落後觀察蕨類莖部 | 植物纖維扭轉後具有張力，可固定複合工具 |
-
-### Category: `ecology`（生態規律）
+### Category: `arthropod`（節肢動物）【新增】
 
 | factor_id | 名稱 | 觸發條件 | 描述 |
 |-----------|------|---------|------|
-| `prey_behavior` | 獵物行為模式 | 多次跟蹤同一物種後 | 不同物種的逃跑模式、休息時間都有規律性 |
-| `migration_cycle` | 遷徙週期 | 連續觀察 3 次動物足跡方向 | 動物遷徙受季節、水源、捕食者遷移影響 |
-| `predator_territory` | 捕食者領域 | 進入特定區域被追逐後 | 大型捕食者有固定的覓食領域與標記範圍 |
-| `symbiosis` | 共生關係 | 觀察小鳥停在大型草食恐龍身上 | 某些生物種間存在互利共生可以被模擬利用 |
+| `arthropod_warning` | 節肢動物警戒色 | 被巨蜈蚣毒液攻擊後 | 高氧時代節肢動物體型巨大，鮮豔色彩 = 有毒的演化訊號 |
+| `arthropod_nutrition` | 昆蟲蛋白質 | 烤熟並吃下第一隻蟲後 | 史前昆蟲是唯一可靠的蛋白質來源，但必須加熱殺死寄生蟲 |
 
-### Category: `civilization`（文明原語）
+### 原有 Category 新增項目
 
-| factor_id | 名稱 | 觸發條件 | 描述 |
-|-----------|------|---------|------|
-| `salt_preservation` | 鹽分保存 | 食物在海岸附近不腐爛後 | 高濃度鹽分抑制微生物繁殖，可保存食物 |
-| `fermentation` | 發酵現象 | 果實在密閉陶罐中變質後 | 酵母菌在無氧環境下分解糖分產生酒精 |
-| `symbol_abstraction` | 符號抽象化 | 嘗試在石壁上畫出捕食者形狀 | 固定符號可以代指真實世界的物件與規律 |
-| `fire_control` | 火的控制 | 在白堊紀高氧環境中引燃後失控 | 大氣含氧 30% 時燃燒速度激增，需控制氧氣供給 |
-
----
-
-## 五、Rooms（空間）完整規劃
-
-### Stage 1-2 區域：三疊紀
-
-```
-triassic_plains（三疊紀荒原）[起始點]
-  └── [reveal: 解鎖 thermodynamics 後] → fern_forest（巨型蕨類森林）
-        └── [reveal: 解鎖 wind_direction 後] → predator_canyon（捕食者峽谷）
-              └── [reveal: 解鎖 vibration_reading 後] → dark_cave（黑暗洞穴）[Stage 2 spawn]
-```
-
-#### `triassic_plains`（三疊紀荒原）【已存在】
-- **描述**：橘紅天空的硫磺荒原，紅棕砂岩，始祖小雞出沒
-- **感官訊號**：smell（腥臭）/ sound（地鳴）/ wind（東南風）/ ground（三趾腳印）
-- **Reveal**：黑暗的森林邊界，火光解鎖後才可進入
-- **Monsters**：proto_chicken（始祖小雞）
-
-#### `fern_forest`（巨型蕨類森林）【已存在】
-- **描述**：高大蕨類，濕潤腐植土，黑曜石散落
-- **感官訊號**：smell（腐植土）/ sound（葉片摩擦）/ wind（微弱）/ ground（鬆軟落葉）
-- **Exits**：back → triassic_plains
-
-#### `predator_canyon`（捕食者峽谷）【待建】
-- **描述**：深紅砂岩峽谷，地面刻滿大型捕食者爪痕，空氣稀薄
-- **感官訊號**：smell（血腥 + 尿液領域標記）/ sound（低吼迴響）/ ground（深陷爪印 + 骨骸碎片）
-- **Monsters**：herrerasaurus（奔跑捕食者）
-- **Reveal**：破解風向後，可沿峭壁小路穿越
-
-#### `dark_cave`（黑暗洞穴）【待建】
-- **描述**：天然石灰岩洞，火把是唯一光源，地面有前人壁畫雛形
-- **感官訊號**：smell（石灰 + 舊灰燼）/ sound（水滴聲）/ ground（石英砂礫）
-- **Stage 2 spawn point**
-
-### Stage 3-4 區域：侏羅紀
-
-```
-jurassic_valley（侏羅紀河谷）[Stage 3 spawn]
-  └── [reveal: 解鎖 flint_knapping 後] → obsidian_quarry（黑曜石採石場）
-  └── [reveal: 解鎖 migration_cycle 後] → migration_trail（遷徙走廊）
-        └── pterosaur_cliff（翼龍峭壁）[Stage 4 spawn]
-```
-
-#### `jurassic_valley`（侏羅紀河谷）【待建】
-- **描述**：廣闊的蕨類河谷，Diplodocus 在遠處緩慢移動，植被更高更茂密
-- **感官訊號**：smell（青草 + 大型草食恐龍糞便）/ sound（河流 + 遠方巨獸步伐）/ ground（植物根系形成天然網格）
-
-#### `obsidian_quarry`（黑曜石採石場）【待建】
-- **描述**：火山噴發形成的黑曜石礦脈，地面高溫，玩家可以打製石器
-- **Challenge**：stone_tool_craft（選擇正確角度、材料打製刃口）
-
-#### `migration_trail`（遷徙走廊）【待建】
-- **描述**：動物遷徙踩出的古老路徑，每隔一段距離有不同足跡
-- **Challenge**：migration_pattern（連續觀察 3 次足跡方向分析規律）
-
-#### `pterosaur_cliff`（翼龍峭壁）【待建】
-- **描述**：高聳的砂岩峭壁，翼龍在崖邊築巢
-- **Challenge**：pterosaur_bond（以食物和聲音訊號建立翼龍信任）
-
-### Stage 5-6 區域：白堊紀
-
-```
-cretaceous_shore（白堊紀海岸）[Stage 5 spawn]
-  └── [reveal: 解鎖 salt_preservation 後] → salt_flats（鹽灘）
-  └── [reveal: 解鎖 pottery_craft 後] → settlement_ridge（聚落山脊）[Stage 6 spawn]
-        └── [reveal: 解鎖 symbol_abstraction 後] → ancestor_cave（祖先洞穴）
-```
-
-#### `cretaceous_shore`（白堊紀海岸）【待建】
-- **描述**：白堊紀海岸，大氣含氧量 30%，植被茂盛但極易起火
-- **感官訊號**：smell（海鹽 + 焦木）/ sound（浪濤）/ ground（細白砂）
-- **特殊機制**：高氧環境下火炬生命週期縮短，需要更謹慎控制火源
-
-#### `salt_flats`（鹽灘）【待建】
-- **描述**：海水蒸發形成的天然鹽灘，食物在此不腐爛
-- **Discovery 觸發點**：salt_preservation
-
-#### `settlement_ridge`（聚落山脊）【待建】
-- **描述**：玩家建立的第一個人類聚落，有陶器、火堆、簡單的獸皮遮蔽
-- **Challenge**：food_preservation + pottery_craft
-
-#### `ancestor_cave`（祖先洞穴）【待建】
-- **描述**：岩壁上密佈壁畫，從粗糙輪廓到精確符號的演進清晰可見
-- **Challenge**：cave_painting + ritual_altar（終局）
+| factor_id | 名稱 | 類別 | 觸發條件 |
+|-----------|------|------|---------|
+| `motion_stillness` | 靜止偽裝 | survival | 被異特龍追逐後突然靜止而脫逃 |
+| `altitude_wind` | 高空風向差異 | tools | 在樹冠層發現風向與地面不同 |
+| `tyrex_senses` | 霸王龍感知矛盾 | ecology | 靜止後 T-Rex 從旁走過 |
+| `wound_infection` | 傷口感染機制 | survival | 侏羅紀中未處理傷口在潮濕環境惡化 |
+| `structural_load` | 結構承重 | tools | 樹枝平台在過重後斷裂 |
 
 ---
 
-## 六、Monsters（生物）完整規劃
+## 四、Rooms 升級版（新增場景）
 
-| monster_id | 名稱 | 時代 | HP | ATK | 特殊行為 | 設計意圖 |
-|-----------|------|------|-----|-----|---------|---------|
-| `proto_chicken` | 始祖小雞 | 三疊紀 | 15 | 4 | respawn | 第一次戰鬥，習得戰鬥基礎 |
-| `herrerasaurus` | 奔跑者 | 三疊紀 | 45 | 12 | 追蹤嗅覺 | 觸發 wind_direction Discovery |
-| `ramphorhynchus` | 鑲嵌翼龍 | 侏羅紀 | 20 | 8 | 可馴化 | 觸發 pterosaur_bond Discovery |
-| `torvosaurus` | 蠻龍 | 侏羅紀 | 120 | 28 | 領域型 | 觸發 predator_territory Discovery |
-| `pteranodon` | 無齒翼龍 | 白堊紀 | 30 | 10 | 可作為哨兵 | Stage 4 馴化成就 |
-| `tyrannosaurus` | 暴龍 | 白堊紀 | 300 | 60 | 嗅覺強、視覺弱 | 測試玩家對所有感官知識的綜合應用 |
+### 三疊紀（全新設計）
+
+```
+desert_canyon（乾燥峽谷）[DAY_ZERO 起始點，不是荒原]
+  └── triassic_shade（背光洞窟陰影）[找到陰影才能進入]
+        └── triassic_riverbed（史前河床）[有水源，但有毒]
+              └── triassic_plains（三疊紀荒原）[原始入口]
+                    └── fern_forest（蕨類森林）[火解鎖]
+                          └── predator_canyon（捕食者峽谷）[風向解鎖]
+```
+
+#### `desert_canyon`（乾燥峽谷）【新增，取代 triassic_plains 作為起點】
+- **描述**：比荒原更壓迫的環境。紅色峽谷，地表溫度 55°C，CO₂ 的低沉感讓頭腦昏沉。
+- **感官**：smell（硫磺 + 熱岩石 + 乾腐植物）/ sound（絕對的靜默，反而恐怖）/ ground（滾燙，手不能碰）
+- **環境殺手**：陽光 + 熱量，超過 5 分鐘不移動到陰影會死
+- **Reveal**：峽谷深處有陰影，但需要先理解「陰影不在太陽方向」
+
+#### `megapede_territory`（巨蜈蚣領域）【新增】
+- **描述**：腐木堆積的低地，史前巨型蜈蚣（50cm-1m）的棲息地
+- **夜行性危險**：白天可以安全收集昆蟲作為食物，夜晚它們會主動攻擊
+- **Discovery 觸發**：arthropod_warning（被攻擊後）/ arthropod_nutrition（成功獵食後）
+
+### 侏羅紀（全新場景）
+
+#### `jurassic_understory`（侏羅紀林底層）【新增】
+- **描述**：高聳植被下的昏暗地帶。每幾分鐘就有巨型草食恐龍的腳步在附近轟響。
+- **環境殺手**：`accidental_trampling`（草食恐龍移動路徑，每輪有機率踩到玩家）
+- **感官**：ground（持續的低頻震動）/ smell（強烈的草食糞便 + 溫潤泥土）
+
+#### `canopy_refuge`（樹冠避難所）【新增】
+- **描述**：玩家建造的第一個樹冠避難所。這是整個遊戲中第一個「相對安全」的地方。
+- **機制**：安全時間有限（樹木會搖晃）、食物儲存容量有限
+- **Reveal**：更高的樹冠層，有翼龍築巢
+
+### 白堊紀（大幅升級）
+
+#### `cretaceous_floodplain`（白堊紀洪泛平原）【新增】
+- **描述**：寬闊的洪泛平原，地勢低，海嘯時首當其衝
+- **海嘯事件**：隨機觸發，玩家必須在 3 回合內到達高地
+- **前兆**：focus smell（海水異常退潮的鹹腥味）/ sound（海浪聲突然消失）
+
+#### `volcano_ridge`（火山脊）【新增】
+- **描述**：活躍火山附近的山脊，地表熱裂縫，時常落灰
+- **環境殺手**：ash_fall（持續扣體力）/ lava_crack（隨機出現的地裂）
+- **資源**：火山附近有豐富的黑曜石礦脈
+
+#### `impact_crater_eve`（撞擊前夜的山洞）【終局】
+- **描述**：玩家在白堊紀末期發現的深層洞穴。牆壁可以刻寫。
+- **終局場景**：天空亮起 → 地震 → 黑暗 → 沉默
+- **Legacy 機制**：玩家刻下的符號決定「文明遺產」分數
 
 ---
 
-## 七、Commands（指令）設計
+## 五、Monsters 升級版
 
-PC 使用感官導向的指令系統，與 pw 的 blockly 積木指令不同：
+| monster_id | 名稱 | 時代 | HP | ATK | 感知方式 | 能否戰勝 | 設計意圖 |
+|-----------|------|------|-----|-----|---------|---------|---------|
+| `megapede` | 史前巨蜈蚣 | 三疊紀 | 10 | 15（毒） | 震動 | ✅ 可以（用石頭） | 教學「節肢動物危險」 |
+| `meganeura` | 超大蜻蜓 | 三疊紀 | 5 | 3 | 視覺 | ✅ 可以（也可以吃） | 「食物」的認知轉換 |
+| `herrerasaurus` | 奔跑捕食者 | 三疊紀 | 45 | 18 | 嗅覺（主）+聽覺 | ❌ 只能逃 | 觸發 wind_direction |
+| `diplodocus` | 馬門溪龍（草食） | 侏羅紀 | 800 | 0（踩踏 50） | 無 | ❌ 毫無意義 | 踩踏意外，教學「不是所有威脅都是捕食者」 |
+| `allosaurus` | 異特龍 | 侏羅紀 | 200 | 35 | 聽覺（主）+嗅覺 | ❌ 只能繞路 | 測試「靜止偽裝 + 繞行」的綜合應用 |
+| `pteranodon` | 無齒翼龍 | 侏羅紀末 | 30 | 10 | 視覺（主） | ✅ 可馴化 | 哨兵系統 |
+| `tyrannosaurus` | 霸王龍 | 白堊紀 | 9999 | 即死 | 嗅覺（極強）+動作 | ❌ **不可能戰勝** | 終極威脅，測試所有 Factors |
+| `spinosaurus` | 棘龍 | 白堊紀 | 9999 | 即死 | 視覺（強）+水中 | ❌ **不可能戰勝** | 水域的終極威脅 |
 
-| 指令 | 說明 | 觸發的 Discovery |
-|------|------|-----------------|
-| `look` | 視覺觀察當前空間 | — |
-| `focus smell` | 專注嗅覺感知 | predator_scent、salt_preservation |
-| `focus sound` | 專注聽覺感知 | vibration_reading |
-| `focus ground` | 專注觸地感知 | vibration_reading、migration_cycle |
-| `focus wind` | 感知風向與氣息 | wind_direction |
-| `rub <A> <B>` | 摩擦兩個物件 | thermodynamics |
-| `strike <A> <B>` | 用物件敲擊另一物件 | flint_knapping、hardness_index |
-| `pry <A> with <B>` | 用槓桿撬動 | lever_principle |
-| `follow tracks` | 跟蹤足跡 | prey_behavior、migration_cycle |
-| `hide downwind` | 順風向隱蔽 | wind_direction |
-| `draw <symbol>` | 在石壁或地面畫符號 | symbol_abstraction |
-| `observe <target>` | 長時間觀察特定目標 | symbiosis、prey_behavior |
+> **設計說明**：T-Rex 和 Spinosaurus 的 HP 設計為 9999 是有意為之的。  
+> 玩家看到這個數字的那一刻，就應該理解：**這不是一場戰鬥，這是一場考驗你知識的逃脫謎題。**
 
 ---
 
-## 八、Locale（本地化）規劃
+## 六、自然事件（Disasters）系統——全新機制
 
-`/content/locales/zh_TW.yaml` 需擴充以下條目：
+這是 PC 獨有的、PW 沒有的系統：**隨機觸發的自然災害**。
 
-```yaml
-# 感官系統
-pc.sensory.smell_result: "你深吸一口氣，感知到：{result}"
-pc.sensory.sound_result: "你閉上眼睛傾聽，感知到：{result}"
-pc.sensory.ground_result: "你俯身貼地，感知到：{result}"
-pc.sensory.wind_result: "你感受著風的方向與氣息：{result}"
+| event_id | 名稱 | 時代 | 觸發條件 | 前兆訊號 | 應對 |
+|---------|------|------|---------|---------|------|
+| `volcanic_eruption` | 火山噴發 | 三疊紀/白堊紀 | 隨機（Stage 後半段機率增加） | sound（悶雷）/ ground（微震）/ smell（硫磺加重） | 逆風移動到高地 |
+| `ash_storm` | 火山灰暴 | 三疊紀/白堊紀 | 火山噴發後 2 回合 | sky（灰塵遮蔽太陽） | 找到遮蔽 + 濕布掩口 |
+| `forest_fire` | 林火 | 白堊紀（高氧） | 任何失控火源 | smell（焦木）/ sound（劈啪聲）/ sky（遠方橘光） | 找到水源或岩石屏障 |
+| `tsunami` | 海嘯 | 白堊紀海岸 | 海嘯前海水退潮事件 | smell（異常的海腥）/ sound（海浪聲消失） | 立刻往高地跑（3回合） |
+| `impact_event` | 小行星撞擊 | 白堊紀末 | Stage 10 固定觸發 | sky（天空出現第二個太陽，持續變亮） | 無法阻止，只能準備遺產 |
 
-# 失敗後果
-pc.failure.oxygen_deplete: "$RED$你劇烈喘息，氧氣不足，視野開始模糊... 在三疊紀，奔跑是一種奢侈。$NOR$\n"
-pc.failure.scent_detected: "$RED$捕食者突然轉頭！牠的鼻孔在抽動——牠聞到了你。$NOR$\n"
-pc.failure.fire_wet: "樹枝太潮濕，摩擦產生的熱量全被水分帶走了。\n"
-pc.failure.fire_rain: "暴雨澆熄了你的火星。你需要找到更乾燥的引火物。\n"
-pc.failure.tool_wrong_material: "石頭彼此碰撞，留下白色粉末——硬度不夠，無法切削。\n"
+---
 
-# Discovery 觸發文字
-pc.discovery.thermodynamics: "\n$HIC$【 🔥 領悟：摩擦生熱 】$NOR$\n乾燥的蕨類根部在快速摩擦下冒出橘紅色的火星。你第一次在這個世界點燃了火。\n你理解了：熱量是機械能轉化的結果，而乾燥是燃燒的必要條件。\n"
-pc.discovery.wind_direction: "\n$HIC$【 🌬️ 領悟：風向掌控 】$NOR$\n暴龍在你靠近時猛然轉頭——牠是靠鼻子，不是眼睛。\n你理解了：順著風走等於把自己的氣味送進捕食者的鼻腔。\n"
-pc.discovery.lever_principle: "\n$HIC$【 ⚖️ 領悟：槓桿原理 】$NOR$\n一根叉狀樹枝抵著石塊，你輕輕一壓——巨石翻動了。\n支點改變了力的方向與大小。\n"
-pc.discovery.symbol_abstraction: "\n$HIC$【 ✍️ 領悟：符號誕生 】$NOR$\n你在石壁上畫下了一個代表「危險」的標記。後代或許再也不用親身試錯。\n這是知識脫離個體、成為文明的那一刻。\n"
+## 七、終局哲學：文明是什麼的回答
 
-# 進度推進
-pc.progress.stage_shifted: "\n$HIW$【文明階段躍升】$NOR$\n你從「{prev}」成長為：$HIG${name}$NOR$\n\n"
+影片末尾說：「生存的終極反思」。
+
+在 FSE 的框架下，這個反思就是 PC 的最終 Discovery：
+
+```
+最終 Factor：`civilization_meaning`（文明的意義）
+
+觸發條件：
+  - 完成 ritual_altar
+  - 目擊小行星撞擊
+  - 在洞穴中刻下最後一個符號
+
+Discovery 文字：
+  「文明不是人類的勝利。
+   文明是人類記住了什麼，
+   並且讓這份記憶比個體活得更長。
+   
+   你無法對抗大自然的熵增。
+   但你可以在它消滅你之前，
+   把理解留給下一個願意聆聽的存在。」
 ```
 
 ---
 
-## 九、第一個可執行閉環（MVP）
-
-> 對應現有的 `novice` stage 與 `first_fire` quest，需要完成以下檔案建置：
-
-### 閉環流程
-```
-玩家進入 triassic_plains
-  → look → 看到橘紅天空、恐龍腳印、遠方蕨類森林（黑暗邊緣被遮蔽）
-  → 嘗試 rub branches → 失敗：「樹枝太潮濕」
-  → 嘗試跑步移動 → 失敗提示：「你喘不過氣」（觸發 oxygen_scarcity confusion）
-  → focus ground → 發現「乾枯蕨類根部」
-  → rub fern roots → 成功引燃！
-  → 解鎖 thermodynamics factor
-  → 解鎖 first_fire quest 完成
-  → 蕨類森林邊界 Reveal（可進入 fern_forest）
-  → novice → survivor stage 推進
-```
-
-### 需要新建的檔案
-
-| 檔案路徑 | 類型 | 說明 |
-|---------|------|------|
-| `content/rooms/triassic_plains/challenges/first_fire.yaml` | Challenge | 鑽木取火挑戰 |
-| `content/rooms/triassic_plains/discoveries/thermodynamics_trigger.yaml` | Discovery | 解鎖熱力學領悟 |
-| `content/locales/zh_TW.yaml` | Locale | 感官 + Discovery 文字 |
-| `content/factors/oxygen_scarcity.yaml` | Factor | 低氧呼吸節律 |
-| `content/factors/wind_direction.yaml` | Factor | 風向掌控 |
-| `content/factors/vibration_reading.yaml` | Factor | 地震波解讀 |
-
----
-
-## 十、架構差異：PC vs PW
-
-| 面向 | PW（Programming World） | PC（Prehistoric Civilization） |
-|------|------------------------|-------------------------------|
-| 核心服務 | `blockly_service`（積木 AST） | 感官指令系統（文字 MUD） |
-| Challenge 類型 | `ast_matcher`（積木匹配） | `action_sequence`（指令序列） |
-| Node 結構 | `/content/nodes/<name>/` | `/content/rooms/<name>/` |
-| Discovery 觸發 | 執行正確積木 | 執行正確感官行動 + 失敗歷史 |
-| Factor 前置 | 積木工具箱前置 | 感官能力前置 |
-| Reveal 機制 | 工具箱新積木出現 | 空間黑暗邊界被照亮 |
-| Locale 主題 | 程式語言（迴圈、記憶體） | 感官、自然現象、文明原語 |
-
----
-
-## 十一、開發優先序
+## 八、開發優先序（更新）
 
 | 優先級 | 項目 | 說明 |
 |--------|------|------|
-| P0 | `first_fire` 閉環 | MVP：完整的 novice → survivor 體驗 |
-| P0 | `zh_TW.yaml` locale | 所有感官 + Discovery 文字 |
-| P1 | `first_hunt` + `wind_stealth` | survivor stage 完整化 |
-| P1 | `predator_canyon` + `dark_cave` rooms | 三疊紀地圖完整化 |
-| P1 | `herrerasaurus` monster | wind_direction Discovery 觸發體 |
-| P2 | Stage 3-4（侏羅紀）全部 | 工具與馴化 |
-| P3 | Stage 5-6（白堊紀）全部 | 聚落與文字 |
-| P4 | 感官指令系統服務擴充 | 若 runtime 尚未支援 |
+| P0 | `day_zero` + `first_night` 閉環 | 取代原 novice，更真實的第一死亡體驗 |
+| P0 | `desert_canyon` room + 熱傷害機制 | 讓起點本身就是威脅 |
+| P0 | `zh_TW.yaml` locale（含自然災害文字） | 感官 + 災害描述文字 |
+| P1 | `megapede` + `meganeura` monsters | 三疊紀巨蟲完整化 |
+| P1 | `bug_eater` quest（昆蟲食物鏈） | 讓玩家第一次面對「什麼能吃」問題 |
+| P2 | `allosaurus_gauntlet` + 靜止偽裝系統 | 侏羅紀核心挑戰 |
+| P2 | Disasters 系統（volcanic / tsunami） | 自然災害隨機觸發機制 |
+| P3 | `canopy_builder` 樹冠建造系統 | 侏羅紀避難所 |
+| P3 | T-Rex 遭遇場景 | 白堊紀頂點體驗 |
+| P4 | 終局 `impact_event` + Legacy 機制 | 小行星撞擊終局 |

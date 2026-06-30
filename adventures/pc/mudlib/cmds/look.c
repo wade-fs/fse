@@ -16,6 +16,14 @@ void main(object me, string arg) {
         return;
     }
 
+    // 若目標是一個已知出口方向，引導玩家用 go 前往
+    mapping room_exits = room->query_exits();
+    if (room_exits && !undefinedp(room_exits[arg])) {
+        tell_object(me, GRN + "你注視著「" + arg + "」的方向。\n" + NOR +
+            "💡 輸入 [ go " + arg + " ] 前往那個方向。\n");
+        return;
+    }
+
     // 只有解鎖了戰鬥生存或基礎觀察，才能看清恐龍細節
     if (!me->has_factor("combat_survival") && !me->has_factor("predator_scent")) {
         tell_object(me, YEL + "在昏暗而陌生的史前光線下，你無法看清「" + arg + "」的細節，貿然直視只會引起危險。\n" +
