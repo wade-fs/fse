@@ -42,6 +42,7 @@
   ──────
   ### 4. 關卡詳細攻略與引導指南 (Stage Guidelines)
 
+  *   **[史前地球求生與生活哲學](docs/guidelines/00-living_philosophy.md)**：跨階段物品重用、工具保養與日常生活生存節奏。
   *   **[新手教學與保護機制指南](docs/guidelines/novice_tutorial.md)**：新手安全區防護、復活點與通關機制。
   *   **[開發與 Presence 生物手冊](docs/guidelines/stages_manual.md)**：無戰鬥系統、Presence 偵測模型與關卡開發手冊。
 

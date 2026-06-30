@@ -1,0 +1,14 @@
+id: record_extra_pos_72
+title: "進香的隊伍"
+era: "modern"
+evidence_type: "信仰記憶"
+quality: 1
+progress: 10
+description: |
+  每年農曆三月，從全台各地來的進香隊伍在奉天宮前集合。
+  有人走了三天，腳上起了水泡，還是繼續走。
+  攝影師問一個進香的老太太，為什麼要走這麼遠來拜媽祖？
+  她說：「因為她一直在等我，我不能讓她等太久。」
+settlement: "singang"
+trigger_site: "singang"
+conditions: []

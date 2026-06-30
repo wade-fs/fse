@@ -1,0 +1,1 @@
+../../mudlib/item/temple_amulet.c

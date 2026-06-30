@@ -1,0 +1,13 @@
+id: "v1_0"
+name: "清領紀"
+time_range: "1683～1895"
+description: "清朝統治時期，閩粵移民渡過黑水溝大舉來台開墾。一府二鹿三艋舺的繁華逐漸在島嶼各處綻放，地方宗族、宗教信仰與街市網絡在風雨中生根茁壯。"
+next_era: ""
+min_progress: 150
+memory_eras:
+  - "qing"
+forces:
+  - "清官府"
+  - "在地縉紳"
+settlement_tier_cap: 2
+announce: "清領紀：烽火与墾荒，島嶼的輪廓漸漸清晰。"

@@ -1,0 +1,1 @@
+../../mudlib/item/ward_stone.c

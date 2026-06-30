@@ -1,0 +1,71 @@
+# /data/yaml/settlements/ludao.yaml
+#
+# 綠島 靜態設定
+
+id: "ludao"
+name: "綠島鄉"
+tier: 4              # TIER_VILLAGE
+admin_level: "鄉"
+county: "taitung_county"
+
+# 六維初始值
+population: 25
+industry:   20
+culture:    35
+memory:     65
+trade:      30
+cohesion:   50
+
+# 失源者
+specters_active: []
+
+# 歷史脈絡
+eras_present:
+  - "v3.0"
+  - "v3.1"
+  - "modern"
+
+# 地方產業
+industries:
+  - "漁業"
+  - "觀光業"
+
+# 信仰
+temples:
+  - name: "綠島觀音洞"
+    deity: "觀音菩薩"
+
+# 地標
+sites:
+  - "ludao_prison"
+  - "ludao_green_oasis"
+  - "ludao_lighthouse"
+  - "ludao_guanyin_cave"
+  - "ludao_asahi_hotspring"
+  - "ludao_human_rights_monument"
+  - "ludao_swallow_cave"
+  - "ludao_nanzihu_ruins"
+  - "ludao_sleeping_beauty"
+  - "ludao_dabaisha_beach"
+  - "ludao_weather_station"
+  - "ludao_defensive_bunker"
+  - "ludao_swallow_secret_cave"
+# 記憶子項目完成度
+memory_breakdown:
+  history_events: 0.40
+  oral_tradition: 0.35
+  named_persons:  0.42
+sites:
+  - "ludao_prison"
+  - "ludao_green_oasis"
+  - "ludao_lighthouse"
+  - "ludao_guanyin_cave"
+  - "ludao_asahi_hotspring"
+  - "ludao_human_rights_monument"
+  - "ludao_swallow_cave"
+  - "ludao_nanzihu_ruins"
+  - "ludao_sleeping_beauty"
+  - "ludao_dabaisha_beach"
+  - "ludao_weather_station"
+  - "ludao_defensive_bunker"
+  - "ludao_swallow_secret_cave"

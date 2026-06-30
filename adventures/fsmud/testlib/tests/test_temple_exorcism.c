@@ -1,0 +1,1 @@
+../../mudlib/tests/test_temple_exorcism.c
