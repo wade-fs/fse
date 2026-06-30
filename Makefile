@@ -19,7 +19,7 @@ GO_EXE := $(shell if [ -f $(GOROOT)/bin/go ]; then echo $(GOROOT)/bin/go; else e
 GO_FLAGS := -ldflags="-s -w"
 COMMON_ENV := CGO_CFLAGS="-Wno-return-local-addr"
 
-.PHONY: all clean run-pw test-pw run-pc test-pc build-engine
+.PHONY: all clean run-pw test-pw run-pc test-pc run-fsmud test-fsmud build-engine
 
 all: build-engine
 
@@ -36,6 +36,7 @@ clean:
 	@rm -rf $(OUT)
 	@rm -f data/pw/state/system/*.o
 	@rm -f data/pc/state/system/*.o
+	@make -C adventures/fsmud clean-txt
 
 run-pw: build-engine
 	@make -C adventures/pw run-pw
@@ -48,3 +49,9 @@ run-pc: build-engine
 
 test-pc: build-engine
 	@make -C adventures/pc test-pc
+
+run-fsmud: build-engine
+	@make -C adventures/fsmud run-fsmud
+
+test-fsmud: build-engine
+	@make -C adventures/fsmud test-driver
