@@ -195,16 +195,16 @@ void add_faction_reputation(string fid, int val) {
 // ── 職涯等級查詢與設定 ────────────────────────
 int query_career_rank(string career_id) {
     // career_d 在 create 時可能尚未載入，安全呼叫
-    object cd = find_object("/daemon/career_d.c");
-    if (!cd) cd = load_object("/daemon/career_d.c");
+    object cd = find_object("/services/career_d.c");
+    if (!cd) cd = load_object("/services/career_d.c");
     if (cd) return cd->query_career_rank(this_object(), career_id);
     return 1; // fallback
 }
 
 void set_career_rank(string career_id, int rank) {
     if (!career_points) career_points = ([]);
-    object cd = find_object("/daemon/career_d.c");
-    if (!cd) cd = load_object("/daemon/career_d.c");
+    object cd = find_object("/services/career_d.c");
+    if (!cd) cd = load_object("/services/career_d.c");
     if (cd) {
         mapping career = cd->load_career(career_id);
         if (career && pointerp(career["ranks"])) {
@@ -225,7 +225,7 @@ void set_career_rank(string career_id, int rank) {
 
 // 🚀 新增：清理編輯鎖定
 void cleanup_editor() {
-    object ide_d = find_object("/daemon/ide_d.c");
+    object ide_d = find_object("/services/ide_d.c");
     if (ide_d) {
         ide_d->release_all_locks(this_object());
     }
@@ -367,7 +367,7 @@ void setup() {
 
     // 🚀 新增：發送 UI 初始化資訊給前端
     string l = query_lang();
-    object lang_d = load_object("/daemon/language_d.c");
+    object lang_d = load_object("/services/language_d.c");
 
     // 如果是測試帳號，略過實體載入與自動移動邏輯
     if (stringp(id) && strsrch(id, "test") == 0) {
@@ -420,7 +420,7 @@ void setup() {
         call_other(help_ob, "do_help_list", this_object(), "");
     }
 
-    mapping socials = load_object("/daemon/social_d.c")->get_ui_list();
+    mapping socials = load_object("/services/social_d.c")->get_ui_list();
     write(sprintf("{\"ui\": \"socials\", \"title\": \"%s\", \"data\": %s}", 
         lang_d->translate("label_actions", l), json_encode(socials)));
 
@@ -456,7 +456,7 @@ int process_input(string input) {
             input = substr(input, 1, strlen(input) - 1);
             write("$CYN$【本機指令】$NOR$" + input + "\n");
         } else {
-            object ssh_d = find_object("/daemon/ssh_d.c");
+            object ssh_d = find_object("/services/ssh_d.c");
             if (ssh_d) {
                 ssh_d->client_send_input(this_object(), input);
                 return 1;

@@ -188,7 +188,7 @@ void execute_routine(mapping routine) {
         object env = environment(this_object());
         if (env && env->query_entity_id() != "site:" + loc) {
             // 嘗試透過 SETTLEMENT_D 找到目標 Site
-            object dest = load_object("/daemon/settlement_d.c")->get_site_object(loc);
+            object dest = load_object("/services/settlement_d.c")->get_site_object(loc);
             if (dest && dest != env) {
                 say(query_name() + " 看了看時間，動身前往其他地方了。\n");
                 move_object(this_object(), dest);
@@ -514,7 +514,7 @@ void do_wander() {
         }
     }
 
-    object lang_d = load_object("/daemon/language_d.c");
+    object lang_d = load_object("/services/language_d.c");
     
     // 廣播離開訊息
     lang_d->broadcast_event(env, "say_leave", ([ "$name": this_object(), "$dir": dir ]));
@@ -814,7 +814,7 @@ void on_death() {
 
         // 🚀 任務進度通知
         if (userp(killer)) {
-            load_object("/daemon/quest_d.c")->check_kill_progress(killer, base_name(this_object()));
+            load_object("/services/quest_d.c")->check_kill_progress(killer, base_name(this_object()));
         }
     }
 

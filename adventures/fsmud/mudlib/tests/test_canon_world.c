@@ -3,7 +3,7 @@ inherit "/std/test_case";
 
 void run_tests(object me) {
     start_test("世界資料庫 (Canon to World YAML) - Eras 測試");
-    object tl_d = load_object("/daemon/timeline_d.c");
+    object tl_d = load_object("/services/timeline_d.c");
     assert_equal(1, objectp(tl_d), "應該載入 timeline_d");
     
     // 檢查目前 Era (預設為 v0_1)
@@ -17,7 +17,7 @@ void run_tests(object me) {
     assert_equal(1, member_array("西拉雅", era_data["forces"]) != -1, "勢力應包含西拉雅");
 
     start_test("世界資料庫 - Settlements 測試");
-    object set_d = load_object("/daemon/settlement_d.c");
+    object set_d = load_object("/services/settlement_d.c");
     assert_equal(1, objectp(set_d), "應該載入 settlement_d");
 
     // 載入鹿港
@@ -35,7 +35,7 @@ void run_tests(object me) {
     assert_equal(80, tainan["population"], "台南人口值");
 
     start_test("世界資料庫 - Factions 測試");
-    object fac_d = load_object("/daemon/faction_d.c");
+    object fac_d = load_object("/services/faction_d.c");
     assert_equal(1, objectp(fac_d), "應該載入 faction_d");
 
     // 檢查板橋林家
@@ -51,7 +51,7 @@ void run_tests(object me) {
     assert_equal("鹿港辜家", fac_d->query_faction_name("gu_family"), "勢力名稱應為鹿港辜家");
 
     start_test("世界資料庫 - Historical Events 測試");
-    object ev_d = load_object("/daemon/historical_event_d.c");
+    object ev_d = load_object("/services/historical_event_d.c");
     assert_equal(1, objectp(ev_d), "應該載入 historical_event_d");
 
     // 檢查西來庵事件

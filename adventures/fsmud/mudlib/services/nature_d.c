@@ -110,7 +110,7 @@ void update_weather() {
                     string lang = user->query_lang();
                     if (!lang) lang = "en";
                     
-                    string msg = load_object("/daemon/language_d.c")->translate("weather_" + current_weather, lang);
+                    string msg = load_object("/services/language_d.c")->translate("weather_" + current_weather, lang);
                     tell_object(user, "\n" + "$HIW$" + msg + "$NOR$" + "\n");
                 }
             }

@@ -16,19 +16,19 @@ string query_role() { return "god"; }
 void run_tests(object me) {
     start_test("遺忘浪潮與失源者共鳴儀式整合測試");
 
-    object ob_d = load_object("/daemon/oblivion_d.c");
-    object res_d = load_object("/daemon/resonance_d.c");
+    object ob_d = load_object("/services/oblivion_d.c");
+    object res_d = load_object("/services/resonance_d.c");
     assert_true(objectp(ob_d), "應成功載入 oblivion_d");
     assert_true(objectp(res_d), "應成功載入 resonance_d");
 
     // 重新載入 settlement_d 以清空執行期快取並讀取全新狀態
-    object s_d = find_object("/daemon/settlement_d.c");
+    object s_d = find_object("/services/settlement_d.c");
     if (s_d) destruct(s_d);
     
     // 確保底層存檔也被刪除以保持測試獨立性
     rm("/data/state/settlements/minxiong.o");
     
-    s_d = load_object("/daemon/settlement_d.c");
+    s_d = load_object("/services/settlement_d.c");
     assert_true(objectp(s_d), "應成功重新載入 settlement_d");
     // Ensure EVENT_D subscriptions are updated
     EVENT_D->unsubscribe("SpecterResolved");

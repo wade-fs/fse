@@ -13,8 +13,8 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("鹿港工藝聚落與職涯深化整合測試 (P9.2)");
 
-    object route_d = load_object("/daemon/route_d.c");
-    object career_d = load_object("/daemon/career_d.c");
+    object route_d = load_object("/services/route_d.c");
+    object career_d = load_object("/services/career_d.c");
     assert_true(objectp(route_d), "應載入 route_d");
     assert_true(objectp(career_d), "應載入 career_d");
 

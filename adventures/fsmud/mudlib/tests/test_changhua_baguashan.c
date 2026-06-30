@@ -13,8 +13,8 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("彰化八卦山與乙未歷史層整合測試 (P9.3)");
 
-    object route_d = load_object("/daemon/route_d.c");
-    object tl_d = load_object("/daemon/timeline_d.c");
+    object route_d = load_object("/services/route_d.c");
+    object tl_d = load_object("/services/timeline_d.c");
     assert_true(objectp(route_d), "應載入 route_d");
     assert_true(objectp(tl_d), "應載入 timeline_d");
 

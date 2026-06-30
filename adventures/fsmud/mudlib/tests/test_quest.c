@@ -9,7 +9,7 @@ void run_tests(object me) {
     me->set_name("測試英雄");
     me->set_level(10); // 確保等級足夠
     
-    object quest_d = load_object("/daemon/quest_d.c");
+    object quest_d = load_object("/services/quest_d.c");
 
     // 1. 測試承接任務
     int res = quest_d->accept_quest(me, "newbie_badge");

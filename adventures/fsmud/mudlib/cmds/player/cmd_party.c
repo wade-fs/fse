@@ -19,7 +19,7 @@ int main(object me, string verb, string arg) {
         }
     }
 
-    object party_d = load_object("/daemon/party_d.c");
+    object party_d = load_object("/services/party_d.c");
 
     switch (cmd) {
         case "create":

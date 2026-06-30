@@ -91,7 +91,7 @@ string _t(string key) {
     
     if (!lang || lang == "0") lang = "en";
 
-    return load_object("/daemon/language_d.c")->translate(key, lang);
+    return load_object("/services/language_d.c")->translate(key, lang);
 }
 
 // 取得中文化的時間 (範例)

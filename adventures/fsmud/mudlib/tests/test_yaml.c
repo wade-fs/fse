@@ -43,9 +43,9 @@ void run_tests(object me) {
     // 3. 測試領域事件與聚落探索聯動 (M1 核心循環)
     start_test("M1 核心循環 (事件與聚落聯動)");
     
-    object set_d = load_object("/daemon/settlement_d.c");
-    object fp_d = load_object("/daemon/footprint_d.c");
-    object tl_d = load_object("/daemon/timeline_d.c");
+    object set_d = load_object("/services/settlement_d.c");
+    object fp_d = load_object("/services/footprint_d.c");
+    object tl_d = load_object("/services/timeline_d.c");
     object ev_d = load_object("/secure/event_d.c");
 
     // 重置民雄的狀態

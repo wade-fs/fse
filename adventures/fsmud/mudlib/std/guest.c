@@ -32,7 +32,7 @@ void catch_tell(string msg) {
     
     if (!session_id || !remote_mudlib) return;
 
-    object ssh_d = find_object("/daemon/ssh_d.c");
+    object ssh_d = find_object("/services/ssh_d.c");
     if (ssh_d) {
         ssh_d->server_send_output(remote_mudlib, session_id, msg);
     }
@@ -44,7 +44,7 @@ int save() {
 }
 
 void quit() {
-    object ssh_d = find_object("/daemon/ssh_d.c");
+    object ssh_d = find_object("/services/ssh_d.c");
     if (ssh_d) {
         ssh_d->server_send_disconnect(remote_mudlib, session_id, "Guest quit");
     }

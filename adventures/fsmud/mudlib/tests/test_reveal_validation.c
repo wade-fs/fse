@@ -7,7 +7,7 @@ inherit "/std/test_case";
 void run_tests(object me) {
     // 1. 驗證聚落 validation 機制
     start_test("聚落驗證 (Settlement Validation) 測試");
-    object set_d = load_object("/daemon/settlement_d.c");
+    object set_d = load_object("/services/settlement_d.c");
     assert_equal(1, objectp(set_d), "應該載入 settlement_d");
 
     // 建立合法的測試聚落 Mapping
@@ -46,7 +46,7 @@ void run_tests(object me) {
     assert_equal(0, sizeof(initial_reveals["npcs"]), "初始玩家不應看到任何浮現 NPC");
 
     // 模擬玩家獲得 footprint 踏印
-    object footprint_d = load_object("/daemon/footprint_d.c");
+    object footprint_d = load_object("/services/footprint_d.c");
     assert_equal(1, objectp(footprint_d), "應該載入 footprint_d");
     
     // 授予 geo:chiayi_city，此時滿足民雄地圖中的「層級二」條件

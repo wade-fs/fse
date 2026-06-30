@@ -16,7 +16,7 @@ int main(object me, string verb, string arg) {
     arg = trim(arg);
     if (arg == "en" || arg == "zh-TW" || arg == "zh-CN") {
         me->set_lang(arg);
-        string msg = load_object("/daemon/language_d.c")->translate("login_success", arg);
+        string msg = load_object("/services/language_d.c")->translate("login_success", arg);
         msg = replace_string(msg, "$name", me->query_name());
         write(msg + "\n");
         me->save();

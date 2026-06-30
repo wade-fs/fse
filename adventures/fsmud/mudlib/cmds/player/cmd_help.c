@@ -72,7 +72,7 @@ int do_help_list(object me, string arg) {
     
     // 進行一些 UI 過濾：如果是 Admin 類別且玩家不是巫師，則隱藏
     if (me->query_role() != "god" && me->query_role() != "wizard") {
-        object lang_d = load_object("/daemon/language_d.c");
+        object lang_d = load_object("/services/language_d.c");
         string admin_cat = lang_d->translate("cat_admin", lang);
         m_delete(data, admin_cat);
     }

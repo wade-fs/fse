@@ -77,7 +77,7 @@ int validate_event_activation(string event_id, string settlement_id) {
     }
 
     // 2. 時代版本驗證 (必須與當前 TIMELINE_D 的 Era 一致或相容)
-    string current_era = load_object("/daemon/timeline_d.c")->query_current_era();
+    string current_era = load_object("/services/timeline_d.c")->query_current_era();
     
     // 如果事件定義的 era 與目前世界 era 不同，則限制啟動
     // 註：這可依據專案設計決定是否允許過去時代的事件啟動，這裡先設計為 era 必須相同

@@ -13,9 +13,9 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("歷史文獻記錄與傳言 (Rumor & Chronicles) 系統測試 (P8.2)");
 
-    object ch_d = load_object("/daemon/chronicle_d.c");
-    object set_d = load_object("/daemon/settlement_d.c");
-    object career_d = load_object("/daemon/career_d.c");
+    object ch_d = load_object("/services/chronicle_d.c");
+    object set_d = load_object("/services/settlement_d.c");
+    object career_d = load_object("/services/career_d.c");
 
     assert_true(objectp(ch_d), "應載入 chronicle_d");
     assert_true(objectp(set_d), "應載入 settlement_d");

@@ -172,8 +172,8 @@ void on_quest_completed(mapping event) {
     if (!player || !qid) return;
 
     // 嘗試從 quest 的 YAML 取得 related_npc 欄位
-    object qd = find_object("/daemon/quest_d.c");
-    if (!qd) qd = load_object("/daemon/quest_d.c");
+    object qd = find_object("/services/quest_d.c");
+    if (!qd) qd = load_object("/services/quest_d.c");
     if (!qd) return;
     mapping qinfo = qd->query_quest_info(qid);
     if (!qinfo || !qinfo["related_npc"]) return;

@@ -142,7 +142,7 @@ int read_chronicle(object player, string cid) {
         player->set_temp(read_key, 1);
         
         // 讀者可獲得文士職涯點數 (Scholar Points) 與少量經驗
-        object career_d = find_object("/daemon/career_d.c");
+        object career_d = find_object("/services/career_d.c");
         if (career_d) {
             career_d->add_points(player, "scholar", 2);
         }
@@ -167,7 +167,7 @@ void on_memory_completed(mapping event) {
     string s_id = "unknown";
     
     // 嘗試從 memory_d 取得此記憶片段關聯的聚落
-    object mem_d = find_object("/daemon/memory_d.c");
+    object mem_d = find_object("/services/memory_d.c");
     if (mem_d) {
         mapping mem_info = mem_d->query_memory_fragment(mid);
         if (mem_info && mem_info["trigger_site"]) {

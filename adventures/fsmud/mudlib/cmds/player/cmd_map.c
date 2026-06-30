@@ -13,7 +13,7 @@ int main(object me, string verb, string arg) {
         if (range > 5) range = 5; // 限制最大範圍避免洗頻
     }
 
-    write(load_object("/daemon/map_d.c")->draw_map(me, range));
+    write(load_object("/services/map_d.c")->draw_map(me, range));
     return 1;
 }
 

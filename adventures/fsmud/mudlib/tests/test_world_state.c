@@ -18,7 +18,7 @@ void run_tests(object me) {
     start_test("歷史事件驅動的世界狀態 (World State Evolution) 系統測試 (P21)");
 
     // ── 載入守護進程 ────────────────────────────────────
-    object ws_d = load_object("/daemon/world_state_d.c");
+    object ws_d = load_object("/services/world_state_d.c");
     assert_true(objectp(ws_d), "應成功載入 world_state_d");
 
     // ── 1. YAML 狀態鏈解析 ────────────────────────────

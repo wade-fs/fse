@@ -34,7 +34,7 @@ int main(object me, string verb, string arg) {
         return 1;
     }
 
-    object ssh_d = load_object("/daemon/ssh_d.c");
+    object ssh_d = load_object("/services/ssh_d.c");
     if (!ssh_d) {
         write("$RED$系統錯誤：無法載入 ssh_d。\n$NOR$");
         return 1;

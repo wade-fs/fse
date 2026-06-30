@@ -11,7 +11,7 @@ int main(object me, string verb, string arg) {
         return 1;
     }
 
-    object timeline = find_object("/daemon/timeline_d.c");
+    object timeline = find_object("/services/timeline_d.c");
     string era = timeline ? timeline->query_current_era() : "v0_1";
 
     string msg;
@@ -47,7 +47,7 @@ int main(object me, string verb, string arg) {
     me->add_exp(exp_gain);
     write("你獲得了 " + exp_gain + " 點經驗值與商人修練點，並賺取了 " + money_gain + " 銅幣。\n");
 
-    object career_d = find_object("/daemon/career_d.c");
+    object career_d = find_object("/services/career_d.c");
     if (career_d) {
         career_d->add_points(me, "merchant", 2);
     }

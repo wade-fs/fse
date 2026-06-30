@@ -12,7 +12,7 @@ void run_tests() {
     }
 
     // 測試 nature_d 初始化
-    object nature_d = load_object("/daemon/nature_d.c");
+    object nature_d = load_object("/services/nature_d.c");
     if (nature_d) {
         write("  [PASS] nature_d loaded successfully\n");
     } else {

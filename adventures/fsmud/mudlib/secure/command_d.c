@@ -56,7 +56,7 @@ int execute(object me, string verb, string arg) {
     }
 
     // 🚀 備援：檢查是否為社交動作 (Socials)
-    object social_d = load_object("/daemon/social_d.c");
+    object social_d = load_object("/services/social_d.c");
     if (social_d && social_d->execute_social(me, verb, arg)) {
         return 1;
     }
@@ -70,8 +70,8 @@ mapping query_cmd_map() { return cmd_map; }
 mapping query_categorized_commands(string lang) {
     mapping res = ([]);
     string *verbs = sort_array(keys(cmd_map), 1);
-    object lang_d = find_object("/daemon/language_d.c");
-    if (!lang_d) lang_d = load_object("/daemon/language_d.c");
+    object lang_d = find_object("/services/language_d.c");
+    if (!lang_d) lang_d = load_object("/services/language_d.c");
     
     foreach (string v in verbs) {
         string file = cmd_map[v];

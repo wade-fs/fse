@@ -41,7 +41,7 @@ void receive_p2p_message(string sender, string content, string type) {
     // ── Interstellar SSH Session 協議路由 ───────────────────
     // 格式：fs_session|from_mudlib|to_mudlib|msg_type|session_id|payload
     if (strsrch(content, "fs_session|") == 0) {
-        object ssh_d = load_object("/daemon/ssh_d.c");
+        object ssh_d = load_object("/services/ssh_d.c");
         if (ssh_d) {
             ssh_d->receive_fs_session(content);
         }
@@ -113,7 +113,7 @@ void receive_p2p_message(string sender, string content, string type) {
     // ── Distributed Object Model (dist_msg) 路由 ───────────
     // 格式：dist_msg|from|to|action|json
     if (strsrch(content, "dist_msg|") == 0) {
-        object dist_d = load_object("/daemon/dist_d.c");
+        object dist_d = load_object("/services/dist_d.c");
         if (!dist_d) {
             printf("❌ [Interstellar] 無法載入 dist_d，忽略 RPC。\n");
             return;

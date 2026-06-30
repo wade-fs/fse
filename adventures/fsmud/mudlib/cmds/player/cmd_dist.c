@@ -4,7 +4,7 @@
 inherit "/std/object";
 
 int main(object me, string verb, string arg) {
-    object dist_d = find_object("/daemon/dist_d.c");
+    object dist_d = find_object("/services/dist_d.c");
     if (!dist_d) {
         write("DistD not found.\n");
         return 1;

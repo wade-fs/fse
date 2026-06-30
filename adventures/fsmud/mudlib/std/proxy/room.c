@@ -82,7 +82,7 @@ int do_proxy_cmd(string input) {
         return 1; // 攔截但不執行，防止本地出錯
     }
 
-    object dist_d = find_object("/daemon/dist_d.c");
+    object dist_d = find_object("/services/dist_d.c");
     if (dist_d) {
         dist_d->send_dist_msg(remote_mud, "cmd", ([
             "uuid": shadow_uuid,

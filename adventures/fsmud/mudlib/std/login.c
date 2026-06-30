@@ -22,7 +22,7 @@ void set_browser_lang(string lang) { browser_lang = lang; }
 string _t(string key) {
     string l = browser_lang;
     if (!l) l = "en";
-    return load_object("/daemon/language_d.c")->translate(key, l);
+    return load_object("/services/language_d.c")->translate(key, l);
 }
 
 void logon() {
@@ -32,9 +32,9 @@ void logon() {
     // 🚀 新增：立即發送 UI 初始化資訊給前端，不需要等登入完成
     string l = browser_lang;
     if (!l) l = "en";
-    object lang_d = load_object("/daemon/language_d.c");
+    object lang_d = load_object("/services/language_d.c");
 
-    mapping socials = load_object("/daemon/social_d.c")->get_ui_list();
+    mapping socials = load_object("/services/social_d.c")->get_ui_list();
     write(sprintf("{\"ui\": \"socials\", \"title\": \"%s\", \"data\": %s}", 
         lang_d->translate("label_actions", l), json_encode(socials)));
 
@@ -62,8 +62,8 @@ void get_language(string input) {
     string lang = browser_lang;
 
     // 🚀 關鍵修正：語系切換後立即更新 UI 標籤
-    object lang_d = load_object("/daemon/language_d.c");
-    mapping socials = load_object("/daemon/social_d.c")->get_ui_list();
+    object lang_d = load_object("/services/language_d.c");
+    mapping socials = load_object("/services/social_d.c")->get_ui_list();
     write(sprintf("{\"ui\": \"socials\", \"title\": \"%s\", \"data\": %s}", 
         lang_d->translate("label_actions", lang), json_encode(socials)));
 
@@ -140,7 +140,7 @@ void check_pass(string pass) {
                 user->set_name(user->get_id());
             }
 
-            string msg_login = load_object("/daemon/language_d.c")->translate("login_success", user->query_lang());
+            string msg_login = load_object("/services/language_d.c")->translate("login_success", user->query_lang());
             msg_login = replace_string(msg_login, "$name", user->query_name());
             write("\n" + "$RED$" + msg_login + "$NOR$" + "\n");
             destruct(this_object());
@@ -272,7 +272,7 @@ void get_mudlib_name(string input) {
         return;
     }
 
-    object system_d = load_object("/daemon/system_d.c");
+    object system_d = load_object("/services/system_d.c");
     if (system_d) {
         system_d->set_mudlib_name(input, id);
     }
@@ -322,7 +322,7 @@ void create_character() {
         user->set_role("god");
         user->add_write_path("/");
         write("$MAG$【創世神】您是本服第一位玩家，已自動獲得 god 權限！$NOR$" + "\n");
-        string id = load_object("/daemon/system_d.c")->query_mudlib_id();
+        string id = load_object("/services/system_d.c")->query_mudlib_id();
         write("$HIW$[Fantasy Space] $NOR$" + "本 mudlib 識別字為：" + "$HIY$" + id + "$NOR$" + "\n");
         write("$HIW$[Fantasy Space] $NOR$" + "你的跨服身份為：" + "$HIY$" + user->get_id() + "@" + id + "$NOR$" + "\n");
         write("$HIW$[Fantasy Space] $NOR$" + "使用 fsgoto <mudlib_id> 連接其他伺服器。\n");
@@ -337,7 +337,7 @@ void create_character() {
 void finish_create_character(object user) {
     if (exec(user, this_object())) {
         string lang = user->query_lang() ? user->query_lang() : browser_lang;
-        string msg_login = load_object("/daemon/language_d.c")->translate("login_success", lang);
+        string msg_login = load_object("/services/language_d.c")->translate("login_success", lang);
         msg_login = replace_string(msg_login, "$name", user->query_name());
         write("\n" + "$RED$" + msg_login + "$NOR$" + "\n");
         user->save();

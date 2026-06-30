@@ -39,7 +39,7 @@ void run_tests(object me) {
         assert_true(objectp(npc), "老車站月台應該能找到「老站長」NPC");
 
         if (npc) {
-            object q_d = load_object("/secure/quest_d.c") || load_object("/daemon/quest_d.c");
+            object q_d = load_object("/secure/quest_d.c") || load_object("/services/quest_d.c");
             assert_true(objectp(q_d), "應成功載入任務守護進程");
 
             // 4. 玩家向老站長詢問「任務」

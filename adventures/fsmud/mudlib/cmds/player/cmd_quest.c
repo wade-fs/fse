@@ -7,7 +7,7 @@ inherit "/std/object";
 
 int main(object me, string verb, string arg) {
     mapping quests = me->query_quests();
-    object quest_d = load_object("/daemon/quest_d.c");
+    object quest_d = load_object("/services/quest_d.c");
 
     if (!quests || sizeof(quests) == 0) {
         write(select_lang(([ "en": "You have no active quests.\n", "zh-TW": "你目前沒有任何任務紀錄。\n", "zh-CN": "你目前没有任何任务纪录。\n" ])));

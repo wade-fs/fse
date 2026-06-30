@@ -16,7 +16,7 @@ void run_tests(object me) {
     assert_true(strsrch(m_str, "酷金幣") != -1, "1,000,000 銅幣應顯示包含酷金幣");
     
     // 2. 測試頻道收費
-    object channel_d = load_object("/daemon/channel_d.c");
+    object channel_d = load_object("/services/channel_d.c");
     
     // 測試公會頻道收費 (1 銀幣 = 100 銅幣)
     tester->set_guild("adventurer");

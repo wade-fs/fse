@@ -8,8 +8,8 @@ inherit "/std/object";
 
 int main(object me, string verb, string arg) {
     if (me->query_temp("ssh_session_id") || me->query_temp("ssh_pending")) {
-        object ssh_d = find_object("/daemon/ssh_d.c");
-        if (!ssh_d) ssh_d = load_object("/daemon/ssh_d.c");
+        object ssh_d = find_object("/services/ssh_d.c");
+        if (!ssh_d) ssh_d = load_object("/services/ssh_d.c");
         if (ssh_d) {
             ssh_d->client_send_disconnect(me);
             return 1;
@@ -27,8 +27,8 @@ int main(object me, string verb, string arg) {
 
     // 通知遠端銷毀 shadow_player
     if (shadow_uuid && shadow_uuid != "") {
-        object dist_d = find_object("/daemon/dist_d.c");
-        if (!dist_d) dist_d = load_object("/daemon/dist_d.c");
+        object dist_d = find_object("/services/dist_d.c");
+        if (!dist_d) dist_d = load_object("/services/dist_d.c");
         if (dist_d) {
             dist_d->send_dist_msg(remote_mud, "disconnect", ([
                 "uuid": shadow_uuid

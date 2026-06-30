@@ -125,7 +125,7 @@ private void handle_connect(string from_mudlib, mapping payload) {
     shadow_players[shadow_uuid] = shadow;
 
     // 尋找玩家的 $HOME 空間
-    object home_d = load_object("/daemon/home_d.c");
+    object home_d = load_object("/services/home_d.c");
     object start_room;
     if (home_d) {
         start_room = home_d->query_home(player_name);

@@ -16,7 +16,7 @@ void run_tests(object me) {
     start_test("歷史百科圖鑑 (Codex Encyclopedia) 系統測試 (P19)");
 
     // ── 載入必要 Daemon ────────────────────────────────
-    object codex_d = load_object("/daemon/codex_d.c");
+    object codex_d = load_object("/services/codex_d.c");
     assert_true(objectp(codex_d), "應成功載入 codex_d");
 
     // ── 建立測試玩家 ───────────────────────────────────

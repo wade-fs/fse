@@ -127,8 +127,8 @@ int do_proxy_cmd(string input) {
         return 0; // 交回 process_input 本機處理
     }
 
-    object dist_d = find_object("/daemon/dist_d.c");
-    if (!dist_d) dist_d = load_object("/daemon/dist_d.c");
+    object dist_d = find_object("/services/dist_d.c");
+    if (!dist_d) dist_d = load_object("/services/dist_d.c");
     if (!dist_d) {
         write("$RED$連線錯誤：無法找到 dist_d。\n$NOR$");
         return 1;

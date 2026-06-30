@@ -36,7 +36,7 @@ int do_say_cmd(object me, string arg) {
 
     // 房間內其他人（包含玩家與 NPC）看到這行
     // 使用 broadcast_event 以便為每個接收者本地化姓名
-    load_object("/daemon/language_d.c")->broadcast_event(environment(me), "say_msg", ([ "$name": me, "$msg": arg ]));
+    load_object("/services/language_d.c")->broadcast_event(environment(me), "say_msg", ([ "$name": me, "$msg": arg ]));
 
     return 1;
 }
@@ -47,7 +47,7 @@ int do_emote(object me, string arg) {
     write(select_lang(([ "en": "You ", "zh-TW": "你 ", "zh-CN": "你 " ])) + arg + "\n");
     
     // 使用 broadcast_event 以便為每個接收者本地化姓名
-    load_object("/daemon/language_d.c")->broadcast_event(environment(me), "emote_msg", ([ "$name": me, "$msg": arg ]));
+    load_object("/services/language_d.c")->broadcast_event(environment(me), "emote_msg", ([ "$name": me, "$msg": arg ]));
     
     return 1;
 }

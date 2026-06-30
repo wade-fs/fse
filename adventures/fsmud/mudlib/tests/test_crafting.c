@@ -9,7 +9,7 @@ void run_tests(object me) {
     me->set_name("合成大師");
     me->set_lang("zh-TW"); // 🚀 確保名稱驗證符合預期
 
-    object crafting_d = load_object("/daemon/crafting_d.c");
+    object crafting_d = load_object("/services/crafting_d.c");
 
     // 1. 測試煉金 (Alchemy)
     object m1 = clone_object("/item/material/slime_jelly.c");

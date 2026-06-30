@@ -4,7 +4,7 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("Nature System and Time Flow");
 
-    object nature_d = load_object("/daemon/nature_d.c");
+    object nature_d = load_object("/services/nature_d.c");
     int t1 = nature_d->query_game_time();
     write("Time 1: " + t1 + "\n");
     

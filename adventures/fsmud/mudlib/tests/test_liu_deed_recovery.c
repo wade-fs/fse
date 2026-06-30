@@ -19,7 +19,7 @@ string query_role() { return "god"; }
 void run_tests(object me) {
     start_test("劉家地契任務 (Liu Family Deed Recovery) 完整流程測試");
 
-    object q_d = load_object("/secure/quest_d.c") || load_object("/daemon/quest_d.c");
+    object q_d = load_object("/secure/quest_d.c") || load_object("/services/quest_d.c");
     assert_true(objectp(q_d), "應成功載入任務守護進程");
 
     // ── 建立測試玩家 ────────────────────────────────────────

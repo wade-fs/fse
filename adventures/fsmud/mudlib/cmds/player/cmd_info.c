@@ -36,7 +36,7 @@ int main(object me, string verb, string arg) {
         
         // 如果不是巫師，過濾掉管理類別
         if (me->query_role() != "god" && me->query_role() != "wizard") {
-            object lang_d = load_object("/daemon/language_d.c");
+            object lang_d = load_object("/services/language_d.c");
             string admin_cat = lang_d->translate("cat_admin", me->query_lang());
             m_delete(cmds, admin_cat);
         }

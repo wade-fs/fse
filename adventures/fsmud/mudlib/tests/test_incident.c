@@ -13,7 +13,7 @@ void run_tests(object caller) {
     me->set("id", "tester");
     me->set("name", "Tester");
     
-    object incident_d = find_object("/daemon/incident_d") || load_object("/daemon/incident_d.c");
+    object incident_d = find_object("/services/incident_d") || load_object("/services/incident_d.c");
     
     // 測試 1: 事件載入
     mapping incs = incident_d->query_incidents();

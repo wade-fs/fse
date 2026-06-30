@@ -29,7 +29,7 @@ int move(mixed dest, string dir) {
     int res = ::move(dest, dir);
     if (res) {
         object env = environment(this_object());
-        object dist_d = find_object("/daemon/dist_d.c");
+        object dist_d = find_object("/services/dist_d.c");
         if (env && dist_d) {
             dist_d->sync_room_to_remote(remote_mud, env, remote_uuid);
         }
@@ -41,7 +41,7 @@ int move(mixed dest, string dir) {
 void catch_tell(string msg) {
     if (!msg || msg == "") return;
     
-    object dist_d = find_object("/daemon/dist_d.c");
+    object dist_d = find_object("/services/dist_d.c");
     if (dist_d) {
         dist_d->send_dist_msg(remote_mud, "output", ([
             "uuid": remote_uuid, // 遠端玩家在本機的 UUID
@@ -57,7 +57,7 @@ int do_remote_cmd(string cmd) {
     // 如果可能是影響背包的指令，強制同步一次
     string verb = explode(cmd, " ")[0];
     if (verb == "get" || verb == "drop" || verb == "i" || verb == "inventory") {
-        object dist_d = find_object("/daemon/dist_d.c");
+        object dist_d = find_object("/services/dist_d.c");
         if (dist_d) {
             dist_d->sync_inventory_to_remote(remote_mud, this_object(), remote_uuid);
         }

@@ -4,9 +4,9 @@ inherit "/std/object";
 int main(object me, string verb, string arg) {
     if (!wizardp(me)) return 0;
 
-    object td = find_object("/daemon/template_d.c");
+    object td = find_object("/services/template_d.c");
     if (!td) {
-        td = load_object("/daemon/template_d.c");
+        td = load_object("/services/template_d.c");
     }
 
     if (is_web_client(me)) {

@@ -17,7 +17,7 @@ int do_settlement_audit(object me, string id) {
 
     write(HIY "正在對聚落 " + id + " 進行遊戲內稽核（P23.2 Settlement Audit）...\n" NOR);
 
-    result = "/daemon/settlement_d"->load_settlement(id);
+    result = "/services/settlement_d"->load_settlement(id);
     if (!result) {
         write(RED "錯誤：找不到聚落「" + id + "」的設定檔或載入失敗。\n" NOR);
         return 1;
@@ -31,12 +31,12 @@ int do_settlement_audit(object me, string id) {
     if (!pointerp(sites) || !sizeof(sites)) {
         write(RED "警告：該聚落沒有配置任何 Sites (地標)。\n" NOR);
     } else {
-        mapping all_mems = "/daemon/memory_d"->query_all_memories();
-        mapping all_quests = "/daemon/quest_d"->query_all_quests();
+        mapping all_mems = "/services/memory_d"->query_all_memories();
+        mapping all_quests = "/services/quest_d"->query_all_quests();
         
         write(HIC "地標清單與狀態查核：\n" NOR);
         for(i = 0; i < sizeof(sites); i++) {
-            object site_obj = "/daemon/settlement_d"->get_site_object(sites[i]);
+            object site_obj = "/services/settlement_d"->get_site_object(sites[i]);
             if (!site_obj) {
                 write(sprintf("  [%-25s] %s\n", sites[i], RED "● 載入失敗 (檔案不存在或語法錯誤)" NOR));
             } else {
@@ -104,7 +104,7 @@ int do_routes_audit(object me, string id) {
 
     write(HIY "正在對聚落 " + id + " 進行路線與時代地名稽核（Audit Routes）...\n" NOR);
 
-    result = "/daemon/settlement_d"->load_settlement(id);
+    result = "/services/settlement_d"->load_settlement(id);
     if (!result) {
         write(RED "錯誤：找不到聚落「" + id + "」的設定檔或載入失敗。\n" NOR);
         return 1;
@@ -122,7 +122,7 @@ int do_routes_audit(object me, string id) {
 
     for (i = 0; i < sizeof(sites); i++) {
         string site_id = sites[i];
-        mapping s_data = "/daemon/site_d"->load_site(site_id);
+        mapping s_data = "/services/site_d"->load_site(site_id);
         if (!s_data) {
             write(sprintf("  %-25s : %s\n", site_id, RED "● 無法讀取地標資料" NOR));
             continue;
@@ -135,7 +135,7 @@ int do_routes_audit(object me, string id) {
         write("   " WHT "【各時代地名變遷】" NOR "\n");
         int has_era_name = 0;
         for (j = 0; j < sizeof(eras); j++) {
-            string era_name = "/daemon/site_d"->query_name_in_era(site_id, eras[j]);
+            string era_name = "/services/site_d"->query_name_in_era(site_id, eras[j]);
             if (era_name && era_name != site_id && era_name != canon_name) {
                 write(sprintf("     %-12s -> %s\n", eras[j] + ":", era_name));
                 has_era_name = 1;
@@ -151,7 +151,7 @@ int do_routes_audit(object me, string id) {
         if (sizeof(conn) > 0) {
             for (j = 0; j < sizeof(conn); j++) {
                 string neighbor = conn[j];
-                string neighbor_name = "/daemon/site_d"->query_name_in_era(neighbor, "modern");
+                string neighbor_name = "/services/site_d"->query_name_in_era(neighbor, "modern");
                 write(sprintf("     --> %-25s (%s)\n", neighbor, neighbor_name));
             }
         } else {

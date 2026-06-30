@@ -20,7 +20,7 @@ int main(object me, string verb, string arg) {
     // 1. 處理全域重新命名
     string gname, gid;
     if (sscanf(arg, "-global %s %s", gname, gid) == 2) {
-        object system_d = load_object("/daemon/system_d");
+        object system_d = load_object("/services/system_d");
         if (system_d) {
             system_d->set_mudlib_name(gname, gid);
             write("$HIG$全域 MUD 重新命名為：$NOR$" + gname + " (" + gid + ")\n");

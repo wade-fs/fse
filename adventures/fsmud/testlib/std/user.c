@@ -1,1 +1,721 @@
-../../mudlib/std/user.c
+// mudlib/std/user.c
+
+#include "/include/config.h"
+#include "/include/ansi.h"
+#include "/include/race.h"
+#include "/include/formosa.h"
+
+inherit "/std/living.c";
+
+// ── 屬性宣告 ────────────────────────────────────────────
+string id, password, role;
+string full_id;  // Fantasy Space 全域識別字：username@mudlib_id，例如 wade@fantasy.space
+string nature;
+string lang; // 🚀 新增：語系設定
+string in_edit; // 🚀 新增：Web IDE 正在編輯的檔案路徑
+string cwd;     // 🚀 新增：當前工作目錄 (CWD)
+string *write_paths;
+mapping aliases;
+mapping quests; // 🚀 新增：任務紀錄
+mapping muted_channels; // 🚀 新願：屏蔽的頻道
+mapping explored_rooms; // 🚀 新增：已探索房間 ([ "room_file": 1 ])
+mapping faction_reputation; // 🚀 新增：陣營聲望 ([ faction_id: points ])
+string *saved_inventory = ({ });
+string last_location;
+string *footprints; // 🚀 新增：踏印紀錄
+string *unlocked_memories; // 🚀 新增：解鎖的歷史記憶 ID 陣列
+mapping footprint_atlas;   // 🚀 新增：踏印地圖 (用於 footprint_d.c)
+mapping career_points; // P4：職涯修練點 ([ career_id: points ])
+string faction;        // P4：所屬勢力 ID
+mapping encyclopedia;  // P19：歷史百科圖鑑 ([ 分類: ([ id: 條目 ]) ])
+
+
+
+// ── 查詢 ──────────────────────────────────────────────────
+
+// ── 初始化 ───────────────────────────────────────────────
+void init_aliases() {
+    if (!aliases || sizeof(aliases) == 0) {
+        aliases = ([
+            "n" : "go north",
+            "s" : "go south",
+            "e" : "go east",
+            "w" : "go west",
+            "u" : "go up",
+            "d" : "go down",
+            "north" : "go north",
+            "south" : "go south",
+            "east" : "go east",
+            "west" : "go west",
+            "l" : "look",
+            "i" : "inventory",
+            "sc": "score"
+        ]);
+    }
+}
+
+// 🚀 新增：跨服狀態追蹤
+string current_mudlib; // 目前所在的 mudlib ID，空代表本機
+string data_base_path; // 當前資料庫相對路徑，本機為 "/mudlib/data/"，遠端為 "/mudlib/data/fs_cache/<id>/"
+
+void create() {
+    ::create();
+    if (!quests) quests = ([]);
+    if (!muted_channels) muted_channels = ([]);
+    if (!explored_rooms) explored_rooms = ([]);
+    if (!footprints) footprints = ({});
+    if (!career_points) career_points = ([]);
+    if (!footprint_atlas) footprint_atlas = ([]);
+    if (!aliases) aliases = ([]);
+    if (!encyclopedia) encyclopedia = ([ "memory": ([]), "quest": ([]), "incident": ([]) ]);
+    init_aliases();
+    
+    write_paths = ({ }); 
+    current_mudlib = "";
+    data_base_path = "/mudlib/data/";
+    cwd = "/"; // 🚀 預設為根目錄
+}
+
+// ── 查詢函式 ────────────────────────────────────────────
+string query_current_mudlib() { return current_mudlib; }
+string query_data_base_path() { return data_base_path; }
+string query_in_edit() { return in_edit; }
+void set_in_edit(string path) { in_edit = path; }
+string query_cwd() { 
+    if (!stringp(cwd) || cwd == "") return "/";
+    return cwd; 
+}
+void set_cwd(string path) { cwd = path; }
+
+string query_last_location() { return last_location; }
+
+string *query_footprints() {
+    if (!footprints) footprints = ({});
+    return footprints;
+}
+
+void add_footprint_record(string fid) {
+    if (!footprints) footprints = ({});
+    if (member_array(fid, footprints) == -1) {
+        footprints += ({ fid });
+        if (!stringp(id) || strsrch(id, "test") != 0) save();
+    }
+}
+
+int has_footprint_record(string fid) {
+    if (!footprints) return 0;
+    return member_array(fid, footprints) != -1;
+}
+
+void clear_footprints() {
+    footprints = ({});
+    footprint_atlas = ([]);
+    if (!stringp(id) || strsrch(id, "test") != 0) save();
+}
+
+// 支援 footprint_d.c 及 reveal_layer.c 依賴的 API
+
+mapping query_footprint_atlas() {
+    if (!footprint_atlas) footprint_atlas = ([]);
+    return footprint_atlas;
+}
+
+void set_footprint_atlas(mapping atlas) {
+    footprint_atlas = atlas;
+}
+
+void save_me() {
+    if (stringp(id) && strsrch(id, "test") == 0) return;
+    save();
+}
+
+string *query_unlocked_memories() {
+    if (!unlocked_memories) unlocked_memories = ({});
+    return unlocked_memories;
+}
+
+void unlock_memory(string mid) {
+    if (!unlocked_memories) unlocked_memories = ({});
+    if (member_array(mid, unlocked_memories) == -1) {
+        unlocked_memories += ({ mid });
+        save();
+    }
+}
+
+void add_unlocked_memory(string mid) {
+    if (!unlocked_memories) unlocked_memories = ({});
+    if (member_array(mid, unlocked_memories) == -1) {
+        unlocked_memories += ({ mid });
+    }
+}
+
+int has_talent(string talent_id) {
+    // 預設給予島嶼記憶天賦以利測試，或者可擴展成設定檔
+    if (talent_id == "island_memory") return 1;
+    return 0;
+}
+
+// ── 職涯修練點 API (P4) ─────────────────────────────────────
+mapping query_career_points_all() {
+    if (!career_points) career_points = ([]);
+    return career_points;
+}
+
+int query_career_points(string career_id) {
+    if (!career_points) career_points = ([]);
+    return career_points[career_id] || 0;
+}
+
+void add_career_points(string career_id, int val) {
+    if (!career_points) career_points = ([]);
+    career_points[career_id] = (career_points[career_id] || 0) + val;
+    save();
+}
+
+// ── 勢力 API (P4) ──────────────────────────────────────────
+string query_faction() { return faction; }
+void set_faction(string fid) { faction = fid; }
+
+mapping query_faction_reputation_all() {
+    if (!faction_reputation) faction_reputation = ([]);
+    return faction_reputation;
+}
+
+int query_faction_reputation(string fid) {
+    if (!faction_reputation) faction_reputation = ([]);
+    return faction_reputation[fid] || 0;
+}
+
+void add_faction_reputation(string fid, int val) {
+    if (!faction_reputation) faction_reputation = ([]);
+    faction_reputation[fid] = (faction_reputation[fid] || 0) + val;
+    save();
+}
+
+// ── 職涯等級查詢與設定 ────────────────────────
+int query_career_rank(string career_id) {
+    // career_d 在 create 時可能尚未載入，安全呼叫
+    object cd = find_object("/services/career_d.c");
+    if (!cd) cd = load_object("/services/career_d.c");
+    if (cd) return cd->query_career_rank(this_object(), career_id);
+    return 1; // fallback
+}
+
+void set_career_rank(string career_id, int rank) {
+    if (!career_points) career_points = ([]);
+    object cd = find_object("/services/career_d.c");
+    if (!cd) cd = load_object("/services/career_d.c");
+    if (cd) {
+        mapping career = cd->load_career(career_id);
+        if (career && pointerp(career["ranks"])) {
+            foreach (mapping r in career["ranks"]) {
+                if (r["level"] == rank) {
+                    career_points[career_id] = r["min_points"];
+                    save();
+                    return;
+                }
+            }
+        }
+    }
+    // Fallback if career_d not loaded or rank not found
+    career_points[career_id] = (rank - 1) * 100;
+    save();
+}
+
+
+// 🚀 新增：清理編輯鎖定
+void cleanup_editor() {
+    object ide_d = find_object("/services/ide_d.c");
+    if (ide_d) {
+        ide_d->release_all_locks(this_object());
+    }
+}
+
+// 🚀 新增：網路斷線處理
+void net_dead() {
+    cleanup_editor();
+    save();
+}
+
+// 🚀 新增：物件銷毀處理 (由系統呼叫)
+void on_destruct() {
+    cleanup_editor();
+}
+
+string query_start_room() {
+    if (current_mudlib != "") {
+        object fs_d = find_object("/secure/fs_d.c");
+        if (fs_d) {
+            mapping joined = fs_d->query_joined_muds();
+            if (joined && joined[current_mudlib]) {
+                string ent = joined[current_mudlib]["entrance"];
+                if (ent && ent != "") {
+                    return FS_CACHE_DIR + "/" + current_mudlib + ent;
+                }
+            }
+        }
+        return FS_CACHE_DIR + "/" + current_mudlib + START_ROOM;
+    }
+    return START_ROOM;
+}
+
+// 當環境改變時，自動更新跨服狀態
+// 當環境改變時，自動更新跨服狀態並廣播 presence 事件
+int move(mixed dest, string dir) {
+    // ── 離開前：記錄目前所在的跨服資訊 ──────────────────────
+    string old_mudlib = current_mudlib;
+    string old_room_path = "";
+    if (current_mudlib != "") {
+        object old_env = environment(this_object());
+        if (old_env) {
+            string oname = object_name(old_env);
+            if (strsrch(oname, FS_CACHE_DIR) == 0) {
+                string rel2 = substr(oname, strlen(FS_CACHE_DIR) + 1, strlen(oname));
+                int sl2 = strsrch(rel2, "/");
+                if (sl2 != -1) {
+                    old_room_path = substr(rel2, sl2, strlen(rel2) - sl2);
+                }
+            }
+        }
+    }
+
+    int res = ::move(dest, dir);
+    if (res) {
+        object env = environment(this_object());
+        if (env) {
+            string ename = object_name(env);
+            // 判斷是否為遠端緩存路徑，格式如：/data/fs_cache/mudlib_id/area/...
+            if (strsrch(ename, FS_CACHE_DIR) == 0) {
+                // 提取 mudlib_id
+                string rel = substr(ename, strlen(FS_CACHE_DIR) + 1, strlen(ename));
+                int slash = strsrch(rel, "/");
+                if (slash != -1) {
+                    string new_mudlib = substr(rel, 0, slash);
+                    string new_room   = substr(rel, slash, strlen(rel) - slash);
+                    current_mudlib = new_mudlib;
+                    data_base_path = FS_CACHE_DIR + "/" + current_mudlib + "/";
+
+                    // 廣播 leave 給舊房間（若有）
+                    if (old_mudlib != "" && old_room_path != "" &&
+                        (old_mudlib != new_mudlib || old_room_path != new_room)) {
+                        object fs_d = find_object("/secure/fs_d.c");
+                        if (fs_d) fs_d->on_player_leave_remote(this_object(), old_mudlib, old_room_path);
+                    }
+                    // 廣播 enter 給新房間
+                    if (old_mudlib != new_mudlib || old_room_path != new_room) {
+                        object fs_d2 = find_object("/secure/fs_d.c");
+                        if (fs_d2) fs_d2->_do_enter_remote(this_object(), new_mudlib, new_room);
+                    }
+                }
+            } else {
+                // 離開跨服區域 → 通知遠端 leave
+                if (old_mudlib != "" && old_room_path != "") {
+                    object fs_d = find_object("/secure/fs_d.c");
+                    if (fs_d) fs_d->on_player_leave_remote(this_object(), old_mudlib, old_room_path);
+                }
+                current_mudlib = "";
+                data_base_path = "/mudlib/data/";
+            }
+        }
+    }
+    return res;
+}
+
+// ── 登入初始化 ───────────────────────────────────────────
+void setup() {
+    if (!quests) quests = ([]);
+    if (!muted_channels) muted_channels = ([]);
+    if (!explored_rooms) explored_rooms = ([]);
+    if (!career_points) career_points = ([]);
+    if (!footprint_atlas) footprint_atlas = ([]);
+    if (!unlocked_memories) unlocked_memories = ({});
+    if (!aliases) aliases = ([]);
+    if (!encyclopedia) encyclopedia = ([ "memory": ([]), "quest": ([]), "incident": ([]) ]);
+    init_aliases();
+    set_heart_beat(1);
+    enable_commands();
+
+    // P19: 確保圖鑑守護進程已啟動（自動訂閱事件）
+    catch(CODEX_D);
+
+    if (role == "wizard" || role == "god") {
+        enable_wizard();
+    }
+
+    if (!name) {
+        set_name(id);
+    }
+
+    recalc_stats();
+
+    // 🚀 新增：初始化 CWD (針對巫師與管理員)
+    if ((role == "wizard" || role == "god") && (!cwd || cwd == "" || cwd == "/")) {
+        string *wp = query_write_paths();
+        if (wp && sizeof(wp) > 0) {
+            cwd = wp[0];
+        } else {
+            cwd = "/";
+        }
+    }
+
+	// 🚀 新增：賦予種族天性
+	if (race == "dwarf") {
+		set_skill("forging", 5);
+	} else if (race == "elf") {
+		set_skill("magic", 5);
+	}
+
+    // 🚀 新增：發送 UI 初始化資訊給前端
+    string l = query_lang();
+    object lang_d = load_object("/services/language_d.c");
+
+    // 如果是測試帳號，略過實體載入與自動移動邏輯
+    if (stringp(id) && strsrch(id, "test") == 0) {
+        return;
+    }
+
+    // 恢復背包物品
+    call_other(this_object(), "restore_inventory");
+
+    // 處理進入世界的位置
+    if (last_location && last_location != "" && last_location != "/") {
+        object loc;
+        if (strsrch(last_location, "site:") == 0 || strsrch(last_location, "settlement:") == 0) {
+            string site_id = last_location;
+            int colon = strsrch(site_id, ":");
+            if (colon != -1) {
+                site_id = substr(site_id, colon + 1, strlen(site_id) - colon - 1);
+            }
+            loc = SETTLEMENT_D->get_site_object(site_id);
+        } else {
+            // 🚀 核心修正：如果上次地點在創界、遠端緩存、舊區域或檔案已不存在，自動導向起始點
+            if (strsrch(last_location, "/area/lm/") == 0 || 
+                strsrch(last_location, FS_CACHE_DIR) == 0 ||
+                strsrch(last_location, "/area/newbie/") == 0 ||
+                strsrch(last_location, "/area/cave/") == 0 ||
+                strsrch(last_location, "/area/tower/") == 0 ||
+                strsrch(last_location, "/area/water/") == 0 ||
+                file_size(last_location) <= 0) {
+                last_location = query_start_room();
+            }
+            loc = load_object(last_location);
+        }
+
+        if (loc) {
+            move_object(loc);
+            if (loc->query_is_site()) {
+                catch(loc->player_enter(this_object()));
+            }
+        } else {
+            move_to_start();
+        }
+    } else {
+        move_to_start();
+    }
+
+    object help_ob = find_object("/cmds/player/cmd_help.c");
+    if (!help_ob) catch(help_ob = load_object("/cmds/player/cmd_help.c"));
+    if (!help_ob) catch(help_ob = load_object("/cmds/cmd_help.c"));
+    if (help_ob) {
+        call_other(help_ob, "do_help_list", this_object(), "");
+    }
+
+    mapping socials = load_object("/services/social_d.c")->get_ui_list();
+    write(sprintf("{\"ui\": \"socials\", \"title\": \"%s\", \"data\": %s}", 
+        lang_d->translate("label_actions", l), json_encode(socials)));
+
+    mapping cmds = load_object("/secure/command_d.c")->query_categorized_commands(l);
+    write(sprintf("{\"ui\": \"commands\", \"title\": \"%s\", \"data\": %s}", 
+        lang_d->translate("label_commands", l), json_encode(cmds)));
+}
+
+int process_input(string input) {
+    string verb, arg;
+    
+    input = trim(input);
+    if (!input) return 0;
+
+    // 🚀 核心修正：展開別名 (Aliases)
+    input = expand_alias(input);
+
+    // 1. 處理特殊符號指令 (如 ' 代表 say, : 代表 emote)
+    if (substr(input, 0, 1) == "'") {
+        verb = "'";
+        arg = substr(input, 1, strlen(input) - 1);
+        return ::process_input("say " + arg);
+    } else if (substr(input, 0, 1) == ":") {
+        verb = ":";
+        arg = substr(input, 1, strlen(input) - 1);
+        return ::process_input("emote " + arg);
+    } 
+    
+    // 🚀 新增：分散式物件代理攔截 (SSH-like mode)
+    if (query_temp("ssh_session_id") || query_temp("ssh_pending")) {
+        // 如果輸入以 "!" 開頭，代表強制在本機執行 (類似 SSH 的 ~)
+        if (substr(input, 0, 1) == "!") {
+            input = substr(input, 1, strlen(input) - 1);
+            write("$CYN$【本機指令】$NOR$" + input + "\n");
+        } else {
+            object ssh_d = find_object("/services/ssh_d.c");
+            if (ssh_d) {
+                ssh_d->client_send_input(this_object(), input);
+                return 1;
+            }
+        }
+    }
+    
+    // 舊版 proxy_room 相容 (即將被淘汰)
+    object env = environment(this_object());
+    if (env && env->is_proxy_room()) {
+        // 如果輸入以 "!" 開頭，代表強制在本機執行 (類似 SSH 的 ~)
+        if (substr(input, 0, 1) == "!") {
+            input = substr(input, 1, strlen(input) - 1);
+            write("$CYN$【本機指令】$NOR$" + input + "\n");
+        } else {
+            if (env->do_proxy_cmd(input)) {
+                return 1;
+            }
+        }
+    }
+    
+    // 2. 呼叫基底類別處理 (含 command_d 呼叫)
+    int res = ::process_input(input);
+    return res;
+}
+
+void move_to_start() {
+    string start_path = query_start_room();
+    object start = load_object(start_path);
+    if (start) {
+        move_object(start);
+        if (start->query_is_site()) {
+            catch(start->player_enter(this_object()));
+        }
+    } else {
+        write("致命錯誤：找不到起始點 " + start_path + "\n");
+    }
+}
+
+// ── 基本介面 ─────────────────────────────────────────────
+void set_id(mixed i) { ::set_id(i); if (stringp(i)) id = i; }
+string get_id() { return id; }
+string query_entity_id() { return "player:" + id; }
+void set_password(string p) { password = p; }
+string get_password() { return password; }
+string query_role() { return role; }
+string query_full_id() {
+    if (full_id && full_id != "") return full_id;
+    return id + "@" + FS_MUDLIB_ID;
+}
+void set_full_id(string fid) { full_id = fid; }
+void set_role(string r) {
+    if (r == "god" || r == "wizard" || r == "user") {
+        role = r;
+        if (role == "wizard" || role == "god") {
+            enable_wizard();
+        } else {
+            disable_wizard();
+        }
+    }
+}
+
+// 供 Proxy Room 使用：執行初始的 look
+void remote_look() {
+    object env = environment(this_object());
+    if (env && env->is_proxy_room()) {
+        env->look_room(this_object());
+    }
+}
+
+void set_lang(string l) { lang = l; }
+string query_lang() { return lang; }
+
+
+
+void set_nickname(string n) { set_name(n); }
+
+// ── 頻道管理 ─────────────────────────────────────────────
+int is_channel_open(string ch) {
+    if (!muted_channels) return 1;
+    return !muted_channels[ch];
+}
+void set_channel_status(string ch, int open) {
+    if (!muted_channels) muted_channels = ([]);
+    if (open) m_delete(muted_channels, ch);
+    else muted_channels[ch] = 1;
+}
+mapping query_muted_channels() { return muted_channels; }
+
+void set_nature(string n) { nature = n; }
+string query_nature() { return nature; }
+
+// ── 任務系統介面 ─────────────────────────────────────────────
+mapping query_quests() { return quests; }
+void set_quest(string qid, mapping data) {
+    if (!quests) quests = ([]);
+    quests[qid] = data;
+}
+void update_quest_progress(string qid, string key, mixed val) {
+    if (!quests[qid]) return;
+    if (!quests[qid]["progress"]) quests[qid]["progress"] = ([]);
+    quests[qid]["progress"][key] = val;
+}
+mapping query_quest(string qid) { return quests[qid]; }
+
+
+
+// ── 地圖探索介面 ─────────────────────────────────────────────
+mapping query_explored_rooms() { return explored_rooms; }
+void record_exploration(string room_file) {
+    if (!explored_rooms) explored_rooms = ([]);
+    // room_file 已由 room.c 用 object_name(this_object()) 傳入，直接當 key 用
+    explored_rooms[room_file] = 1;
+}
+
+string *query_write_paths() { return write_paths; }
+void add_write_path(string p) {
+    if (member_array(p, write_paths) == -1) {
+        write_paths += ({ p });
+    }
+}
+void remove_write_path(string p) {
+    write_paths -= ({ p });
+}
+
+// ── 心跳 ─────────────────────────────────────────────────
+int heart_beat_count = 0;
+void heart_beat() {
+    if (is_dead) return;
+
+    // 🚀 每 5 秒發送一次狀態資訊給前端 UI (減少洗頻)
+    heart_beat_count++;
+    if (heart_beat_count >= 5) {
+        heart_beat_count = 0;
+        object cmd_info = load_object("/cmds/player/cmd_info");
+        if (cmd_info) {
+            cmd_info->main(this_object(), "", "");
+        }
+    }
+}
+
+// ── 死亡 ─────────────────────────────────────────────────
+void on_death() {
+    write("$RED$\n你感覺到世界在眼前漸漸模糊... 你死亡了。\n$NOR$");
+    write("你的靈魂緩緩脫離了肉體，進入了一片純白的世界...\n\n");
+
+    
+    // 產生屍體
+    object corpse = clone_object("/std/corpse.c");
+    if (corpse) {
+        corpse->set_owner(query_name());
+        move_object(corpse, environment(this_object()));
+    }
+
+    // 死亡懲罰：遺失一部分金幣
+    if (gold > 0) {
+        int lost = gold / 5;
+        gold -= lost;
+        write("$YEL$你遺失了 " + sprintf("%d", lost) + " 枚金幣。\n$NOR$");
+    }
+
+    
+    // 移至祈願所
+    object prayer_room = load_object("/std/prayer_room.c");
+    if (prayer_room) {
+        move_object(prayer_room);
+    }
+
+    // 10 秒後復活 (對應屍體消失時間)
+    call_out("revive", 10);
+    save();
+}
+
+void revive() {
+    write("$HIY$\n一陣溫暖的光芒包圍了你，你感覺到生命力正在重新注入靈魂...\n$NOR$");
+    write("你在中央廣場睜開了眼睛。\n\n");
+
+    // 恢復基礎狀態
+    is_dead = 0;
+    hp = max_hp / 2; // 復活時只有一半血
+    mp = max_mp / 2;
+    set_heart_beat(1);
+
+    // 回到起始點
+    move_to_start();
+    save();
+}
+
+string query_save_file() { return "/data/user/" + id; }
+
+int save() {
+    if (!stringp(id) || id == "") return 0;
+	object *inv = all_inventory(this_object());
+	saved_inventory = ({ });
+	for (int i = 0; i < sizeof(inv); i++) {
+		string filename = object_name(inv[i]);
+		int pos = strsrch(filename, "#");
+		if (pos != -1) {
+			filename = substr(filename, 0, pos);
+		}
+		saved_inventory += ({ filename });
+	}
+
+    object env = environment(this_object());
+    if (env) {
+        if (env->query_is_site()) {
+            last_location = env->query_entity_id();
+        } else {
+            string oname = object_name(env);
+            last_location = oname;
+            int pos_env = strsrch(last_location, "#");
+            if (pos_env != -1) {
+                last_location = substr(last_location, 0, pos_env);
+            }
+        }
+    }
+
+	return save_object(query_save_file());
+}
+
+int restore() { return restore_object(query_save_file()); }
+
+void restore_inventory() {
+	if (!sizeof(saved_inventory)) return;
+	
+	for (int i = 0; i < sizeof(saved_inventory); i++) {
+		if (!saved_inventory[i] || saved_inventory[i] == "" || saved_inventory[i] == "/") continue;
+		object ob = clone_object(saved_inventory[i]);
+		if (ob) {
+			move_object(ob, this_object());
+		}
+	}
+	saved_inventory = ({ });
+}
+
+mapping query_aliases() { return aliases; }
+void set_alias(string verb, string cmd) { aliases[verb] = cmd; }
+void remove_alias(string verb) { m_delete(aliases, verb); }
+string expand_alias(string input) {
+    mixed ks = keys(aliases);
+    if (!ks) { return input; }
+
+    string verb;
+    string rest;
+    int sp = strsrch(input, " ");
+
+    if (sp < 0) {
+        verb = input;
+        rest = "";
+    } else {
+        verb = substr(input, 0, sp);
+        rest = substr(input, sp + 1, strlen(input) - sp - 1);
+    }
+
+    if (member_array(verb, ks) >= 0) {
+        string expanded = aliases[verb];
+        if (rest) { expanded = expanded + " " + rest; }
+        return expanded;
+    }
+    return input;
+}
+

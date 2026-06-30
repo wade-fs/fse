@@ -4,7 +4,7 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("System Save Verification");
 
-    object nature_d = load_object("/daemon/nature_d.c");
+    object nature_d = load_object("/services/nature_d.c");
     if (function_exists("save_object", nature_d)) {
         nature_d->save_object("/data/test_save");
     } else {

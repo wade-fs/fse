@@ -16,7 +16,7 @@ inherit "/std/test_case";
 void run_tests(object me) {
     start_test("NPC 好感度與關係網 (NPC Relationship) 系統測試 (P20)");
 
-    object rel_d = load_object("/daemon/relation_d.c");
+    object rel_d = load_object("/services/relation_d.c");
     assert_true(objectp(rel_d), "應成功載入 relation_d");
 
     // 建立測試玩家

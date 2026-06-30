@@ -25,7 +25,7 @@ int main(object me, string verb, string arg) {
         return 1;
     }
 
-    load_object("/daemon/channel_d.c")->broadcast(type, me, arg, "");
+    load_object("/services/channel_d.c")->broadcast(type, me, arg, "");
     return 1;
 }
 
@@ -36,7 +36,7 @@ int do_fchat(object me, string arg) {
         return 1;
     }
 
-    load_object("/daemon/channel_d.c")->broadcast("friend", me, msg, cid);
+    load_object("/services/channel_d.c")->broadcast("friend", me, msg, cid);
     return 1;
 }
 

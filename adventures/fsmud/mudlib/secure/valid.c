@@ -148,7 +148,7 @@ mixed valid_write(string path, object user, string func)
         // 允許 /data/lm 目錄本身（mkdir 時 path 沒有結尾斜線）及其子路徑
         if (strsrch(path, "/data/lm") == 0) return 1;
     }
-    if (strsrch(caller_file, "/daemon/") == 0 || strsrch(caller_file, "/std/") == 0) {
+    if (strsrch(caller_file, "/services/") == 0 || strsrch(caller_file, "/std/") == 0) {
         if (strsrch(path, "/data/state/") == 0) return 1;
     }
 

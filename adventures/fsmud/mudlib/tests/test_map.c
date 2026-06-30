@@ -18,7 +18,7 @@ void run_tests(object me) {
     }
 
     // 1. Test basic drawing
-    string map_str = load_object("/daemon/map_d.c")->draw_map(me, 1);
+    string map_str = load_object("/services/map_d.c")->draw_map(me, 1);
     assert_true(strlen(map_str) > 0, "Map should not be empty");
     assert_true(strsrch(map_str, " * ") != -1, "Map should contain player marker ' * '");
     assert_true(strsrch(map_str, "|") != -1 || strsrch(map_str, "-") != -1, "Map should contain connection markers");
@@ -30,11 +30,11 @@ void run_tests(object me) {
     string map_body = substr(map_str, first_line_end + 1, strlen(map_str) - first_line_end - 1);
     // Move slightly to make room_4_4 a 'visited' room from another perspective
     me->move(load_object("/area/newbie/room_4_5.c"), "north");
-    string map_str2 = load_object("/daemon/map_d.c")->draw_map(me, 1);
+    string map_str2 = load_object("/services/map_d.c")->draw_map(me, 1);
     assert_true(strsrch(map_str2, " # ") != -1, "Map should show visited room as ' # '");
 
     // 3. Test JSON output
-    mapping map_json = load_object("/daemon/map_d.c")->get_map_json(me, 1);
+    mapping map_json = load_object("/services/map_d.c")->get_map_json(me, 1);
     assert_true(mapp(map_json), "Map JSON should be a mapping");
     assert_equal("player", map_json["grid"][1][1], "Center of 3x3 grid should be player");
     assert_true(sizeof(map_json["connections"]) > 0, "Should have at least some connections in newbie square");

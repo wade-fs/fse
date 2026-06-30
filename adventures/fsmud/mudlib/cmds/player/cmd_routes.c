@@ -28,7 +28,7 @@ int main(object me, string verb, string arg) {
         id = trim(arg);
     }
 
-    result = "/daemon/settlement_d"->load_settlement(id);
+    result = "/services/settlement_d"->load_settlement(id);
     if (!result) {
         write(RED "錯誤：找不到聚落「" + id + "」的設定檔或載入失敗。" NOR "\n");
         return 1;
@@ -46,7 +46,7 @@ int main(object me, string verb, string arg) {
 
     for (i = 0; i < sizeof(sites); i++) {
         string site_id = sites[i];
-        mapping s_data = "/daemon/site_d"->load_site(site_id);
+        mapping s_data = "/services/site_d"->load_site(site_id);
         if (!s_data) {
             write(sprintf("  %-25s : %s\n", site_id, RED "● 無法讀取地標資料" NOR));
             continue;
@@ -59,7 +59,7 @@ int main(object me, string verb, string arg) {
         int has_era_name = 0;
         string era_details = "";
         for (j = 0; j < sizeof(eras); j++) {
-            string era_name = "/daemon/site_d"->query_name_in_era(site_id, eras[j]);
+            string era_name = "/services/site_d"->query_name_in_era(site_id, eras[j]);
             if (era_name && era_name != site_id && era_name != canon_name) {
                 string era_title = select_lang(([
                     "indigenous": "原住民時代",
@@ -83,7 +83,7 @@ int main(object me, string verb, string arg) {
             write("   " WHT "【聯外路線】" NOR "\n");
             for (j = 0; j < sizeof(conn); j++) {
                 string neighbor = conn[j];
-                string neighbor_name = "/daemon/site_d"->query_name_in_era(neighbor, "modern");
+                string neighbor_name = "/services/site_d"->query_name_in_era(neighbor, "modern");
                 write(sprintf("     --> %-25s (%s)\n", neighbor, neighbor_name));
             }
         } else {

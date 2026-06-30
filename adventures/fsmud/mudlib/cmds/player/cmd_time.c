@@ -7,7 +7,7 @@
 inherit "/std/object";
 
 int main(object me, string verb, string arg) {
-    object nature_d = load_object("/daemon/nature_d.c");
+    object nature_d = load_object("/services/nature_d.c");
     
     // 1. 取得自然時間與天氣
     string weather = nature_d->query_weather_string();

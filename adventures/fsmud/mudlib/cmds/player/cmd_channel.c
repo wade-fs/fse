@@ -33,9 +33,9 @@ int main(object me, string verb, string arg) {
         me->set_channel_status(ch, 0);
         write("$HIR$" + select_lang(([ "en": "You have closed the ", "zh-TW": "你關閉了 ", "zh-CN": "你关闭了 " ])) + ch + select_lang(([ "en": " channel.\n", "zh-TW": " 頻道。\n", "zh-CN": " 频道。\n" ])) + "$NOR$");
     } else if (status == "join" || status == "加入") {
-        load_object("/daemon/channel_d.c")->join_friend_channel(me, ch);
+        load_object("/services/channel_d.c")->join_friend_channel(me, ch);
     } else if (status == "leave" || status == "離開") {
-        load_object("/daemon/channel_d.c")->leave_friend_channel(me, ch);
+        load_object("/services/channel_d.c")->leave_friend_channel(me, ch);
     } else {
         write(select_lang(([ "en": "Unknown status, please use on/off or join/leave.\n", "zh-TW": "未知狀態，請使用 on/off 或 join/leave。\n", "zh-CN": "未知状态，请使用 on/off 或 join/leave。\n" ])));
     }

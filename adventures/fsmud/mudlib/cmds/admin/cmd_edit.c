@@ -60,8 +60,8 @@ int main(object me, string verb, string arg) {
     }
 
     // 🚀 新增：編輯鎖定檢查
-    object ide_d = find_object("/daemon/ide_d.c");
-    if (!ide_d) ide_d = load_object("/daemon/ide_d.c");
+    object ide_d = find_object("/services/ide_d.c");
+    if (!ide_d) ide_d = load_object("/services/ide_d.c");
 
     if (ide_d) {
         object editor = ide_d->query_lock(file);
@@ -74,8 +74,8 @@ int main(object me, string verb, string arg) {
 
     string content = read_file(file);
     if (!content && template && template != "") {
-        object td = find_object("/daemon/template_d.c");
-        if (!td) td = load_object("/daemon/template_d.c");
+        object td = find_object("/services/template_d.c");
+        if (!td) td = load_object("/services/template_d.c");
         if (td) {
             content = td->query_template(template);
             if (content) {
@@ -167,7 +167,7 @@ void edit_loop(object me, string input) {
         }
 
         // 🚀 新增：釋放鎖定
-        object ide_d = find_object("/daemon/ide_d.c");
+        object ide_d = find_object("/services/ide_d.c");
         if (ide_d) ide_d->release_lock(file, me);
 
         me->delete_temp("edit_buffer");
@@ -183,7 +183,7 @@ void edit_loop(object me, string input) {
         ])) + "$NOR$");
 
         // 🚀 新增：釋放鎖定
-        object ide_d = find_object("/daemon/ide_d.c");
+        object ide_d = find_object("/services/ide_d.c");
         if (ide_d) ide_d->release_lock(file, me);
 
         me->delete_temp("edit_buffer");

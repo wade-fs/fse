@@ -60,7 +60,7 @@ int main(object me, string verb, string arg) {
     }
 
     // 3. 呼叫守護進程執行合成
-    mixed result = load_object("/daemon/crafting_d.c")->do_craft(me, type, items);
+    mixed result = load_object("/services/crafting_d.c")->do_craft(me, type, items);
     
     if (stringp(result)) {
         write(result + "\n");

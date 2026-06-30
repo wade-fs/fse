@@ -26,7 +26,7 @@ void run_tests(object me) {
     assert_equal("en", me->query_lang(), "執行 lang en 指令後語系應變更");
 
     // 5. 測試帶有佔位符的翻譯
-    object lang_d = load_object("/daemon/language_d.c");
+    object lang_d = load_object("/services/language_d.c");
     string res = lang_d->translate("login_success", "en");
     res = replace_string(res, "$name", "Wade");
     assert_equal("Login successful! Welcome, Wade.", res, "英文登入訊息佔位符替換");

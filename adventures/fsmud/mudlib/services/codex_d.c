@@ -104,8 +104,8 @@ void on_quest_completed(mapping event) {
     if (!player || !qid) return;
 
     mapping qinfo = INCIDENT_D ? 0 : 0; // 先嘗試從 quest_d 取得資訊
-    object qd = find_object("/daemon/quest_d.c");
-    if (!qd) qd = load_object("/daemon/quest_d.c");
+    object qd = find_object("/services/quest_d.c");
+    if (!qd) qd = load_object("/services/quest_d.c");
     if (qd) qinfo = qd->query_quest_info(qid);
 
     string title   = qinfo ? (qinfo["name"] || qid) : qid;
@@ -165,8 +165,8 @@ mapping query_codex_summary(object player) {
 mapping query_world_totals() {
     int mem_total = sizeof(MEMORY_D->query_all_memories() || ([]));
     int quest_total = 0;
-    object qd = find_object("/daemon/quest_d.c");
-    if (!qd) qd = load_object("/daemon/quest_d.c");
+    object qd = find_object("/services/quest_d.c");
+    if (!qd) qd = load_object("/services/quest_d.c");
     if (qd) quest_total = sizeof(qd->query_all_quests() || ([]));
     int inc_total = sizeof(INCIDENT_D->query_incidents() || ([]));
 

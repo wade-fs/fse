@@ -124,7 +124,7 @@ void look_room(object who) {
 
     // 顯示天氣與時間 (僅限室外)
     if (is_outdoor) {
-        write("$HIG$" + load_object("/daemon/nature_d.c")->query_weather_string() + "$NOR$" + "\n");
+        write("$HIG$" + load_object("/services/nature_d.c")->query_weather_string() + "$NOR$" + "\n");
     }
 
     write("【" + query_short() + "】\n");
@@ -197,7 +197,7 @@ void look_room(object who) {
     }
 
     // 🚀 新增：發送小地圖的 JSON 資料給前端
-    object map_d = load_object("/daemon/map_d.c");
+    object map_d = load_object("/services/map_d.c");
     mapping map_data = ([]);
     if (map_d) {
         map_data = map_d->get_map_json(who, 2); // 取得 5x5 的網格資料
@@ -206,7 +206,7 @@ void look_room(object who) {
     write(sprintf("{\"ui\": \"minimap\", \"data\": %s}", json_encode(map_data)));
 
     // 🚀 新增：發送天氣資訊給前端
-    object nature_d = load_object("/daemon/nature_d.c");
+    object nature_d = load_object("/services/nature_d.c");
     mapping nature_data = ([
         "weather": nature_d->query_weather(),
         "is_day": nature_d->is_day(),
@@ -274,7 +274,7 @@ int do_go(string dir) {
     }
 
     object me = this_player();
-    object lang_d = load_object("/daemon/language_d.c");
+    object lang_d = load_object("/services/language_d.c");
 
     // 🚀 核心優化：移動前紀錄當前位置，方便目標房間查詢來源
     me->set_temp("last_location", base_name(this_object()));

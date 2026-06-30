@@ -57,12 +57,12 @@ int main(object me, string verb, string arg) {
     int max_lv = teachable[sid];
 
     if (my_lv >= max_lv) {
-        write(teacher->query_name() + select_lang(([ "en": " says: Your proficiency in '", "zh-TW": " 說：你的『", "zh-CN": " 说：你的『" ])) + load_object("/daemon/skill_d.c")->query_skill_name(sid) + select_lang(([ "en": "' is no less than mine.\n", "zh-TW": "』造詣已經不在我之下了。\n", "zh-CN": "』造诣已经不在我之下了。\n" ])));
+        write(teacher->query_name() + select_lang(([ "en": " says: Your proficiency in '", "zh-TW": " 說：你的『", "zh-CN": " 说：你的『" ])) + load_object("/services/skill_d.c")->query_skill_name(sid) + select_lang(([ "en": "' is no less than mine.\n", "zh-TW": "』造詣已經不在我之下了。\n", "zh-CN": "』造诣已经不在我之下了。\n" ])));
         return 1;
     }
 
     // 執行學習
-    if (load_object("/daemon/skill_d.c")->learn_skill(me, sid, amount)) {
+    if (load_object("/services/skill_d.c")->learn_skill(me, sid, amount)) {
         say(me->query_name() + select_lang(([ "en": " asks ", "zh-TW": " 向 ", "zh-CN": " 向 " ])) + teacher->query_name() + select_lang(([ "en": " for advice on the secrets of '", "zh-TW": " 請教了一些關於『", "zh-CN": " 请教了一些关于『" ])) + sid + select_lang(([ "en": "'.\n", "zh-TW": "』的竅門。\n", "zh-CN": "』的窍门。\n" ])));
         me->save();
     }

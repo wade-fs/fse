@@ -6,13 +6,13 @@ void run_tests(object me) {
     start_test("Dynamic World Events (P15)");
     
     // 1. 載入 world_event_d
-    object wed = load_object("/daemon/world_event_d.c");
+    object wed = load_object("/services/world_event_d.c");
     assert_true(wed != 0, "World Event Daemon loaded");
     
     // 2. 準備測試場景
-    write("DEBUG_WE: SITE_D object is: " + sprintf("%O", load_object("/daemon/site_d")) + "\n");
-    write("DEBUG_WE: load_site minxiong_old_station: " + sprintf("%O", load_object("/daemon/site_d")->load_site("minxiong_old_station")) + "\n");
-    write("DEBUG_WE: load_site temple: " + sprintf("%O", load_object("/daemon/site_d")->load_site("dashiye_temple")) + "\n");
+    write("DEBUG_WE: SITE_D object is: " + sprintf("%O", load_object("/services/site_d")) + "\n");
+    write("DEBUG_WE: load_site minxiong_old_station: " + sprintf("%O", load_object("/services/site_d")->load_site("minxiong_old_station")) + "\n");
+    write("DEBUG_WE: load_site temple: " + sprintf("%O", load_object("/services/site_d")->load_site("dashiye_temple")) + "\n");
     object station = SETTLEMENT_D->get_site_object("minxiong_old_station");
     object market = SETTLEMENT_D->get_site_object("minxiong_market");
     assert_true(station != 0, "minxiong_old_station loaded");

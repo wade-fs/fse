@@ -7,7 +7,7 @@ void run_test() {
     print_title("Testing NPC Schedule (P14)");
     
     // 1. 啟動 schedule_d
-    object sched_d = load_object("/daemon/schedule_d.c");
+    object sched_d = load_object("/services/schedule_d.c");
     assert(sched_d != 0, "Schedule Daemon loaded");
     
     // 2. 建立老站長
