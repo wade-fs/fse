@@ -1,9 +1,8 @@
 short: "史前河床"
 long: "一條乾涸的史前河谷底，紅褐色的卵石遍布河床。\n在幾處低窪的岩縫中積聚著渾濁的水窪，水面泛著詭異的藍綠色藍藻光澤。\n空氣中有一股刺鼻的有機物腐爛味。"
-monsters:
-  - id: "/monsters/meganeura/monster"
+presence:
+  - id: "/presence/meganeura/presence"
     count: 2
-    respawn: true
 
 exits:
   shade: "/rooms/triassic_shade/room"

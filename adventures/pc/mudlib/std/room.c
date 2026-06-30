@@ -8,7 +8,7 @@ private string short_desc;
 private string long_desc;
 private mapping exits;      // 方向 -> 目標房間路徑
 private object *occupants;  // 所有在此房間的物件 (玩家/怪物)
-private nosave mapping monster_configs;
+private nosave mapping presence_configs;
 
 void create() {
     ::create();
@@ -35,15 +35,15 @@ void create() {
             }
         }
 
-        // 解析怪物配置
-        mixed monsters = config["monsters"];
-        if (arrayp(monsters) && sizeof(monsters) > 0) {
-            monster_configs = ([]);
-            foreach (mapping m in monsters) {
-                monster_configs[m["id"]] = m["count"];
+        // 解析存在實體 (presence) 配置
+        mixed presence = config["presence"];
+        if (arrayp(presence) && sizeof(presence) > 0) {
+            presence_configs = ([]);
+            foreach (mapping p in presence) {
+                presence_configs[p["id"]] = p["count"];
             }
             // 延遲在當前 tick 結束後執行，避免 create 期間移動物件造成的時序問題
-            call_out("spawn_monsters_from_config", 0);
+            call_out("spawn_presence_from_config", 0);
         }
     }
 }
@@ -53,11 +53,11 @@ string query_short()      { return short_desc; }
 void set_long(string l)   { long_desc = l; }
 string query_long()       { return long_desc; }
 
-void spawn_monsters_from_config() {
-    if (!monster_configs) return;
-    foreach (string mid, int count in monster_configs) {
+void spawn_presence_from_config() {
+    if (!presence_configs) return;
+    foreach (string pid, int count in presence_configs) {
         for (int i = 0; i < count; i++) {
-            object ob = clone_object(mid);
+            object ob = clone_object(pid);
             if (ob) {
                 ob->set_respawn_room(base_name(this_object()));
                 move_object(ob, this_object());
@@ -97,6 +97,15 @@ mapping query_exits(object player) {
 void enter(object ob) {
     if (member_array(ob, occupants) == -1) {
         occupants += ({ ob });
+    }
+    
+    // 如果進入的是玩家，則觸發當前房間中所有存在實體（presence）的偵測機制
+    if (ob && function_exists("query_role", ob) && ob->query_role() == "player") {
+        foreach (object presence in query_occupants()) {
+            if (presence && presence != ob && function_exists("check_detection", presence)) {
+                presence->check_detection(ob);
+            }
+        }
     }
 }
 

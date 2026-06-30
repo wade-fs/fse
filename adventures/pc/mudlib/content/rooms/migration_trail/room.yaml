@@ -1,9 +1,8 @@
 short: "遷徙走廊"
 long: "這是一條夾在茂密針葉林之間的開闊泥地通道。\n泥地上縱橫交錯著無數巨大的獸類足跡，有些足跡甚至像小水坑一樣深。\n這是恐龍前往水源與避冬地的古老遷徙走廊。\n此時，一隻巨大的異特龍正堵在通道中央，不時低頭嗅探，極為警惕。"
-monsters:
-  - id: "/monsters/allosaurus/monster"
+presence:
+  - id: "/presence/allosaurus/presence"
     count: 1
-    respawn: true
 exits:
   back: "/rooms/jurassic_valley/room"
 

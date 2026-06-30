@@ -1,0 +1,10 @@
+presence_id: "herrerasaurus"
+name: "赫氏翼龍"
+short_desc: "一隻敏捷兇狠的赫氏翼龍。"
+long_desc: "這是一隻中型捕食者，嗅覺和聽覺極為靈敏，正虎視眈眈地盯著谷底。"
+detection_factors:
+  - "stealth_camouflage"
+failure_consequence:
+  hp_change: -30
+  trigger_confusion: "caught_by_predator"
+respawn_delay: 30

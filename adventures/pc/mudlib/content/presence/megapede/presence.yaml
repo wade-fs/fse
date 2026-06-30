@@ -1,0 +1,10 @@
+presence_id: "megapede"
+name: "史前巨蜈蚣"
+short_desc: "一隻體長近一公尺的史前巨蜈蚣。"
+long_desc: "這是一隻生活在三疊紀的巨蜈蚣，身體呈亮紅色，長著無數密集的步足。牠的口器泛著綠色毒液光澤，夜間活動頻繁。牠對震動極度敏感。"
+detection_factors:
+  - "arthropod_warning"
+failure_consequence:
+  hp_change: -15
+  trigger_confusion: "caught_by_predator"
+respawn_delay: 20

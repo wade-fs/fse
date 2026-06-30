@@ -22,15 +22,29 @@ graph TD
 
 ---
 
-## 設計核心：無戰鬥系統（No Combat System）
+## 設計核心：無戰鬥系統與 Presence 偵測模型
 
 未來開發者在開發任何階段的生物與威脅時，**必須遵循 ADR-0008 的核心設計決定：不使用傳統戰鬥系統**。
 
-1. **禁用傳統戰鬥指令**：系統徹底停用了 `kill` 和 `attack` 指令。玩家無法藉由赤手空拳或刷數值（如等級、HP、ATK、DEF）來與史前巨獸正面交鋒。
-2. **環境偵測實體模型（Environmental Detection Model）**：PC 中的掠食者（如赫氏翼龍、異特龍、霸王龍）不是戰鬥物件，而是「會移動的環境危害」。牠們的威脅性完全取決於**玩家的「感官狀態與認知因子」**：
-   * **未解鎖/未應用對應因子**（例如站在上風處、劇烈走動） ➔ 觸發偵測 ➔ 直接扣減生命值（致死）、強行退回上一個節點並觸發 `Confusion` (困惑)。
-   * **正確應用對應因子**（例如利用逆風 `hide downwind`、保持完全靜止 `freeze`） ➔ 規避偵測 ➔ 安全繞行或進一步交互。
-3. **對抗熵增的發現驅動**：玩家的成長體現在「對物理世界的規律理解」（解鎖 Factors），而不是數字堆疊。如果玩家可以直接用數值蠻幹打死怪物，那麼對風向、溫度、地表震動的探索就會失去意義。
+1. **禁用傳統戰鬥指令**：系統已徹底停用了 `kill` 和 `attack` 指令，並移除了 `mudlib/std/monster.c`。
+2. **存在與環境偵測模型（Presence & Detection Model）**：
+   * 所有具備威脅性的史前生物一律繼承自 `/std/presence.c`，以存在實體（Presence）型態註冊在房間中（使用 `/manifest.yaml` 中的 `presence` 虛擬物件規則）。
+   * 牠們使用數據驅動的 `presence.yaml` 進行聲明（配置於 `/content/presence/` 下），其結構如下：
+     ```yaml
+     presence_id: "herrerasaurus"
+     name: "赫氏翼龍"
+     detection_factors:
+       - "stealth_camouflage"           # 避開此掠食者所需解鎖的認知因子（Discovery）
+     failure_consequence:
+       hp_change: -30                  # 偵測失敗時扣減的生命值
+       trigger_confusion: "caught_by_predator"  # 偵測失敗時觸發的玩家困惑狀態
+     respawn_delay: 30                 # 重生排程延遲（秒）
+     ```
+3. **主動偵測觸發機制**：
+   * 當玩家進入一個包含 Presence 實體的房間時，會自動觸發該實體的 `check_detection(player)` 方法。
+   * 如果玩家**未解鎖/未具備** `detection_factors` 宣告的所有因子，則會當場判定為偵測失敗，扣減 HP 並觸發 `trigger_confusion` 懲罰。
+4. **教導性定位與裝飾物清除**：
+   * **`proto_chicken` 已被移除**：在無戰鬥系統框架下，不對應任何 Discovery 探索或教學引導的無害裝飾性生物（如先前的 `proto_chicken`）應一律從房間中清除，以維護物理探索的純粹度。
 
 ---
 

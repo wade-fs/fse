@@ -1,9 +1,8 @@
 short: "捕食者峽谷"
 long: "你來到了一片狹窄而深邃的紅砂岩峽谷。\n兩側是近乎垂直的峭壁，遮擋了大部分光線。\n風在峽谷狹窄的通道中呼嘯而過，發出尖銳的口哨聲。\n此地充滿了未知的壓迫感，每一步都必須極為小心。"
-monsters:
-  - id: "/monsters/herrerasaurus/monster"
+presence:
+  - id: "/presence/herrerasaurus/presence"
     count: 1
-    respawn: true
 exits:
   back: "/rooms/fern_forest/room"
 

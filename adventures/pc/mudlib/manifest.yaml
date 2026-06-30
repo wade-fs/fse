@@ -23,5 +23,5 @@ name: Prehistoric Civilization
 requires_runtime: '>=1.0'
 version: "0.1"
 virtual_rules:
-    monsters: /std/monster.c
+    presence: /std/presence.c
     rooms: /std/room.c

@@ -1,9 +1,8 @@
 short: "白堊紀海岸"
 long: "你從高空降落在一片開闊的白堊紀沙灘上。\n天空呈現出明亮的湛藍色，空氣無比清澈，每一口呼吸都讓你感到神清氣爽。\n此時，一隻龐大如山的霸王龍正在前方沙灘上徘徊，震耳欲聾的低吼聲在海岸迴盪。\n沙灘一側延伸至無垠的古地中海，另一側則是開滿原始花朵的灌木叢。"
-monsters:
-  - id: "/monsters/tyrannosaurus/monster"
+presence:
+  - id: "/presence/tyrannosaurus/presence"
     count: 1
-    respawn: true
 exits:
   back: "/rooms/pterosaur_cliff/room"
 

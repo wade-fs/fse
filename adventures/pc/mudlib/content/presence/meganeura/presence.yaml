@@ -1,0 +1,8 @@
+presence_id: "meganeura"
+name: "超大蜻蜓"
+short_desc: "一隻翼展達 70 公分的史前超大蜻蜓。"
+long_desc: "這是一隻翼展寬闊的巨蜻蜓，複眼在陽光下閃爍著複合金屬光澤，飛行極為快速敏捷，會試圖接管或奪取地面上的食物物資。"
+detection_factors: []
+failure_consequence:
+  hp_change: 0
+respawn_delay: 15

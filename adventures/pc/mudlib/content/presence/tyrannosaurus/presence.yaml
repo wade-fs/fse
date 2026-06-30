@@ -1,0 +1,10 @@
+presence_id: "tyrannosaurus"
+name: "霸王龍"
+short_desc: "史前地表最強霸主——霸王龍（T-Rex）。"
+long_desc: "這是一隻高達六米的終極掠食者。牠渾身覆蓋著暗色的鱗片，利齒如鋼刀般參差交錯。任何細微的震動、動作或氣味都無法逃脫牠的感知。正面對抗是毫無意義的自殺行為。"
+detection_factors:
+  - "tyrex_senses"
+failure_consequence:
+  hp_change: -100
+  trigger_confusion: "caught_by_predator"
+respawn_delay: 120
