@@ -17,13 +17,6 @@ mapping hidden_elements; // ([ "id": ([ "type": "exit/item", "value": "...", "ms
 int x;
 int y;
 int z;
-int no_combat;         // 🚀 禁止戰鬥屬性
-int has_forge;         // 🚀 鍛造設施
-int has_lab;           // 🚀 煉金設施
-int has_bank;          // 🚀 銀行設施
-int has_tavern;        // 🚀 酒館設施
-int has_guild;         // 🚀 公會設施
-int has_shop;          // 🚀 商店設施
 int is_outdoor;        // 🚀 是否為室外
 
 void create() {
@@ -36,13 +29,6 @@ void create() {
     x = 0;
     y = 0;
     z = 0;
-    no_combat = 0;
-    has_forge = 0;
-    has_lab   = 0;
-    has_bank  = 0;
-    has_tavern= 0;
-    has_guild = 0;
-    has_shop  = 0;
     is_outdoor = 1; // 預設皆為室外
 }
 
@@ -65,13 +51,6 @@ mixed query_coordinate() {
 // ── 設定函式 ────────────────────────────────────────────
 void set_short(string s) { short_desc = s; }
 void set_long(string s)  { long_desc  = s; }
-void set_no_combat(int v){ no_combat = v; }
-void set_has_forge(int v){ has_forge = v; }
-void set_has_lab(int v)  { has_lab   = v; }
-void set_has_bank(int v) { has_bank  = v; }
-void set_has_tavern(int v){ has_tavern = v; }
-void set_has_guild(int v){ has_guild = v; }
-void set_has_shop(int v) { has_shop  = v; }
 void set_is_outdoor(int v){ is_outdoor = v; }
 
 void add_exit(string dir, string path) {
@@ -109,13 +88,6 @@ object spawn_npc(string file) {
 string query_short() { return select_lang(short_desc); }
 string query_long()  { return select_lang(long_desc); }
 mapping query_exits(){ return exits; }
-int query_no_combat(){ return no_combat; }
-int query_has_forge(){ return has_forge; }
-int query_has_lab()  { return has_lab; }
-int query_has_bank() { return has_bank; }
-int query_has_tavern(){ return has_tavern; }
-int query_has_guild(){ return has_guild; }
-int query_has_shop() { return has_shop; }
 int query_is_outdoor(){ return is_outdoor; }
 
 // ── 顯示房間 ────────────────────────────────────────────
