@@ -1,9 +1,24 @@
 adventure_id: pc
-name: "Prehistoric Civilization"
-version: "0.1"
-requires_runtime: ">=1.0"
 content_paths:
-  factors: "/content/factors"
-  progression: "/content/progression"
-  locales: "/content/locales"
-initial_stage: "novice"
+    factors: /content/factors
+    locales: /content/locales
+    progression: /content/progression
+difficulty:
+    current: normal
+    modes:
+        easy:
+            damage_multiplier: 0.5
+            decay_multiplier: 0.5
+            fatigue_multiplier: 0.5
+        nightmare:
+            damage_multiplier: 2.5
+            decay_multiplier: 2
+            fatigue_multiplier: 2
+        normal:
+            damage_multiplier: 1
+            decay_multiplier: 1
+            fatigue_multiplier: 1
+initial_stage: novice
+name: Prehistoric Civilization
+requires_runtime: '>=1.0'
+version: "0.1"

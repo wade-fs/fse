@@ -146,6 +146,31 @@ int run_all_tests() {
     player->force_me("i");
     write(HIG "  ✓ 通過: 背包物資狀態記錄與動態物品攜帶驗證成功。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 11：驗證動態難度切換與 Nightmare 傷害加成乘數
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 11] 測試 Wizard 動態切換難度為 Nightmare 與傷害放大...\n" NOR);
+    // 1. 先用 god 指令變更難度
+    player->force_me("god difficulty nightmare");
+    
+    // 2. 測試 kick rocks 的地獄傷害 (基礎 fail_hp: -5，Nightmare 傷害倍率為 2.5 倍，預期扣減 12 滴血)
+    player->set_hp(100);
+    player->set_temp("found_roots", 0); // 確保失敗
+    player->force_me("kick rocks");
+    
+    int dmg_taken = 100 - player->query_hp();
+    // 5 * 2.5 = 12.5，LPC 轉 int 預期為 12 點傷害
+    if (dmg_taken != 12) {
+        write(HIR "❌ 測試 11 失敗: 難度加成未生效，預期扣減 12 HP，實際扣減了 " + dmg_taken + " HP！\n" NOR);
+        // 還原難度
+        player->force_me("god difficulty normal");
+        return 1;
+    }
+    
+    // 3. 還原難度為正常
+    player->force_me("god difficulty normal");
+    write(HIG "  ✓ 通過: 難度切換與 Nightmare 乘數傷害放大驗證成功。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +

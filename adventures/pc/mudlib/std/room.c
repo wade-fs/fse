@@ -306,12 +306,22 @@ int resolve_interaction(object player, string action, string target) {
                     if (pm) pm->complete_player_quest(player, comp_quest, "main", 100);
                 }
 
-                // 疲勞與體力變更
+                // 疲勞與體力變更 (套用難度倍率)
                 int fatigue = act["fatigue"];
-                if (fatigue) player->add_fatigue(fatigue);
+                if (fatigue) {
+                    float f_mod = query_difficulty_modifier("fatigue");
+                    player->add_fatigue(to_int(fatigue * f_mod));
+                }
 
                 int hp_change = act["hp_change"];
-                if (hp_change) player->add_hp(hp_change);
+                if (hp_change) {
+                    if (hp_change < 0) {
+                        float d_mod = query_difficulty_modifier("damage");
+                        player->add_hp(to_int(hp_change * d_mod));
+                    } else {
+                        player->add_hp(hp_change);
+                    }
+                }
 
                 // ── 🌟 FSE 宣告式物品生成 ──
                 mapping give_item = act["give_item"];
@@ -322,7 +332,11 @@ int resolve_interaction(object player, string action, string target) {
                         ob->set_name(give_item["name"] || "未知物品");
                         ob->set_long(give_item["desc"] || "無詳細描述。");
                         if (!undefinedp(give_item["durability"])) {
-                            ob->set_durability(give_item["durability"]);
+                            // 火種與消耗性工具耐久度受衰減倍率影響
+                            float dec_mod = query_difficulty_modifier("decay");
+                            int final_dur = to_int(give_item["durability"] / dec_mod);
+                            if (final_dur < 1) final_dur = 1;
+                            ob->set_durability(final_dur);
                         }
                         move_object(ob, player);
                         tell_object(player, HIY + "🎁 你獲得了物品：[" + ob->query_name() + "]，已放入背包(i)。\n" + NOR);
@@ -339,18 +353,60 @@ int resolve_interaction(object player, string action, string target) {
                 string conf = act["trigger_confusion"];
                 if (conf) player->player_confused(conf);
 
-                // 懲罰
+                // 懲罰 (套用難度倍率)
                 int fail_fatigue = act["fail_fatigue"] || 5;
-                player->add_fatigue(fail_fatigue);
+                float f_mod = query_difficulty_modifier("fatigue");
+                player->add_fatigue(to_int(fail_fatigue * f_mod));
 
                 int fail_hp = act["fail_hp"];
-                if (fail_hp) player->add_hp(fail_hp);
+                if (fail_hp) {
+                    if (fail_hp < 0) {
+                        float d_mod = query_difficulty_modifier("damage");
+                        player->add_hp(to_int(fail_hp * d_mod));
+                    } else {
+                        player->add_hp(fail_hp);
+                    }
+                }
             }
             return 1; // 成功解析並處理該互動
         }
     }
     return 0; // 當前房間無此互動定義
 }
+
+// 🌟 FSE 動態難度係數解算器
+// type: "fatigue" 或 "damage" 或 "decay"
+float query_difficulty_modifier(string type) {
+    string mode = "normal"; // 預設難度
+    
+    // 1. 讀取全域 manifest.yaml 配置
+    string raw = read_file("/manifest.yaml");
+    mapping manifest;
+    if (raw) {
+        manifest = yaml_decode(raw);
+        if (manifest && manifest["difficulty"] && manifest["difficulty"]["current"]) {
+            mode = manifest["difficulty"]["current"];
+        }
+    }
+
+    // 2. 檢查房間 (秘境) 是否有自訂難度覆寫全域
+    mapping config = query_virtual_config();
+    if (config && config["difficulty_override"]) {
+        mode = config["difficulty_override"];
+    }
+
+    // 3. 取得對應難度模式下的倍率
+    if (manifest && manifest["difficulty"] && manifest["difficulty"]["modes"] && manifest["difficulty"]["modes"][mode]) {
+        mapping mode_cfg = manifest["difficulty"]["modes"][mode];
+        string key = type + "_multiplier";
+        if (!undefinedp(mode_cfg[key])) {
+            return to_float(mode_cfg[key]);
+        }
+    }
+
+    return 1.0; // 預設無倍率改變
+}
+
 
 
 
