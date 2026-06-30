@@ -1,42 +1,105 @@
-# 《探索即理解：FSE 設計哲學與實踐》
+# FSE 文件
 
-**作者**：Wade  
-**版本**：草稿 v0.1  
+**作者**：Wade
 **日期**：2026
 
 > 理解不是被教的，而是透過在世界中探索、困惑、發現而自然形成的。
 
 ---
 
-## 目錄
+## 結構
 
-### Part 0　序章：起點
-- [第 0 章　為什麼需要 FSE？](#第-0-章-為什麼需要-fse)
-- [第 1 章　理解的物理學（公理）](#第-1-章-理解的物理學公理)
+```
+docs/
+  philosophy/    → FSE 為什麼成立（不變量）
+  architecture/  → FSE 如何組織（可以改）
+  patterns/      → Adventure 設計模式
+  adventures/    → 各冒險的 Mapping 與驗證
+  adr/           → 架構決策記錄
+  reflection/    → 從實作中學到的教訓
+```
 
-### Part 1　理論基礎
-- [第 2 章　四個核心概念](#第-2-章-四個核心概念)
-- [第 3 章　世界模型](#第-3-章-世界模型)
-- [第 4 章　語言與表現模型](#第-4-章-語言與表現模型)
+---
 
-### Part 2　設計原則與決策
-- [第 5 章　Ubiquitous Language 與 Mapping](#第-5-章-ubiquitous-language-與-mapping)
-- [第 6 章　Discovery-First Progression](#第-6-章-discovery-first-progression)
-- [第 7 章　Curiosity Before Knowledge](#第-7-章-curiosity-before-knowledge)
-- [第 8 章　其他重要設計決策](#第-8-章-其他重要設計決策)
+## Philosophy（哲學層）
 
-### Part 3　模式與實踐
-- [第 9 章　Discovery Loop 模式](#第-9-章-discovery-loop-模式)
-- [第 10 章　Reveal 作為設計原語](#第-10-章-reveal-作為設計原語)
-- [第 11 章　Progressive Unlock 與 Path](#第-11-章-progressive-unlock-與-path)
-- [第 12 章　其他可重用模式](#第-12-章-其他可重用模式)
+FSE 在任何技術之上都成立的核心思想。
 
-### Part 4　世界實例
-- [第 13 章　Programming World](#第-13-章-programming-world)
-- [第 14 章　Prehistoric Civilization](#第-14-章-prehistoric-civilization)
-- [第 15 章　Formosa 與未來世界](#第-15-章-formosa-與未來世界)
+| 文件 | 主題 |
+|---|---|
+| [00-Why-FSE-Exists](philosophy/00-Why-FSE-Exists.md) | FSE 為什麼存在 |
+| [01-First-Principles](philosophy/01-First-Principles.md) | 不可逆的第一原則 |
+| [02-Core-Concepts](philosophy/02-Core-Concepts.md) | 最小概念集 |
+| [03-Ubiquitous-Language](philosophy/03-Ubiquitous-Language.md) | 跨 Adventure 的通用語言 |
+| [04-Discovery](philosophy/04-Discovery.md) | Discovery 是什麼 |
+| [05-Progress](philosophy/05-Progress.md) | Progress 的三個維度 |
+| [06-World-Model](philosophy/06-World-Model.md) | 世界如何運作 |
+| [07-Presentation](philosophy/07-Presentation.md) | 玩家如何感知世界（Reveal） |
+| [08-Mapping](philosophy/08-Mapping.md) | Adventure 如何對應到 Runtime |
+| [09-Runtime](philosophy/09-Runtime.md) | Runtime 是 Core 的實作 |
+| [10-Glossary](philosophy/10-Glossary.md) | 所有核心術語的快速查閱表 |
 
-### Part 5　如何建造自己的世界
-- [第 16 章　Adventure 開發指南](#第-16-章-adventure-開發指南)
-- [第 17 章　Runtime 擴展與貢獻](#第-17-章-runtime-擴展與貢獻)
-- [第 18 章　未來展望](#第-18-章-未來展望)
+---
+
+## Architecture（架構層）
+
+Runtime 如何組織，服務如何分工。
+
+| 文件 | 主題 |
+|---|---|
+| [fse-architecture](architecture/fse-architecture.md) | 整體架構說明 |
+| [data-driven-architecture](architecture/data-driven-architecture.md) | 資料驅動設計 |
+
+---
+
+## Patterns（模式層）
+
+Adventure 設計師可以重用的設計模式。
+
+| 文件 | 主題 |
+|---|---|
+| [Discovery-Loop](patterns/Discovery-Loop.md) | 領悟循環 |
+| [Progressive-Reveal](patterns/Progressive-Reveal.md) | 漸進揭示 |
+| [Hidden-Knowledge](patterns/Hidden-Knowledge.md) | 隱藏知識 |
+| [Environmental-Teaching](patterns/Environmental-Teaching.md) | 環境教學 |
+
+---
+
+## Adventures（冒險層）
+
+各個 Adventure 如何 Mapping，以及它教會了 Runtime 什麼。
+
+| 文件 | 主題 |
+|---|---|
+| [Programming-World](adventures/Programming-World.md) | PW 的 Mapping 與驗證 |
+| [Formosa](adventures/Formosa.md) | Formosa 的 Mapping 與驗證 |
+| [Prehistoric-Civilization](adventures/Prehistoric-Civilization.md) | PC 的 Mapping 與驗證 |
+
+---
+
+## ADR（架構決策記錄）
+
+重要設計決策的記錄，包含背景、選項、理由。
+
+| 文件 | 決策 |
+|---|---|
+| [ADR-0001](adr/ADR-0001-Bootstrap-FSE.md) | Bootstrap FSE |
+| [ADR-0002](adr/ADR-0002-Ubiquitous-Language.md) | Ubiquitous Language |
+| [ADR-0003](adr/ADR-0003-Discovery-First-Progression.md) | Discovery-First Progression |
+| [ADR-0004](adr/ADR-0004-Adventure-Mapping.md) | Adventure Mapping |
+| [ADR-0005](adr/ADR-0005-World-Presentation.md) | World Presentation |
+| [ADR-0006](adr/ADR-0006-Curiosity-Before-Knowledge.md) | Curiosity Before Knowledge |
+| [ADR-0007](adr/ADR-0007-Adventure-Laboratory.md) | Adventure Laboratory |
+| [ADR-0008](adr/ADR-0008-No-Combat-System.md) | No Combat System |
+
+---
+
+## Reflection（反思層）
+
+不是設計，而是學習。
+
+| 文件 | 主題 |
+|---|---|
+| [Why-PC-Changed-Runtime](reflection/Why-PC-Changed-Runtime.md) | PC 如何改變了 Runtime |
+| [Lessons-from-Formosa](reflection/Lessons-from-Formosa.md) | Formosa 教會了我們什麼 |
+| [What-Dinosaur-Taught-Us](reflection/What-Dinosaur-Taught-Us.md) | Dinosaur 教會了我們什麼 |

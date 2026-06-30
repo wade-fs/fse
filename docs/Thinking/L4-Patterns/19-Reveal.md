@@ -1,1 +1,0 @@
-revelation as design primitive
