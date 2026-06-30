@@ -1,0 +1,64 @@
+short: "岩漿台地"
+long: "你攀上一處陡峭的地下熔岩管道，來到了一個寬闊的黑色玄武岩高台邊緣。\n下方幾公尺處就是緩緩流動、散發著金紅色光芒的滾燙岩漿河。\n極度熾熱的熱浪迎面撲來，烤得你呼吸困難，皮膚傳來強烈的刺痛感。\n四周被滾燙的地底紅光照亮，黑色的凝固熔岩在大地上形成了詭異的紋路。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 3.0
+  hunger_decay: 1.5
+
+exits:
+  back: "/rooms/lava_tube/room"
+
+sensory_signals:
+  smell: "空氣中滿是濃烈到讓人幾乎窒息的二氧化硫與高溫熔融金屬的燥熱氣味。"
+  sound: "下方岩漿流動的沉悶「咕嚕咕嚕」聲響，伴隨著偶爾地底高壓氣體氣泡爆裂產生的巨響，在封閉的熔岩洞穴中迴盪。"
+  wind: "熾熱的岩漿引發了強烈的向上熱對流氣流，形成一股極其溫熱的上升風。"
+  ground:
+    default_msg: "質地堅硬、冰冷黑色凝固的玄武岩高台。在岩台邊緣高溫熔融凝固處，你看到一塊在紅光下折射出奇特黃綠色光澤的晶石。"
+    discovery:
+      requires_no_factor: "extractive_metallurgy"
+      set_temp: "found_olivine"
+      msg: "【 🔍 發現 】在玄武岩台地邊緣，有一塊剔透的、呈黃綠色結晶的「橄欖石 (olivine)」。\n這是在基性岩漿最先結晶析出的純淨礦物。你可以嘗試採集它 (collect olivine / take crystal)。"
+
+interactions:
+  - action: "collect"
+    target:
+      - "olivine"
+      - "crystal"
+    prerequisites:
+      temp_state: "found_olivine"
+    success_msg: "你小心翼翼地探出身子，用鋒利的石刃輕輕撬動那塊玄武岩，將那顆黃綠色、溫熱無瑕的橄欖石結晶收入囊中。"
+    give_item:
+      id: "olivine_crystal"
+      name: "橄欖石結晶"
+      desc: "一顆天然的黃綠色橄欖石結晶。是在極高溫岩漿中最先結晶結晶出的矽酸鹽礦物，純淨而堅硬。"
+      durability: 5
+    repeat_msg: "岩台邊緣的橄欖石已經被你挖走了，只留下黑色的玄武岩石痕。"
+    fatigue: 5
+
+  - action: "take"
+    target:
+      - "olivine"
+      - "crystal"
+    prerequisites:
+      temp_state: "found_olivine"
+    success_msg: "你小心翼翼地探出身子，用鋒利的石刃輕輕撬動那塊玄武岩，將那顆黃綠色、溫熱無瑕的橄欖石結晶收入囊中。"
+    give_item:
+      id: "olivine_crystal"
+      name: "橄欖石結晶"
+      desc: "一顆天然的黃綠色橄欖石結晶。是在極高溫岩漿中最先結晶結晶出的矽酸鹽礦物，純淨而堅硬。"
+      durability: 5
+    repeat_msg: "岩台邊緣的橄欖石已經被你挖走了，只留下黑色的玄武岩石痕。"
+    fatigue: 5
+
+  - action: "walk"
+    target: "forward"
+    success_msg: "你試圖在不藉助空氣熱對流引導的情況下，強行跨越這片高溫的岩漿台地邊緣。高溫地熱產生的氣體瞬間灼傷了你的氣管，你一陣眩暈，失足跌入了下方 1200°C 滾燙的岩漿河中，瞬間被火焰吞噬..."
+    hp_change: -100
+    fatigue: 10
+
+  - action: "cross"
+    target: "shelf"
+    success_msg: "你試圖在不藉助空氣熱對流引導的情況下，強行跨越這片高溫的岩漿台地邊緣。高溫地熱產生的氣體瞬間灼傷了你的氣管，你一陣眩暈，失足跌入了下方 1200°C 滾燙的岩漿河中，瞬間被火焰吞噬..."
+    hp_change: -100
+    fatigue: 10

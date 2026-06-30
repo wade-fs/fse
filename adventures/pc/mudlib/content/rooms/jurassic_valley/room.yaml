@@ -6,12 +6,19 @@ exits:
   quarry: "/rooms/obsidian_quarry/room"
   trail: "/rooms/migration_trail/room"
   flats: "/rooms/alkali_flats/room"
+  delta: "/rooms/fern_delta/room"
+  footprint: "/rooms/giant_footprint/room"
+  log: "/rooms/fallen_giant/room"
 
 reveal_exits:
   up:
     dest: "/rooms/canopy_refuge/room"
     requires_factor: "canopy_climbing"
     reveal_msg: "你現在可以使用抓鉤攀爬到高處的「樹冠避難所 (up)」了！"
+  river:
+    dest: "/rooms/river_crossing/room"
+    requires_factor: "water_boiling"
+    reveal_msg: "掌握了水的知識後，你注意到遠處有一條寬闊的河流渡口 (river)！"
 
 sensory_signals:
   smell: "濃郁的青草香、濕潤泥土，以及大型草食恐龍糞便散發出的溫熱氣息。"

@@ -1,0 +1,83 @@
+short: "孢子叢林"
+long: "你走進了一片由史前巨型蕈類和高大孢子植物構成的昏暗林地。\n空氣中瀰漫著一層細微的白色孢子粉塵，吸入時肺部有些許麻木感。\n微光透過高大的蕈傘照下，給人一種迷幻而壓抑的氛圍。\n這裡的地面極為鬆軟，彷彿踩在厚厚的地毯上。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 1.2
+  hunger_decay: 0.8
+
+exits:
+  back: "/rooms/triassic_shade/room"
+
+sensory_signals:
+  smell: "空氣中滿是濃郁的孢子氣味，夾帶著發酵與植物腐爛的潮濕甜味，吸入後大腦有些昏昏沉沉。"
+  sound: "四周極度寂靜，偶爾有巨型孢子囊爆裂發出的細微「噗噗」聲，以及不知名節肢動物在樹葉間蠕動的沙沙聲。"
+  wind: "幾乎完全沒有風，孢子霧氣在靜止的空氣中緩緩漂浮。"
+  ground:
+    default_msg: "鋪滿厚重孢子粉的地面，腳踩上去留下深陷的足跡。在幾株巨大蕈類粗壯的根部，可以看到幾隻蠕動的白色肥碩幼蟲。"
+    discovery:
+      requires_no_factor: "arthropod_nutrition"
+      set_temp: "found_fungus_insect"
+      msg: "【 🔍 發現 】在蕈類根部的陰影中，你看到幾隻半埋在孢子堆裡的白色幼蟲 (grub)。\n這些幼蟲以有毒孢子為食，若沒有掌握相關的生物警戒常識，盲目捕捉或食用可能會非常危險！"
+
+interactions:
+  - action: "collect"
+    target:
+      - "insect"
+      - "grub"
+    prerequisites:
+      temp_state: "found_fungus_insect"
+      factor: "arthropod_warning"
+    success_msg: "你利用對史前昆蟲毒性的防範知識，避開了它體表的微小毒毛，成功用寬葉片包裹抓起了一隻白色幼蟲！"
+    give_item:
+      id: "grub"
+      name: "白色幼蟲"
+      desc: "一隻肥美多汁的史前昆蟲幼蟲。雖然外表有些令人抗拒，但卻富含豐富的蛋白質。"
+      durability: 1
+    repeat_msg: "這裡的幼蟲已經被你抓完了，只剩下空蕩蕩的蕈類根部。"
+    fatigue: 5
+
+  - action: "catch"
+    target:
+      - "insect"
+      - "grub"
+    prerequisites:
+      temp_state: "found_fungus_insect"
+      factor: "arthropod_warning"
+    success_msg: "你利用對史前昆蟲毒性的防範知識，避開了它體表的微小毒毛，成功用寬葉片包裹抓起了一隻白色幼蟲！"
+    give_item:
+      id: "grub"
+      name: "白色幼蟲"
+      desc: "一隻肥美多汁的史前昆蟲幼蟲。雖然外表有些令人抗拒，但卻富含豐富的蛋白質。"
+      durability: 1
+    repeat_msg: "這裡的幼蟲已經被你抓完了，只剩下空蕩蕩的蕈類根部。"
+    fatigue: 5
+
+  - action: "eat"
+    target:
+      - "grub"
+    success_msg: "你硬著頭皮把這隻白色幼蟲塞進嘴裡大口咀嚼。汁液在嘴裡爆開，口感異常黏稠，幸好你已經掌握了節肢動物的營養與代謝規律，大腦成功適應了這種野性高蛋白，飢餓感大幅消退！"
+    prerequisites:
+      factor: "arthropod_nutrition"
+    hunger_change: -30
+    fatigue: 5
+
+  - action: "eat"
+    target:
+      - "grub"
+    success_msg: "你不管三七二十一，直接將黏糊糊的白色幼蟲塞進口中吞下。不久後，你感到胃部一陣劇烈翻江倒海，強烈的噁心感傳來，你忍不住狂吐不止..."
+    trigger_confusion: "grub_reaction"
+    hp_change: -5
+    fatigue: 15
+
+  - action: "breathe"
+    success_msg: "你貪婪地大口呼吸著孢子林裡的空氣。無數細小的孢子吸入肺部，你的支氣管瞬間感到灼燒與麻木，肺活量驟降，四肢麻痺，無力地跪倒在地上..."
+    trigger_confusion: "spore_inhalation"
+    hp_change: -10
+    fatigue: 20
+
+  - action: "inhale"
+    success_msg: "你貪婪地大口呼吸著孢子林裡的空氣。無數細小的孢子吸入肺部，你的支氣管瞬間感到灼燒與麻木，肺活量驟降，四肢麻痺，無力地跪倒在地上..."
+    trigger_confusion: "spore_inhalation"
+    hp_change: -10
+    fatigue: 20

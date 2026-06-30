@@ -1,0 +1,64 @@
+short: "地下泉水"
+long: "洞穴深處的一個幽靜角落，清澈的泉水從岩縫中汩汩湧出，在地面匯成一個小小的水潭。\n水質純淨得透明，水潭底部的每一粒砂礫都清晰可見。\n這股泉水是末日浩劫後最後倖存者的生命線——只要泉水不斷，人類就能在洞穴中堅守。"
+
+exits:
+  back: "/rooms/ancestor_cave/room"
+
+sensory_signals:
+  smell: "清冽的礦泉香氣，帶著微微的石灰岩礦物氣息，在洞穴中顯得格外清新，與外界焦灼的氣息形成鮮明對比。"
+  sound: "泉水滴落在水潭表面的清脆聲音，在洞穴中回響，如同輕柔的音樂，讓人感到一絲平靜與希望。"
+  wind: "從泉水表面升起的涼爽水汽，在洞穴中形成一股輕柔的濕潤氣流，是整個洞穴中唯一感覺清涼的地方。"
+  ground:
+    default_msg: "泉水周圍的岩石表面沉積著白色的方解石礦物（鈣質沉澱），形成天然的淺盤形地貌，積存著清澈的泉水。"
+    discovery:
+      requires_no_factor: "arthropod_nutrition"
+      msg: "【 🔍 發現 】在泉水邊的岩縫中，生活著幾種完全適應洞穴環境的小型生物：\n白色半透明的洞穴蟋蟀、帶著觸手的等足蟲，以及幾條細小的洞穴魚。\n牠們雖然微小，卻是在極端環境中頑強存活的生命奇蹟。"
+      set_temp: "found_cave_life"
+
+interactions:
+  - action: "drink"
+    target: "spring"
+    thirst_change: -100
+    hp_change: 10
+    success_msg: "你捧起清涼的泉水一飲而盡。純淨的礦泉水滋潤了你乾裂的嘴唇，清爽流過喉嚨，讓每一個細胞都感到復甦。這是末日廢墟中最珍貴的禮物。"
+
+  - action: "drink"
+    target: "water"
+    thirst_change: -100
+    hp_change: 10
+    success_msg: "你捧起清涼的泉水一飲而盡。純淨的礦泉水滋潤了你乾裂的嘴唇，清爽流過喉嚨，讓每一個細胞都感到復甦。這是末日廢墟中最珍貴的禮物。"
+
+  - action: "collect"
+    target: "water"
+    give_item:
+      id: "spring_water"
+      name: "地下泉水"
+      desc: "從洞穴地下泉中收集的純淨清水，清涼甘甜，是末日後人類存活的希望之源。無需煮沸即可安全飲用。"
+      durability: 5
+    success_msg: "你用陶罐或容器將泉水裝滿，妥善保存這份珍貴的生命之水。"
+    fatigue: 5
+
+  - action: "fill"
+    give_item:
+      id: "spring_water"
+      name: "地下泉水"
+      desc: "從洞穴地下泉中收集的純淨清水，清涼甘甜，是末日後人類存活的希望之源。無需煮沸即可安全飲用。"
+      durability: 5
+    success_msg: "你用陶罐或容器將泉水裝滿，妥善保存這份珍貴的生命之水。"
+    fatigue: 5
+
+  - action: "observe"
+    target: "life"
+    prerequisites:
+      temp_state: "found_cave_life"
+    discover_factor: "arthropod_nutrition"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】洞穴生物的食用價值！\n==================================================\n你仔細觀察這些洞穴生物，研究牠們的體型、行為和分佈規律。\n雖然牠們看起來微小甚至令人不適，但在末日後的世界，這些洞穴節肢動物提供了寶貴的蛋白質來源！\n💡 在極端環境中，評估所有潛在食物來源是生存的關鍵！"
+    fatigue: 10
+
+  - action: "look"
+    target: "organism"
+    prerequisites:
+      temp_state: "found_cave_life"
+    discover_factor: "arthropod_nutrition"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】洞穴生物的食用價值！\n==================================================\n你仔細觀察這些洞穴生物，研究牠們的體型、行為和分佈規律。\n雖然牠們看起來微小甚至令人不適，但在末日後的世界，這些洞穴節肢動物提供了寶貴的蛋白質來源！\n💡 在極端環境中，評估所有潛在食物來源是生存的關鍵！"
+    fatigue: 10

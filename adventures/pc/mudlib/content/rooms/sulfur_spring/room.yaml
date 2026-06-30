@@ -1,0 +1,63 @@
+short: "硫磺溫泉"
+long: "你站在一處活躍的地熱泉眼旁。\n乳白色的硫磺蒸汽不斷從滾燙的泉水中升騰，在低空聚集成瀰漫的白霧。\n泉眼周圍的岩面覆蓋著一層鮮豔的橙紅色薄膜，如同給大地塗上了一層濃烈的顏料。\n這是一個危機四伏卻又充滿生命力的地方——史前最古老的生命形式之一正在此繁盛。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 1.5
+
+exits:
+  back: "/rooms/triassic_plains/room"
+
+sensory_signals:
+  smell: "濃烈到讓人作嘔的硫化氫氣體彌漫四周，長時間停留會讓人頭暈眼花，胸口發悶。"
+  sound: "滾燙的泉水咕嘟咕嘟地沸騰著，蒸汽噴出時發出間歇性的嗶嗶聲。"
+  wind: "帶有硫磺氣味的溫熱蒸汽隨著微風四散，讓周圍幾公尺內都籠罩在白霧之中。"
+  ground:
+    default_msg: "泉眼四周的岩面是橙紅色的，覆蓋著一層黏滑的薄膜狀物質。"
+    discovery:
+      requires_no_factor: "triassic_flora"
+      set_temp: "found_thermophile"
+      msg: "【 🔍 發現 】你小心靠近泉眼邊緣，注意到那層橙紅色的薄膜 (thermophile_mat) 並非沉澱的礦物質。\n它在高溫下仍然保持著柔韌的質地，邊緣隱約可見微細的生長紋路——這是活的生命體！\n這種能在滾燙泉水中存活的嗜熱古菌，是地球上最古老的生命形式之一。"
+
+interactions:
+  - action: "drink"
+    target: "water"
+    hp_change: -50
+    trigger_confusion: "toxic_spring"
+    success_msg: "你捧起清澈卻滾燙的泉水一飲而盡。\n超過 80°C 的高溫瞬間灼傷你的喉嚨和食道，劇烈的灼痛讓你蜷縮在地！\n更糟的是，水中溶解的硫化物讓你的胃部劇烈痙攣...\n💡 這裡的水雖然「清澈」，卻是完全不可飲用的！"
+
+  - action: "collect"
+    target:
+      - "mat"
+      - "thermophile"
+      - "thermophile_mat"
+    prerequisites:
+      temp_state: "found_thermophile"
+    give_item:
+      id: "thermophile_mat"
+      name: "嗜熱古菌薄膜"
+      desc: "橙紅色的嗜熱古菌，是史前最古老的生命形式之一。質地黏滑，富含礦物質結合蛋白，也許有某種特殊用途。"
+      durability: 3
+    success_msg: "你小心翼翼地用樹枝將泉眼邊緣的嗜熱古菌薄膜刮取下來，放入葉片包裹中保存。\n這種橙紅色的黏滑物質在你手指間散發著奇特的熱感。"
+    fatigue: 5
+    repeat_msg: "你已經收集了嗜熱古菌薄膜，泉眼邊緣的量已所剩無幾。"
+
+  - action: "touch"
+    target:
+      - "spring"
+      - "water"
+    hp_change: -30
+    fatigue: 10
+    success_msg: "你的手指觸碰到泉水的剎那，高達 80°C 的溫度瞬間讓你疼痛慘叫！\n你的手背起了幾個燙傷的水泡，皮膚通紅發炎。\n💡 這裡的水溫遠超人體可承受的極限，絕不能直接接觸。"
+    trigger_confusion: "steam_burn"
+
+  - action: "examine"
+    target:
+      - "film"
+      - "mat"
+      - "thermophile"
+    prerequisites:
+      temp_state: "found_thermophile"
+    discover_factor: "triassic_flora"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】生命在極端環境中的韌性！\n==================================================\n你近距離觀察這層橙紅色的嗜熱古菌薄膜。\n它在 80°C 的滾燙泉水中依然充滿活力，這意味著早在多細胞生命出現之前，\n原始生命就已在地球最惡劣的環境中紮根。\n你對三疊紀的生命形式有了更深的理解。"
+    fatigue: 3

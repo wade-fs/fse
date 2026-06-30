@@ -1,0 +1,69 @@
+short: "骸骨場"
+long: "你踏入一片令人毛骨悚然的荒地。\n大小各異的史前爬行動物骸骨散落四周，骨頭已高度石化，在陽光下泛著詭異的灰白光澤。\n這裡是某個古老捕食者長期的獵食場——骨堆的規模顯示這個地方被使用了數千年之久。\n空氣中那股陳腐的氣息提醒你：這片土地的主人或許就在附近。"
+presence: []
+
+exits:
+  back: "/rooms/triassic_plains/room"
+
+sensory_signals:
+  smell: "陳腐的骨骸氣息混合著乾焦紅土的塵埃味，以及一絲難以察覺的獸腥氣——那是捕食者留下的體味。"
+  sound: "風吹過骨堆發出空洞的共鳴聲，如同巨大的風琴。偶爾有骨片因溫差碎裂發出清脆的斷裂聲。"
+  wind: "微風夾帶著骨灰的粉塵，在骨堆間迴旋，揚起細小的白色塵霧。"
+  ground:
+    default_msg: "地面散布著大量石化骨骸，大小混雜，但有一個共同點——幾乎每一根骨頭的一端都有明顯的齒痕與咬合痕跡。"
+    discovery:
+      requires_no_factor: "predator_scent"
+      set_temp: "found_predator_evidence"
+      msg: "【 🔍 發現 】你蹲下來仔細觀察這些骨骸：不同物種、不同大小的骨頭全部混在一起，\n但每一根骨頭的一端都整齊地被咬斷，留有鋸齒狀的咬合痕跡。\n這說明這裡有一個單一的頂級捕食者，長期在此處理獵物。"
+
+interactions:
+  - action: "look"
+    target: "bones"
+    prerequisites:
+      temp_state: "found_predator_evidence"
+    discover_factor: "predator_scent"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】捕食者的行為模式！\n==================================================\n你系統地觀察這些咬痕：齒距約 8 公分，咬合力驚人，能直接咬碎大型骨骸。\n更重要的是，你注意到骨堆集中在某個方向的下風處——\n這說明那個捕食者習慣從上風處接近獵物，你必須時刻注意風向！"
+    fatigue: 5
+
+  - action: "collect"
+    target: "bone"
+    give_item:
+      id: "bone_fragment"
+      name: "骨骸碎片"
+      desc: "一截堅硬的史前骨骸碎片，高度石化，邊緣鋒利如刀。雖然沉重，但作為原始工具的潛力十足。"
+      durability: 5
+    success_msg: "你從骨堆中挑選了一截合適的骨骸碎片，邊緣天然呈現出鋸齒狀的鋒利斷口。\n這塊骨片沉甸甸的，顯示出高度石化的密度。"
+    fatigue: 3
+    repeat_msg: "你再次從骨堆中取了一塊骨骸碎片。"
+
+  - action: "take"
+    target: "bone"
+    give_item:
+      id: "bone_fragment"
+      name: "骨骸碎片"
+      desc: "一截堅硬的史前骨骸碎片，高度石化，邊緣鋒利如刀。雖然沉重，但作為原始工具的潛力十足。"
+      durability: 5
+    success_msg: "你從骨堆中挑選了一截合適的骨骸碎片，邊緣天然呈現出鋸齒狀的鋒利斷口。\n這塊骨片沉甸甸的，顯示出高度石化的密度。"
+    fatigue: 3
+    repeat_msg: "你再次從骨堆中取了一塊骨骸碎片。"
+
+  - action: "sharpen"
+    target: "bone"
+    prerequisites:
+      inventory_item: "bone_fragment"
+    give_item:
+      id: "bone_knife"
+      name: "磨尖的骨刀"
+      desc: "將骨骸碎片在粗糙的岩石上反覆研磨後得到的骨刀，比石片工具更輕巧靈活，但也更容易在撞擊中碎裂。"
+      durability: 3
+    success_msg: "你將骨骸碎片放在粗糙的砂岩上，以固定角度反覆研磨。\n骨粉隨研磨飛散，骨刀的輪廓逐漸清晰，刃口變得相當鋒利。\n這把骨刀輕巧而尖銳，是個不錯的近身工具。"
+    fatigue: 8
+    repeat_msg: "你的骨刀已經夠鋒利了，繼續磨下去只會縮短它的壽命。"
+
+  - action: "smell"
+    target:
+      - "bones"
+      - "ground"
+    success_msg: "你低頭嗅聞地面上的骨堆與塵土。\n除了陳腐的骨骸氣息外，你隱約聞到一股更濃烈的獸腥氣味，方向來自東北方。\n那個方向的植被似乎被踩踏得相當厲害。"
+    discover_factor: "predator_scent"
+    fatigue: 2

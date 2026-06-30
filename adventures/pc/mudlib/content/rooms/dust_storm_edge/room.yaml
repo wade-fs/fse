@@ -1,0 +1,64 @@
+short: "沙塵暴邊緣"
+long: "你來到了捕食者峽谷外圍的一片開闊荒原邊緣。\n強烈的沙塵暴正夾帶著滾滾黃沙撲面而來，漫天風沙遮天蔽日，視線被嚴重干擾。\n雖然狂風讓能見度降低到了極點，但也為你的氣味與聲音提供了完美的天然屏蔽。\n四周有一些低矮的紅色岩堆，在風沙中若隱若現。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 2.5
+  hunger_decay: 1.2
+
+exits:
+  back: "/rooms/predator_canyon/room"
+
+sensory_signals:
+  smell: "空氣中滿是乾焦的紅土塵沙，強風將原本盤旋在低空的掠食恐龍氣味完全吹散、稀釋了。"
+  sound: "風沙在岩堆間穿梭，發出極其高亢、如哨音般的咆哮聲，幾乎掩蓋了其他一切聲響。"
+  wind: "猛烈的西北風夾帶著大量碎石迎面颳來，氣流非常劇烈，吹得你有些站立不穩。"
+  ground:
+    default_msg: "被風砂覆蓋的紅砂岩地面。在一處避風岩堆的底部凹陷處，堆積著幾塊形狀奇特、邊緣圓滑的燧石核。"
+    discovery:
+      requires_no_factor: "flint_knapping"
+      set_temp: "found_stone_cores"
+      msg: "【 🔍 發現 】在避風岩堆下方的碎石中，你找到了幾塊質地緻密、高硬度的「燧石核 (cores)」。\n這些岩石在長期風沙磨蝕下露出了尖銳的斷面。你可以嘗試收集它們 (collect cores / take stone)。"
+
+interactions:
+  - action: "hide"
+    target: "in dust"
+    success_msg: "你貓著腰鑽進了滾滾沙塵之中。漫天的風砂與呼嘯的風聲將你的氣味、身形完全稀釋了！原本循著氣味追趕而來的大型捕食者瞬間失去了你的蹤跡，焦躁地在風沙外圍嘶吼。你安全了！"
+    set_temp: "hidden_in_dust"
+    fatigue: 5
+
+  - action: "enter"
+    target: "dust"
+    success_msg: "你貓著腰鑽進了滾滾沙塵之中。漫天的風砂與呼嘯的風聲將你的氣味、身形完全稀釋了！原本循著氣味追趕而來的大型捕食者瞬間失去了你的蹤跡，焦躁地在風沙外圍嘶吼。你安全了！"
+    set_temp: "hidden_in_dust"
+    fatigue: 5
+
+  - action: "collect"
+    target:
+      - "cores"
+      - "flint"
+    prerequisites:
+      temp_state: "found_stone_cores"
+    success_msg: "你俯身撿起了幾塊質地緻密的燧石核放入背包。這些燧石是打製尖銳石器的最佳材料。"
+    give_item:
+      id: "raw_flint"
+      name: "燧石"
+      desc: "一塊質地高硬度且緻密的史前燧石。它的解理面非常尖銳，可以用來打製各種锋利的切割工具。"
+      durability: 8
+    repeat_msg: "避風岩堆下的燧石核已經被你取走了，只剩下一堆無用的軟砂岩。"
+    fatigue: 3
+
+  - action: "take"
+    target:
+      - "cores"
+      - "stone"
+    prerequisites:
+      temp_state: "found_stone_cores"
+    success_msg: "你俯身撿起了幾塊質地緻密的燧石核放入背包。這些燧石是打製尖銳石器的最佳材料。"
+    give_item:
+      id: "raw_flint"
+      name: "燧石"
+      desc: "一塊質地高硬度且緻密的史前燧石。它的解理面非常尖銳，可以用來打製各種锋利的切割工具。"
+      durability: 8
+    repeat_msg: "避風岩堆下的燧石核已經被你取走了，只剩下一堆無用的軟砂岩。"
+    fatigue: 3

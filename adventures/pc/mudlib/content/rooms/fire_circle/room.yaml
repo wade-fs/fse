@@ -1,0 +1,53 @@
+short: "火圈聖地"
+long: "一個被史前人類精心構建的神聖場所，由十二塊特殊的防火紅砂岩排列成一個完美的圓圈。\n圓圈中央，一堆篝火熊熊燃燒著，火焰橙黃清亮，彷彿從未熄滅過。\n圓圈外圍的地面刻滿了規律而精緻的符號，那些符號的排列如此有序，顯然不是偶然產生的。"
+
+exits:
+  back: "/rooms/pterosaur_cliff/room"
+
+sensory_signals:
+  smell: "木材燃燒的溫暖煙火氣息，夾帶著某種未知草藥薰燃後的清甜香氣，讓人感到心神寧靜。"
+  sound: "篝火劈啪的燃燒聲，在靜謐的夜晚有如古老的儀式鼓聲，聲聲叩擊著內心深處。"
+  wind: "火圈周圍的熱對流形成了一個穩定的微環境，外界的風在此處被熱氣層偏轉，讓火焰永遠保持穩定燃燒。"
+  ground:
+    default_msg: "火圈周圍的地面被踩踏得平整光滑，岩石表面用赭石刻劃出精心設計的符號，有圓有線，有點有面，排列得整齊有序。"
+    discovery:
+      requires_no_factor: "civilization_meaning"
+      msg: "【 🔍 發現 】仔細觀察這些符號，你發現它們並非裝飾——某些符號組合代表「火」，某些代表「水」，某些代表「危險」。\n這是一套早期的語意符號系統！知識被刻在石頭上，等待著後來者解讀。"
+      set_temp: "found_symbols"
+
+interactions:
+  - action: "look"
+    target: "symbols"
+    prerequisites:
+      temp_state: "found_symbols"
+      factor: "cave_painting"
+    discover_factor: "civilization_meaning"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】符號是知識的傳遞工具！\n==================================================\n你用所學的壁畫理解去解讀這些符號，如同突然獲得了閱讀能力。\n這些標記詳細記錄了前人的火種保存法、危險區域警示、食物採集路線……\n一個符號代替了一千個親口講述的故事。💡 文明的核心是知識的跨時間傳遞！"
+    fatigue: 10
+
+  - action: "read"
+    target: "marks"
+    prerequisites:
+      temp_state: "found_symbols"
+      factor: "cave_painting"
+    discover_factor: "civilization_meaning"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】符號是知識的傳遞工具！\n==================================================\n你用所學的壁畫理解去解讀這些符號，如同突然獲得了閱讀能力。\n這些標記詳細記錄了前人的火種保存法、危險區域警示、食物採集路線……\n一個符號代替了一千個親口講述的故事。💡 文明的核心是知識的跨時間傳遞！"
+    fatigue: 10
+
+  - action: "add"
+    target: "fuel"
+    prerequisites:
+      factor: "fire_control"
+    set_temp: "amplified_fire"
+    complete_quest: "master_fire"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】火的主人！\n==================================================\n你按照篝火燃燒的節奏，精確地添加適量薪柴——不多不少，讓火焰從容地吐納。\n火圈的熱對流在你的掌控下形成了完美的燃燒循環，火焰升騰至三公尺高卻穩如磐石！\n你已真正掌握了控制火焰的藝術。"
+    fatigue: 10
+
+  - action: "feed"
+    target: "fire"
+    prerequisites:
+      factor: "fire_control"
+    set_temp: "amplified_fire"
+    complete_quest: "master_fire"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】火的主人！\n==================================================\n你按照篝火燃燒的節奏，精確地添加適量薪柴——不多不少，讓火焰從容地吐納。\n火圈的熱對流在你的掌控下形成了完美的燃燒循環，火焰升騰至三公尺高卻穩如磐石！\n你已真正掌握了控制火焰的藝術。"
+    fatigue: 10

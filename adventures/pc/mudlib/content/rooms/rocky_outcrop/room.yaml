@@ -1,0 +1,61 @@
+short: "岩石突丘"
+long: "你站在三疊紀荒原中一座高聳的岩石突丘頂端。\n俯瞰整片橘紅色荒原，視野開闊，遠方的蕨類森林與蒸汽柱清晰可見。\n腳下的岩面上留有深陷的三趾爪印，爪距驚人，顯示踩踏者體型巨大。\n突丘一角，一簇鮮黃色的奇異植物在岩縫中茂盛生長，散發著刺鼻的辛辣氣味。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 2.0
+
+exits:
+  back: "/rooms/triassic_plains/room"
+
+reveal_exits:
+  updraft:
+    dest: "/rooms/wind_canyon/room"
+    requires_factor: "thermodynamics"
+    requires_temp: "observed_updraft"
+    reveal_msg: "在理解熱力學的基礎上，你發現岩壁裂縫上方氣流的偏折方向指向一條隱藏的峽谷通道 (updraft)！"
+
+sensory_signals:
+  smell: "一股強烈的辛辣硫磺氣味從腳邊的黃色植物叢散發出來，帶有刺激性，讓人眼眶微酸。"
+  sound: "突丘頂部風聲呼嘯，偶爾能聽見遠方荒原中不明巨獸低沉的嘶吼聲。"
+  wind: "強勁的上升氣流從突丘四周湧起，明顯異於平地——這股氣流似乎來自地底的熱源。"
+  ground:
+    default_msg: "灰褐色的硬質岩面，留有多組清晰的三趾爪印，爪痕深達數公分，以及一叢鮮黃色的奇特植物。"
+    discovery:
+      requires_no_factor: "triassic_flora"
+      set_temp: "found_sulfur_grass"
+      msg: "【 🔍 發現 】你低頭仔細端詳腳下的岩面：一組組三趾爪印深深嵌入岩石，爪距足有半公尺寬。\n旁邊那叢鮮黃色的植物 (sulfur_grass) 散發著強烈的硫磺氣味，葉片蠟質而肥厚，似乎非常適應這裡的高溫環境。"
+
+interactions:
+  - action: "smell"
+    target: "sulfur_grass"
+    prerequisites:
+      temp_state: "found_sulfur_grass"
+    trigger_confusion: "toxic_plant"
+    fatigue: 5
+    success_msg: "你湊近那叢黃色植物，深吸一口氣。\n強烈的硫化物刺激瞬間衝入鼻腔，讓你頭暈目眩，連連後退！\n💡 這種植物顯然含有刺激性的化學成分，接觸需要謹慎。"
+
+  - action: "chew"
+    target: "sulfur_grass"
+    prerequisites:
+      temp_state: "found_sulfur_grass"
+    discover_factor: "triassic_flora"
+    hp_change: -20
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】三疊紀植物的化學防禦！\n==================================================\n你摘下一片蠟質葉片放入口中，一股極度苦澀的辛辣滋味瞬間炸開！\n口腔黏膜劇烈灼痛，你趕緊吐出，喉嚨一陣噁心。\n儘管付出了代價，你對三疊紀植物的化學防禦機制有了深刻的理解。"
+    repeat_msg: "你已經知道這種植物含有強烈的刺激性化學物質，不應直接食用。"
+
+  - action: "burn"
+    target: "sulfur_grass"
+    prerequisites:
+      factor: "thermodynamics"
+      temp_state: "found_sulfur_grass"
+    set_temp: "observed_updraft"
+    success_msg: "你用火種點燃了那叢硫磺草。\n橘黃色的濃煙騰起，在突丘頂部被氣流捲走——你注意到煙柱明顯朝著岩壁裂縫上方偏折！\n這股上升熱氣流顯然不只是普通的山風，而是來自地底深處的熱源。\n也許這道氣流通往某個更高的地方..."
+    fatigue: 5
+
+  - action: "look"
+    target: "footprints"
+    prerequisites:
+      temp_state: "found_sulfur_grass"
+    success_msg: "你蹲下來仔細測量爪印的大小：三趾分叉，中間趾最長，兩側趾向外展開。\n從步距推算，這個生物的體長至少有五公尺以上。\n這個認知讓你的脖子不由自主地縮了一下。"
+    fatigue: 2

@@ -1,0 +1,52 @@
+short: "倒下的巨木"
+long: "一棵剛倒下不久的參天古木橫臥在叢林中，直徑超過十公尺，如一道天然的長城。\n倒下時掀起的土壤還保有隆起的形態，樹幹上已經長滿了各種真菌和蕨類，成為新的微型生態系。\n這棵巨木的壽命可能超過千年，它的倒塌為整片叢林帶來了光線，也帶來了新的可能。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+sensory_signals:
+  smell: "新鮮木材的香氣，帶著樹脂的甜味，混合著真菌的土腥味，令人感到平靜。"
+  sound: "木材緩慢腐朽發出的細微咯吱聲，以及棲息在樹幹中的昆蟲蠕動與咬嚙的聲音。"
+  wind: "完全無風，龐大的樹幹阻擋了所有氣流，這裡異常靜謐，像是與外界隔絕。"
+  ground:
+    default_msg: "腐朽的木材周圍有大量的腐葉，踩上去會發出咔哧的聲響，空氣中浮動著細小的孢子。"
+    discovery:
+      set_temp: "found_hollow"
+      msg: "【 🔍 發現 】你繞到樹幹背面，發現一個被蕨類遮蔽的天然空洞，黑暗的深處似乎有骨骸的痕跡。（enter hollow / crawl inside）"
+
+interactions:
+  - action: "enter"
+    target:
+      - "hollow"
+      - "crawl inside"
+      - "crawl"
+    prerequisites:
+      temp_state: "found_hollow"
+    discover_factor: "pterosaur_bond"
+    success_msg: "你爬入潮濕的空洞，發現裡面有一堆細小的骨骸——翼龍用來築巢的痕跡。\n仔細觀察骨骸和巢穴的位置、朝向，你對翼龍選擇棲息地的邏輯有了深刻的理解！\n💡 領悟：掌握了『翼龍親和』的知識！"
+    fatigue: 5
+
+  - action: "collect"
+    target:
+      - "bark"
+      - "peel bark"
+      - "peel"
+    success_msg: "你用石刃沿著紋理切入樹皮，撬起一大片厚實的古木外皮。這種樹皮韌性極強，剝下後仍保持完整。"
+    give_item:
+      id: "bark_strips"
+      name: "樹皮條"
+      desc: "厚實的古木樹皮，韌性極強，可用來製作防水遮蔽物。"
+      durability: 6
+    fatigue: 10
+
+  - action: "build"
+    target:
+      - "shelter"
+      - "make lean_to"
+      - "lean_to"
+    prerequisites:
+      item_in_inventory: "bark_strips"
+      factor: "structural_load"
+    complete_quest: "build_forest_shelter"
+    success_msg: "你將樹皮條搭在倒木側面，形成一個傾斜的遮雨棚，再用樹枝支撐加固。\n這個簡易的叢林遮蔽所足以讓你安全渡過一夜！"
+    fatigue: 15

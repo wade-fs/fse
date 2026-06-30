@@ -1,0 +1,54 @@
+short: "蕨類三角洲"
+long: "多條小溪交匯形成的三角洲，各種高大蕨類植物在這裡茂密生長，能見度極低。\n厚實的蕨葉遮蔽了天空，濕氣在空氣中凝結成薄薄的霧氣，讓每一步都踩在柔軟而潮濕的地面上。\n小溪的水流聲從四面八方傳來，讓人難以辨別方向。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+environmental_multipliers:
+  thirst_decay: 0.5
+  hunger_decay: 1.0
+
+sensory_signals:
+  smell: "強烈的植物腐爛氣息，夾帶著豐富的有機物氣味，令人同時感到噁心與充實。"
+  sound: "流水聲從四面八方傳來，分辨不出主幹河道的方向，你需要靠其他線索辨別位置。"
+  wind: "濕熱的水蒸氣從植物叢中升起，形成區域性的對流霧氣，熱浪一陣陣撲面而來。"
+  ground:
+    default_msg: "蕨類植物的根系在地面形成複雜的網絡，腳步每一踩都可能陷入其中。"
+    discovery:
+      set_temp: "found_clean_water"
+      msg: "【 🔍 發現 】你撥開蕨葉，發現地面有一個天然的水坑，水質相對清澈。\n附近的泥地上還有深深的恐龍足跡，足跡旁生長著一叢叢帶有辛辣氣味的蕨類植物。（collect herbs / drink water）"
+
+interactions:
+  - action: "drink"
+    target:
+      - "water"
+      - "from water"
+    prerequisites:
+      temp_state: "found_clean_water"
+      factor: "water_boiling"
+    thirst_change: -60
+    success_msg: "你舀起煮沸過的清水大口喝下，沁涼的液體滑入喉嚨，解除了長時間的乾渴！"
+
+  - action: "collect"
+    target:
+      - "herbs"
+      - "pick ferns"
+      - "pick"
+    success_msg: "你辨認出這叢帶有辛辣氣味的史前蕨類，仔細採摘了一把，放入囊中備用。"
+    give_item:
+      id: "medicinal_fern"
+      name: "藥用蕨類"
+      desc: "一束帶有辛辣氣味的史前蕨類，古代動物常在受傷後咀嚼這種植物。"
+      durability: 3
+    fatigue: 5
+
+  - action: "apply"
+    target:
+      - "fern"
+      - "treat wound"
+      - "treat"
+    prerequisites:
+      item_in_inventory: "medicinal_fern"
+    hp_change: 20
+    fatigue: -10
+    success_msg: "你將藥用蕨類搗碎，敷在傷口上。辛辣的汁液滲入皮膚，疼痛慢慢緩解，體力也恢復了一些。"

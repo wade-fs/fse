@@ -1,0 +1,54 @@
+short: "火山灰原"
+long: "一片被厚厚火山灰覆蓋的廣袤平原，灰白色的火山灰把整個地表裝扮成另一個世界。\n這裡的火山灰有時厚達一公尺，將一切都封存其中，就像一個巨大的時間膠囊。\n（注意：這與侏羅紀的「灰原」是完全不同的地點，這裡更靠近火山，灰層更厚、更新鮮。）"
+
+exits:
+  back: "/rooms/pterosaur_cliff/room"
+
+sensory_signals:
+  smell: "細膩的火山灰粉末無孔不入，每一次呼吸都能感受到輕微的刺激，喉嚨逐漸乾澀。長時間吸入可能引發嚴重的呼吸道問題。"
+  sound: "腳踩在火山灰上發出的細密沙沙聲是這裡唯一的聲音，灰原極度靜謐，連風聲都被厚重的灰層吸收殆盡。"
+  wind: "稀薄而帶著灰塵的風偶爾掠過，每次都會揚起一陣灰白的粉塵，讓能見度驟降。"
+  ground:
+    default_msg: "均勻的灰白色火山灰地面，踩下去會留下清晰的腳印，灰層下掩埋著保存完好的動物遺骸——這裡是一片天然的化石床。"
+    discovery:
+      requires_no_factor: "flint_knapping"
+      msg: "【 🔍 發現 】在撥開一層火山灰後，你看到了一塊烏黑發亮的玻璃質岩石（黑曜石 Obsidian）。\n它的邊緣鋒利到能映出你的倒影，切口比任何你曾見過的燧石都更細膩。"
+      set_temp: "found_raw_obsidian"
+
+interactions:
+  - action: "excavate"
+    prerequisites:
+      temp_state: "found_raw_obsidian"
+      factor: "flint_knapping"
+    discover_factor: "flint_knapping"
+    give_item:
+      id: "obsidian_blade"
+      name: "黑曜石刃"
+      desc: "用火山玻璃岩（黑曜石）打製的刀刃，鋒利程度遠超任何燧石工具，切口細膩到可以進行外科手術級別的切割。"
+      durability: 6
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】石器製作技術的躍升！\n==================================================\n你用石鎚小心地敲擊黑曜石邊緣，發現它的裂解方式比燧石更規律、更可預測。\n一刃成型——比任何燧石都更完美的刀刃出現了！\n💡 不同材料有不同的最優加工方式，掌握材料特性才能製作出最佳工具！"
+    fatigue: 20
+
+  - action: "dig"
+    prerequisites:
+      temp_state: "found_raw_obsidian"
+      factor: "flint_knapping"
+    discover_factor: "flint_knapping"
+    give_item:
+      id: "obsidian_blade"
+      name: "黑曜石刃"
+      desc: "用火山玻璃岩（黑曜石）打製的刀刃，鋒利程度遠超任何燧石工具，切口細膩到可以進行外科手術級別的切割。"
+      durability: 6
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】石器製作技術的躍升！\n==================================================\n你用石鎚小心地敲擊黑曜石邊緣，發現它的裂解方式比燧石更規律、更可預測。\n一刃成型——比任何燧石都更完美的刀刃出現了！\n💡 不同材料有不同的最優加工方式，掌握材料特性才能製作出最佳工具！"
+    fatigue: 20
+
+  - action: "breathe"
+    hp_change: -10
+    trigger_confusion: "ash_inhalation"
+    success_msg: "你深吸了一口氣——立刻開始劇烈咳嗽！細微的火山灰顆粒刺激了你的喉嚨與肺部，引發一陣嚴重的咳嗽和頭暈。在這裡，要盡量保持淺呼吸！"
+
+  - action: "inhale"
+    target: "deeply"
+    hp_change: -10
+    trigger_confusion: "ash_inhalation"
+    success_msg: "你深吸了一口氣——立刻開始劇烈咳嗽！細微的火山灰顆粒刺激了你的喉嚨與肺部，引發一陣嚴重的咳嗽和頭暈。在這裡，要盡量保持淺呼吸！"

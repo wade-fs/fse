@@ -1,0 +1,48 @@
+short: "潮汐水池"
+long: "退潮後，海水在礁石間留下了一個個天然的淺水池，每一個都是一個完整的微型生態系統。\n池中聚集著豐富的史前海洋無脊椎動物，牠們的形態比現代生物更加奇特和原始。\n礁石邊緣長著厚厚的史前藻類，在陽光照射下呈現出深紫色和翠綠色。"
+
+exits:
+  back: "/rooms/cretaceous_shore/room"
+
+sensory_signals:
+  smell: "鹽水和海洋生物的新鮮氣息，每一次退潮都會帶出海底深處的礦物質氣味，清新而充滿活力。"
+  sound: "海浪衝擊礁石的轟鳴遠遠傳來，水池中則充滿了細微的生命聲響——氣泡、蠕動、細小的水流聲。"
+  wind: "強勁的海風夾著鹹濕的霧氣，潮霧在礁石間瀰漫，能見度有時會下降。"
+  ground:
+    default_msg: "礁石表面被海水打磨得滑溜，步行需要格外小心。水池底部布滿各種形態的史前棘皮動物。"
+    discovery:
+      requires_no_factor: "echinoderm_study"
+      msg: "【 🔍 發現 】在水池底部，你看到了一群形態奇特的史前海星——牠們的腕足比現代海星更多，體型也更大，表面覆蓋著尖銳的棘刺。\n還有幾隻造型完全陌生、帶有螺旋殼的生物在礁石邊爬行。"
+      set_temp: "found_echinoderms"
+
+interactions:
+  - action: "collect"
+    target: "starfish"
+    prerequisites:
+      temp_state: "found_echinoderms"
+    give_item:
+      id: "ancient_echinoderm"
+      name: "史前海星"
+      desc: "一隻史前海星，擁有比現代海星更多的腕足，棘刺更長更尖銳，形態與現代海星截然不同。是珍貴的生物標本。"
+      durability: 1
+    success_msg: "你小心地從礁石上取下了一隻史前海星，牠的腕足緩緩蠕動，顯示著古老生命的活力。"
+    fatigue: 5
+
+  - action: "take"
+    prerequisites:
+      temp_state: "found_echinoderms"
+    give_item:
+      id: "ancient_echinoderm"
+      name: "史前海星"
+      desc: "一隻史前海星，擁有比現代海星更多的腕足，棘刺更長更尖銳，形態與現代海星截然不同。是珍貴的生物標本。"
+      durability: 1
+    success_msg: "你小心地從礁石上取下了一隻史前海星，牠的腕足緩緩蠕動，顯示著古老生命的活力。"
+    fatigue: 5
+
+  - action: "drink"
+    target: "pool"
+    target2: "water"
+    hp_change: -15
+    thirst_change: 20
+    trigger_confusion: "saltwater"
+    success_msg: "你趴下去喝了幾口潮汐水池的水——然後立刻後悔了！濃重的鹹水讓你的喉嚨更加乾渴，胃部也開始不舒服。喝海水會造成脫水！"

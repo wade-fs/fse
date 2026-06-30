@@ -1,0 +1,54 @@
+short: "洞穴畫廊"
+long: "一條幽深的洞穴走廊，長達百公尺，兩側岩壁從頂到底全是史前人類留下的壁畫。\n畫面涵蓋了整個文明的歷史：最早期的獵獸場景、火的發現、工具的製作、恐龍的遷徙路徑，直到最後描繪天空中燃燒的小行星的末日圖景。\n這是一部用顏料和岩石刻就的史詩，記錄了這個文明從誕生到落幕的全部故事。"
+
+exits:
+  back: "/rooms/ancestor_cave/room"
+
+sensory_signals:
+  smell: "石灰岩洞特有的清冷礦石氣息，夾帶著礦物顏料的獨特香氣——赭石的土腥、木炭的焦香、藍銅礦的清冽。"
+  sound: "洞穴的回聲將一切微小聲音放大，自己的腳步聲、呼吸聲都在石壁間來回迴響，彷彿整個文明的靈魂都在傾聽。"
+  wind: "洞穴深處幾乎無風，空氣凝滯而沉靜，讓顏料得以在數萬年後依然鮮豔。"
+  ground:
+    default_msg: "地面鋪著整齊排列的扁平石板，這是史前人類為了讓繪製壁畫的人能夠站在更高的位置而鋪設的。石板的排列本身就是工程智慧的體現。"
+    discovery:
+      requires_no_factor: "cave_painting"
+      msg: "【 🔍 發現 】這些石板的排列方式非常精確，顯然是有計劃地鋪設的。\n可以看出，繪製壁畫的人有嚴格的分工：有人打磨石板，有人研磨顏料，有人攀高繪畫。\n這是有組織的集體勞動！"
+      set_temp: "found_art_floor"
+
+interactions:
+  - action: "read"
+    target: "paintings"
+    prerequisites:
+      factor: "cave_painting"
+      factor2: "symbol_abstraction"
+    discover_factor: "civilization_meaning"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】文明傳承的完整意義！\n==================================================\n你帶著對壁畫藝術和符號系統的深刻理解，從走廊的入口慢慢走到盡頭。\n從第一幅描繪迷茫原始人的場景，到最後描繪文明頂峰後隕石撞擊的末日壁畫——\n你看懂了整個故事：文明並非終結，而是通過這些壁畫，繼續活在未來每一個解讀它的人心中。\n💡 知識的永存本身就是抵抗死亡的方式。"
+    fatigue: 15
+
+  - action: "study"
+    target: "art"
+    prerequisites:
+      factor: "cave_painting"
+      factor2: "symbol_abstraction"
+    discover_factor: "civilization_meaning"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】文明傳承的完整意義！\n==================================================\n你帶著對壁畫藝術和符號系統的深刻理解，從走廊的入口慢慢走到盡頭。\n從第一幅描繪迷茫原始人的場景，到最後描繪文明頂峰後隕石撞擊的末日壁畫——\n你看懂了整個故事：文明並非終結，而是通過這些壁畫，繼續活在未來每一個解讀它的人心中。\n💡 知識的永存本身就是抵抗死亡的方式。"
+    fatigue: 15
+
+  - action: "add"
+    target: "painting"
+    prerequisites:
+      item: "ochre_pigment"
+      factor: "civilization_meaning"
+    complete_quest: "record_civilization"
+    set_temp: "added_art"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】記錄文明！\n==================================================\n你用赭石顏料，在畫廊最末端空白的岩壁上，畫下了你自己的故事：\n一個孤獨的人影，手持火把，在恐龍與隕石之間穿行，最終在洞穴中留下了文明的印記。\n你的壁畫加入了這個永恆的畫廊，成為文明長河中新的一頁。"
+    fatigue: 20
+
+  - action: "draw"
+    prerequisites:
+      item: "ochre_pigment"
+      factor: "civilization_meaning"
+    complete_quest: "record_civilization"
+    set_temp: "added_art"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】記錄文明！\n==================================================\n你用赭石顏料，在畫廊最末端空白的岩壁上，畫下了你自己的故事：\n一個孤獨的人影，手持火把，在恐龍與隕石之間穿行，最終在洞穴中留下了文明的印記。\n你的壁畫加入了這個永恆的畫廊，成為文明長河中新的一頁。"
+    fatigue: 20

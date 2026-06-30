@@ -4,6 +4,16 @@ monsters: []
 exits:
   down: "/rooms/jurassic_valley/room"
 
+reveal_exits:
+  bridge:
+    dest: "/rooms/vine_bridge/room"
+    requires_factor: "structural_load"
+    reveal_msg: "理解了結構力學後，你注意到樹冠避難所旁邊有一座古老的藤蔓吹橋 (bridge)！"
+  up:
+    dest: "/rooms/upper_canopy/room"
+    requires_factor: "canopy_climbing"
+    reveal_msg: "你現在可以使用抓鉤攀爬到更高的「上層樹冠 (up)」！"
+
 sensory_signals:
   smell: "空氣清新，夾雜著高空樹葉的苦澀香氣與水汽。"
   sound: "風吹過林梢的呼嘯聲，遠方翼龍高亢的啼鳴。"

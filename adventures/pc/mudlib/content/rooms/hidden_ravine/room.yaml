@@ -1,0 +1,61 @@
+short: "隱密峽縫"
+long: "你進入了一條極度狹窄的岩石裂縫之中。\n兩側的紅砂岩壁緊緊擠壓，寬度僅容一個成年人側身勉強通過。\n頭頂的陽光被高處交錯的岩層遮蔽，光線非常陰暗。\n這裡地勢極其隱蔽，外面的巨型捕食者巨大的身體根本無法進入這條岩縫。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 1.0
+  hunger_decay: 1.0
+
+exits:
+  back: "/rooms/predator_canyon/room"
+  forward: "/rooms/fossil_cliff/room"
+
+sensory_signals:
+  smell: "陰暗的岩縫裡瀰漫著一股乾燥的岩石粉塵氣息，隱約夾雜著峽谷外圍掠食恐龍（Herrerasaurus）的騷臭味。"
+  sound: "外界巨獸在峽谷中低沉的腳步震鳴聲，透過堅硬的砂岩壁傳導進來，沉悶而富有規律。"
+  wind: "極其微弱的涼風在狹窄的裂縫中擠壓吹過，帶來些許涼意。"
+  ground:
+    default_msg: "鋪滿細砂與剝落碎屑的狹窄地面。在岩壁一側的避風砂岩表面，似乎刻著一些古老的暗紅色手印和幾條平行的刻痕。"
+    discovery:
+      requires_no_factor: "symbol_abstraction"
+      set_temp: "found_ancient_passage"
+      msg: "【 🔍 發現 】在陰暗的砂岩壁上，你看到了幾個用鮮紅赭石顏料塗抹的「古老手印 (handprint)」，手印旁有三條平行的劃痕。\n這顯然不是自然形成的風化痕跡。這是一處史前人類留下的標記。你可以嘗試讀取它 (look handprint / read marks)。"
+
+interactions:
+  - action: "squeeze"
+    target: "through"
+    success_msg: "你試圖強行在大步前進的狀態下擠過峽縫。然而，你身上帶的雜物碰撞岩壁，發出了巨大的摩擦與碎石滾落聲。外面的捕食者被巨響吸引，發出狂怒的嘶吼，巨大的巨爪猛地探入裂縫深處，將你狠狠抓傷..."
+    hp_change: -50
+    fatigue: 20
+
+  - action: "pass"
+    success_msg: "你試圖強行在大步前進的狀態下擠過峽縫。然而，你身上帶的雜物碰撞岩壁，發出了巨大的摩擦與碎石滾落聲。外面的捕食者被巨響吸引，發出狂怒的嘶吼，巨大的巨爪猛地探入裂縫深處，將你狠狠抓傷..."
+    hp_change: -50
+    fatigue: 20
+
+  - action: "creep"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】無聲潛行與峽谷逃脫！\n==================================================\n你屏住呼吸，將身體緊緊貼在冰涼的岩壁上，利用史前岩石斑駁的陰影作為掩護，像壁虎一樣無聲無息地緩慢滑過狹縫。\n外面的赫雷拉鱷和異特龍狂躁地低吼著走過裂縫口，完全沒有察覺到你的存在！你安全地完成了逃脫。"
+    prerequisites:
+      factor: "stealth_camouflage"
+    complete_quest: "escape_predator"
+    fatigue: 10
+
+  - action: "move"
+    target: "slow"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】無聲潛行與峽谷逃脫！\n==================================================\n你屏住呼吸，將身體緊緊貼在岩壁上，利用史前岩石斑駁的陰影作為掩護，像壁虎一樣無聲無息地緩慢滑過狹縫。\n外面的赫雷拉鱷和異特龍狂躁地低吼著走過裂縫口，完全沒有察覺到你的存在！你安全地完成了逃脫。"
+    prerequisites:
+      factor: "stealth_camouflage"
+    complete_quest: "escape_predator"
+    fatigue: 10
+
+  - action: "look"
+    target:
+      - "handprint"
+      - "marks"
+      - "symbols"
+    prerequisites:
+      temp_state: "found_ancient_passage"
+    discover_factor: "symbol_abstraction"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】赭石手印與原始符號的產生！\n==================================================\n你用手指輕撫著那些粗糙的赭紅色手印。\n你領悟到，這些手印不是無意義的塗鴉，而是遠古人類為了在迷宮般的峽谷中，向同伴標記「此處安全、可通過」的空間標示！\n符號是將具體理解抽離成永久記憶的起點。你解鎖了『符號抽象 (symbol_abstraction)』！"
+    repeat_msg: "你注視著牆上的赭紅色手印。這些史前標記正無聲地向你傳遞著古老文明的指引。"
+    fatigue: 3

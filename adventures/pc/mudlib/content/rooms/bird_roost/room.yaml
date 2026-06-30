@@ -1,0 +1,43 @@
+short: "鳥類棲息地"
+long: "一個古老的鳥類棲息地，密密麻麻的巢穴掛滿了粗壯的樹枝。\n這裡棲息著數十隻原始鳥類（類始祖鳥），牠們的體型介於烏鴉與雞之間，全身覆蓋著帶有金屬光澤的深色羽毛。\n你的到來讓牠們一陣騷動，尖銳的鳴叫聲在林間迴盪。"
+monsters: []
+exits:
+  back: "/rooms/vine_bridge/room"
+
+sensory_signals:
+  smell: "鳥糞的酸臭氣味刺激鼻腔，夾帶著濕潤羽毛、蟲子和腐爛果實的複合氣息。"
+  sound: "各種史前鳥類嘈雜的鳴叫聲，此起彼落，充滿了令人振奮的原始生命力。"
+  wind: "鳥類頻繁起飛和降落引起的氣流，讓這裡的空氣比別處更流通，帶著羽毛的細小氣息。"
+  ground:
+    default_msg: "（樹枝上）巢穴用枯枝和泥土築成，結構精巧，幾個巢穴中有遺棄的鳥蛋，斑點圖案清晰可辨。"
+    discovery:
+      set_temp: "found_bird_eggs"
+      msg: "【 🔍 發現 】你仔細觀察巢穴，有幾個巢中的鳥蛋看起來已被親鳥遺棄，外殼完整，可以取用。（take egg / collect egg）"
+
+interactions:
+  - action: "take"
+    target:
+      - "egg"
+      - "collect egg"
+      - "collect"
+    prerequisites:
+      temp_state: "found_bird_eggs"
+    success_msg: "你輕手輕腳地取出遺棄巢中的鳥蛋，小心收入囊中，以免震碎了薄薄的蛋殼。"
+    give_item:
+      id: "bird_egg"
+      name: "斑點鳥蛋"
+      desc: "一顆斑點鳥蛋，較小但富含營養。"
+      durability: 1
+    fatigue: 3
+
+  - action: "roast"
+    target:
+      - "egg"
+      - "cook egg"
+      - "cook"
+    prerequisites:
+      factor: "thermodynamics"
+      item_in_inventory: "embers"
+    hunger_change: -40
+    success_msg: "你將鳥蛋放在燃燒的餘燼旁慢慢加熱，蛋殼微微爆裂時，香氣撲鼻而來。\n烤熟的鳥蛋入口即化，補充了大量能量！"
+    fatigue: 5

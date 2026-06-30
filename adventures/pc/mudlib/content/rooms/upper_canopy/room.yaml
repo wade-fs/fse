@@ -1,0 +1,36 @@
+short: "上層樹冠"
+long: "你攀爬到了侏羅紀雨林的最頂層——上層樹冠。\n這裡完全屬於翼龍的領域，幾隻翼龍在你旁邊的樹枝上停歇，牠們巨大的翼展讓天空都為之陰暗。\n從這個高度望去，整個河谷盡收眼底，景色令人震撼而肅然。"
+monsters: []
+exits:
+  back: "/rooms/canopy_refuge/room"
+
+sensory_signals:
+  smell: "高處的空氣格外清新，完全沒有地面的腐爛氣息，只有雲霧般的水汽與樹葉的清苦香氣。"
+  sound: "翼龍的鳴叫聲此起彼落，高亢清脆，以及強勁高空氣流在樹冠間穿梭時低沉的嗚嗚聲。"
+  wind: "強勁的高空氣流，偶爾讓整個樹冠劇烈搖晃，站立時必須緊抓樹枝才能保持平衡。"
+  ground:
+    default_msg: "（樹冠，「地面」是粗壯的樹枝）枝幹上有翼龍留下的糞便痕跡、脫落的羽毛與爪痕。"
+    discovery:
+      set_temp: "found_ptero_traces"
+      msg: "【 🔍 發現 】你仔細觀察翼龍留下的痕跡——特定方向的爪痕、食物殘渣的位置，這些都指向牠們的行為模式。（observe pterosaur / watch）"
+
+interactions:
+  - action: "observe"
+    target:
+      - "pterosaur"
+      - "watch"
+    prerequisites:
+      temp_state: "found_ptero_traces"
+    discover_factor: "pterosaur_bond"
+    success_msg: "你靜靜地觀察翼龍的飛行姿態、降落習慣與互動方式。\n逐漸地，你理解了如何用姿勢和聲音與牠們溝通，建立信任。\n💡 領悟：掌握了『翼龍親和』！"
+    fatigue: 5
+
+  - action: "call"
+    target:
+      - "pterosaur"
+      - "whistle"
+    prerequisites:
+      factor: "pterosaur_bond"
+    set_temp: "tamed_pterosaur"
+    success_msg: "你模仿翼龍的叫聲吹出輕柔的口哨音。一隻幼翼龍歪著腦袋看著你，試探性地走近幾步。\n你緩慢地伸出手，牠用鼻尖輕輕碰了一下——你們之間建立了初步的信任！"
+    fatigue: 5

@@ -1,0 +1,49 @@
+short: "史前水坑"
+long: "一個天然的史前水坑，泥濘的岸邊擠滿了各種恐龍的腳印。\n水面上漂浮著綠色的藻類，幾圈漣漪顯示水中有生物在活動。\n這裡是整個區域各種恐龍都會聚集飲水的地方，既是最熱鬧的生態觀察點，也是最危險的死亡陷阱。\n遠處，幾隻甲龍緩緩走近水邊，巨大的骨甲在陽光下閃閃發光。"
+
+exits:
+  back: "/rooms/migration_trail/room"
+
+environmental_multipliers:
+  thirst_decay: 0.5
+  hunger_decay: 1.0
+
+sensory_signals:
+  smell: "大型草食恐龍的濃烈體味，以及水面上輕微的藻類腐臭氣息。"
+  sound: "不同體型恐龍踏水的聲音——從輕柔的涉水聲到震動大地的巨響，以及水中生物蠕動的咕嚕聲。"
+  wind: "微風從水面吹來，帶著草食恐龍的氣息。注意：風向會同時把你的氣味傳往下風處——要時刻留意風向！"
+  ground:
+    default_msg: "水坑邊緣的泥地柔軟而鬆動，布滿各種深淺不一的恐龍腳印，像一幅複雜的史前地圖。"
+    discovery:
+      requires_no_factor: "tyrex_senses"
+      msg: "【 🔍 發現 】在眾多腳印中，有一種特殊的三趾腳印格外顯眼——體型比其他肉食恐龍的腳印更大，趾間距更寬，步幅驚人地長。\n這是大型頂端掠食者的足跡，揭示了牠行走時的姿勢與重心分佈。"
+      set_temp: "found_allosaurus_tracks"
+
+interactions:
+  - action: "observe"
+    target: "tracks"
+    prerequisites:
+      temp_state: "found_allosaurus_tracks"
+    discover_factor: "tyrex_senses"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】大型肉食恐龍的感知系統！\n==================================================\n仔細研究這些腳印後，你推斷出異特龍的步態與感知方式：\n牠的雙眼位於頭部兩側，視野極廣；鼻腔龐大，嗅覺遠超視覺；巨大體重讓牠對地面震動極度敏感。\n這些腳印的排列方式揭示了牠行進時習慣性的偵測模式。💡 你掌握了頂端掠食者的感官特徵！"
+    fatigue: 5
+
+  - action: "look"
+    target: "footprint"
+    prerequisites:
+      temp_state: "found_allosaurus_tracks"
+    discover_factor: "tyrex_senses"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】大型肉食恐龍的感知系統！\n==================================================\n仔細研究這些腳印後，你推斷出異特龍的步態與感知方式：\n牠的雙眼位於頭部兩側，視野極廣；鼻腔龐大，嗅覺遠超視覺；巨大體重讓牠對地面震動極度敏感。\n這些腳印的排列方式揭示了牠行進時習慣性的偵測模式。💡 你掌握了頂端掠食者的感官特徵！"
+    fatigue: 5
+
+  - action: "drink"
+    target: "water"
+    prerequisites:
+      temp_state: "water_boiling"
+    thirst_change: -70
+    success_msg: "你喝下了煮沸過的水坑水，雖然略有土腥味，但清涼的液體滋潤了乾渴的喉嚨！"
+
+  - action: "wait"
+    success_msg: "你靜靜地等待著。不久後，幾隻劍龍從北方緩緩走來——背上的骨板在夕陽下染成橙紅色，長長的尾刺左右搖擺，沿著固定路徑走向水邊低頭飲水。"
+    set_temp: "saw_stegosaur"
+    fatigue: 5

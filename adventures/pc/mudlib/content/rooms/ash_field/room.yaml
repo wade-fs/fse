@@ -1,0 +1,49 @@
+short: "火山灰原"
+long: "你走進了一片廣袤而死寂的灰白色火山灰原野。\n地面上覆蓋著厚達數公寸的火山灰泥，踩上去悄無聲息。\n四周是一片淒涼的灰白色地貌，空氣中懸浮著細微的粉塵，使遠方的山影看起來一片模糊。\n偶爾可以看到幾根在古老火山噴發中炭化的黑色樹幹，斜插在厚厚的灰燼中。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 2.0
+  hunger_decay: 1.2
+
+exits:
+  back: "/rooms/alkali_flats/room"
+
+sensory_signals:
+  smell: "空氣中滿是乾澀且帶有輕微灼燒感的火山灰粉塵氣息，吸入時氣管微有發癢的刺痛感。"
+  sound: "四周寂靜得可怕，唯有微風颳過枯木發出空洞的「沙沙」聲，以及你雙腳踩在深灰泥中發出的細碎響聲。"
+  wind: "微弱的偏北風緩緩颳過平原，在空曠的地表捲起一陣陣灰白色的煙塵。"
+  ground:
+    default_msg: "鋪滿厚重火山灰與凝灰角礫的地表。在一處被風吹蝕、火山灰層較薄的岩面下方，似乎隱約露出了大型史前動物骸骨的印痕。"
+    discovery:
+      requires_no_factor: "triassic_flora"
+      set_temp: "found_ash_fossils"
+      msg: "【 🔍 發現 】在火山灰的侵蝕剖面下，你注意到一些被火山碎屑流瞬間凝固並碳化保存的史前植物葉片痕跡 (fossils)。\n火山灰完美的缺氧密封環境，將這些億萬年前的細節纖毫畢露地留存了下來。你可以嘗試挖掘它 (dig ash / excavate)。"
+
+interactions:
+  - action: "dig"
+    target: "ash"
+    prerequisites:
+      temp_state: "found_ash_fossils"
+    discover_factor: "triassic_flora"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】碳化植物與古生態重構！\n==================================================\n你用手扒開細密的火山灰，剝離出幾片完整的碳化蕨類葉片化石。\n你發現這些葉片的角質層極厚，且氣孔密度遠低於現代植物，這完全符合三疊紀大氣二氧化碳極高、氣候極度乾燥炎熱的生理特徵！\n這項發現重構了你對史前古生態系物理規律的理解。你領悟了『三疊紀古植物學 (triassic_flora)』！"
+    repeat_msg: "你撥開灰燼，看著那些完美的植物印痕。它們已在火山灰下靜靜沉睡了億萬年。"
+    fatigue: 5
+
+  - action: "excavate"
+    prerequisites:
+      temp_state: "found_ash_fossils"
+    discover_factor: "triassic_flora"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】碳化植物與古生態重構！\n==================================================\n你用手扒開細密的火山灰，剝離出幾片完整的碳化蕨類葉片化石。\n你發現這些葉片的角質層極厚，且氣孔密度遠低於現代植物，這完全符合三疊紀大氣二氧化碳極高、氣候極度乾燥炎熱的生理特徵！\n這項發現重構了你對史前古生態系物理規律的理解。你領悟了『三疊紀古植物學 (triassic_flora)』！"
+    repeat_msg: "你撥開灰燼，看著那些完美的植物印痕。它們已在火山灰下靜靜沉睡了億萬年。"
+    fatigue: 5
+
+  - action: "breathe"
+    success_msg: "你貪婪地大口深呼吸。細小的酸性火山灰粉塵被吸入肺部，瞬間與你的肺泡水分結合形成微量酸，你劇烈咳嗽，喉嚨火辣辣地痛，肺活量大受影響..."
+    hp_change: -10
+    fatigue: 20
+
+  - action: "inhale"
+    success_msg: "你貪婪地大口深呼吸。細小的酸性火山灰粉塵被吸入肺部，瞬間與你的肺泡水分結合形成微量酸，你劇烈咳嗽，喉嚨火辣辣地痛，肺活量大受影響..."
+    hp_change: -10
+    fatigue: 20

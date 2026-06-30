@@ -1,0 +1,75 @@
+short: "晶石滲流"
+long: "你在峽谷岩壁上發現了一道細細的滲流。\n清澈的水從岩縫中緩緩滲出，沿著岩面流淌，在低窪處匯集成一個小小的水窪。\n更引人注目的是岩面上的沉積物：礦物質被水帶出，在岩石表面形成了橙黃色的鐘乳石狀結晶，\n在斜射的陽光下閃爍著如同寶石般的光澤。"
+presence: []
+
+exits:
+  back: "/rooms/triassic_riverbed/room"
+
+sensory_signals:
+  smell: "淡淡的礦物清香，夾帶著潮濕岩石特有的清冽氣息，與荒原的乾燥形成截然不同的對比。"
+  sound: "水滴有節奏地落在岩盤積水中，滴——滴——滴——，是這片荒漠中最規律也最安撫人心的聲音。"
+  wind: "幾乎沒有風，這片岩壁形成了一個天然的靜風角落，讓這道滲流能在蒸發之前積累起來。"
+  ground:
+    default_msg: "水窪周圍的岩面上有鮮豔的鐵紅色礦物沉澱，在光線下可以看出那是氧化鐵成分——赭石。"
+    discovery:
+      requires_no_factor: "cave_painting"
+      set_temp: "found_iron_deposits"
+      msg: "【 🔍 發現 】你注意到岩面上那些鮮豔的鐵紅色沉澱物 (iron deposits)。\n你用指甲輕輕刮了一下，它像顏料一樣在指尖留下鮮豔的鐵紅色——\n這就是赭石，史前人類最早使用的天然顏料！\n也許這種顏料可以用來在岩壁上留下某種記號。"
+
+interactions:
+  - action: "collect"
+    target:
+      - "deposits"
+      - "ochre"
+      - "pigment"
+    prerequisites:
+      temp_state: "found_iron_deposits"
+    give_item:
+      id: "ochre_pigment"
+      name: "赭石顏料"
+      desc: "從岩壁刮下的赭石礦物粉末，鮮豔的鐵紅色，質地細膩。這是史前人類最早使用的天然顏料，也許可以用來在岩壁上作畫 (cave painting)。"
+      durability: 5
+    success_msg: "你用尖銳的石片從岩壁上仔細刮取那層鐵紅色的赭石沉澱，\n將礦物粉末收集在一片大葉片中包裹好。\n粉末顏色鮮豔，質地細膩如顏料，在你指尖留下深紅色的痕跡。"
+    fatigue: 5
+    repeat_msg: "你再次從岩壁上刮取了更多的赭石粉末，那道鮮豔的鐵紅色痕跡使這塊岩壁顯得更加突出。"
+
+  - action: "scrape"
+    target: "wall"
+    prerequisites:
+      temp_state: "found_iron_deposits"
+    give_item:
+      id: "ochre_pigment"
+      name: "赭石顏料"
+      desc: "從岩壁刮下的赭石礦物粉末，鮮豔的鐵紅色，質地細膩。這是史前人類最早使用的天然顏料，也許可以用來在岩壁上作畫 (cave painting)。"
+      durability: 5
+    success_msg: "你用尖銳的石片從岩壁上仔細刮取那層鐵紅色的赭石沉澱，\n將礦物粉末收集在一片大葉片中包裹好。\n粉末顏色鮮豔，質地細膩如顏料，在你指尖留下深紅色的痕跡。"
+    fatigue: 5
+
+  - action: "drink"
+    target:
+      - "seep"
+      - "water"
+    prerequisites:
+      factor: "water_boiling"
+    thirst_change: -40
+    success_msg: "你謹慎地捧起這道滲流的積水，先觀察了一下——清澈無色，沒有藻類或異物。\n深吸一口氣，你喝了一口。\n清冽而帶有淡淡礦物質甜味的水流過喉嚨，讓你整個人為之一振！\n這是你來到這個時代後第一次喝到乾淨安全的水。\n🌊 天然滲流的礦物過濾效果讓這裡的水質出奇地好。"
+    repeat_msg: "你再次從這道岩石滲流中補充了飲水，清甜的礦泉水讓你的疲勞感大為緩解。"
+
+  - action: "drink"
+    target:
+      - "seep"
+      - "water"
+    prerequisites:
+      no_factor: "water_boiling"
+    discover_factor: "water_boiling"
+    thirst_change: -40
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】天然過濾與水質辨識！\n==================================================\n你謹慎地捧起積水，先觀察了一下——清澈無色，沒有藻類或異物，沒有硫磺氣味。\n你小心地試飲了一口，等待了幾分鐘。\n沒有任何不適——這水竟然是安全的！\n你終於理解了水質辨識的基本原則：靠岩石滲透過濾的水比地表積水安全得多。\n這個領悟在這個時代等同於生存技能的重大突破。"
+    repeat_msg: "你再次從這道岩石滲流中補充了飲水，清甜的礦泉水讓你的疲勞感大為緩解。"
+
+  - action: "examine"
+    target:
+      - "crystals"
+      - "formation"
+      - "seep"
+    success_msg: "你近距離觀察那些橙黃色的鐘乳石狀結晶：\n它們是由滲流水帶出的礦物質在岩面上逐層沉積而成，每一條細紋代表一段時間的沉積。\n從結晶的厚度來看，這道滲流至少已經存在了幾百年。\n這個地方在很久以前就是一個可靠的水源。"
+    fatigue: 2

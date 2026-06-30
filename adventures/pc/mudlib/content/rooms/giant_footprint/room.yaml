@@ -1,0 +1,49 @@
+short: "巨獸足跡"
+long: "一片被梁龍的巨大腳印踩實的泥地，每個腳印直徑超過兩公尺，深達半公尺。\n這些巨大的坑洞如月球表面的隕石坑，改變了整個地貌。\n積水的腳印坑倒映著天空，讓這片土地有一種奇異的寂靜之美。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+sensory_signals:
+  smell: "大型草食恐龍的糞便溫熱氣息，混合著被踩碎植物的青草香，構成一種原始而直接的氣味。"
+  sound: "遠方傳來梁龍緩慢移動時的沉重腳步聲，低沉的悶響讓大地為之震動，規律地傳入腳底。"
+  wind: "微風輕拂，攜帶著遠方草地的氣息，相較周圍的叢林，這裡顯得格外開闊。"
+  ground:
+    default_msg: "被梁龍踩實的泥地堅硬如石，巨大的腳印坑積滿了雨水，形成了一個個天然的小水潭。"
+    discovery:
+      set_temp: "found_lichen"
+      msg: "【 🔍 發現 】你仔細觀察腳印邊緣，發現縫隙中生長著一些薄薄的地衣植物——這是乾燥地區中極佳的引火材料。（collect lichen / scrape lichen）"
+
+interactions:
+  - action: "collect"
+    target:
+      - "lichen"
+      - "scrape lichen"
+      - "scrape"
+    prerequisites:
+      temp_state: "found_lichen"
+    success_msg: "你用指甲小心翼翼地將地衣從岩石邊緣刮下，收集了足夠的份量。"
+    give_item:
+      id: "dry_lichen"
+      name: "乾燥地衣"
+      desc: "一片薄薄的乾燥地衣，是史前生態系中的先驅物種，也是極佳的引火材料。"
+      durability: 4
+    fatigue: 5
+
+  - action: "hide"
+    target:
+      - "in footprint"
+      - "crouch"
+      - "hide"
+    set_temp: "hiding_in_footprint"
+    success_msg: "你蜷縮在巨大的腳印坑中，泥壁遮蔽了你的身形，任何捕食者都很難發現你。"
+    fatigue: 0
+
+  - action: "drink"
+    target:
+      - "from print"
+      - "drink"
+    prerequisites:
+      factor: "water_boiling"
+    thirst_change: -30
+    success_msg: "你俯身喝下腳印水潭中的積水——雖然略帶泥味，但已是煮沸淨化過的安全水源，大幅解了渴意。"

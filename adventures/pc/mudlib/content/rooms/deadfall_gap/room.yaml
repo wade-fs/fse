@@ -1,0 +1,42 @@
+short: "倒木裂口"
+long: "多棵巨大的史前針葉木相互交疊倒下，形成了一個錯綜複雜的木材迷宮。\n縱橫交錯的樹幹在地面上堆疊出狹窄的縫隙，勉強容得下人類穿行，但對於龐大的異特龍來說幾乎無法通過。\n迷宮外圍偶爾傳來沉重的腳步震動聲，是異特龍在外面徘徊，試圖找到入口。"
+
+exits:
+  back: "/rooms/migration_trail/room"
+
+sensory_signals:
+  smell: "腐朽木材散發的濃郁土腥氣，夾帶著松脂的清香，偶爾還有異特龍殺戮後留下的血腥氣息從縫隙中飄入。"
+  sound: "異特龍在迷宮外圍踱步時，每一步落地都引發沉悶的地面震動，以及倒木被碰觸時傳來的低沉木材嗡鳴聲。"
+  wind: "倒木迷宮的特殊結構形成了複雜的氣流通道，風在木縫間穿梭，形成低沉的哨音。"
+  ground:
+    default_msg: "地面鋪滿了不穩固的倒木碎片與腐爛樹皮，稍一踩錯就會發出劇烈的噪音，同時有可能被木刺刺傷。"
+    discovery:
+      requires_no_factor: "safe_path_found"
+      msg: "【 🔍 發現 】你仔細觀察地面，注意到部分地面的碎木片已被踩壓成穩固的基底，而某些木材表面有動物留下的爪痕，指引著一條隱藏的安全路線。"
+      set_temp: "found_safe_path"
+
+interactions:
+  - action: "rush"
+    target: "through"
+    hp_change: -20
+    success_msg: "你魯莽地衝入迷宮！踩到了不穩的木材，發出了一聲巨響！倒木碎片彈起劃破你的腿，更嚴重的是——異特龍循聲而來，開始繞著迷宮邊緣急躁地踱步！"
+
+  - action: "run"
+    hp_change: -20
+    success_msg: "你魯莽地衝入迷宮！踩到了不穩的木材，發出了一聲巨響！倒木碎片彈起劃破你的腿，更嚴重的是——異特龍循聲而來，開始繞著迷宮邊緣急躁地踱步！"
+
+  - action: "move"
+    target: "slow"
+    prerequisites:
+      temp_state: "found_safe_path"
+    set_temp: "passed_deadfall"
+    success_msg: "你按照地面指引的路線，放輕腳步，一步一步確認每塊木材的穩固性再踏上去。\n整個穿越過程幾乎沒有發出任何聲音，異特龍的巨大身影從迷宮另一側走過，完全沒有察覺你的存在！"
+    fatigue: 15
+
+  - action: "navigate"
+    target: "carefully"
+    prerequisites:
+      temp_state: "found_safe_path"
+    set_temp: "passed_deadfall"
+    success_msg: "你按照地面指引的路線，放輕腳步，一步一步確認每塊木材的穩固性再踏上去。\n整個穿越過程幾乎沒有發出任何聲音，異特龍的巨大身影從迷宮另一側走過，完全沒有察覺你的存在！"
+    fatigue: 15

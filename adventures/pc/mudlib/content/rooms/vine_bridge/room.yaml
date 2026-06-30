@@ -1,0 +1,53 @@
+short: "藤蔓吊橋"
+long: "一座橫跨兩棵巨樹之間的藤蔓吊橋，由粗壯的藤蔓交錯纏繞而成，年代久遠但骨架依然堅固。\n橋下是數十公尺的深淵，濕潤的霧氣從底部升騰，看不清底部是什麼。\n踏上橋面，整座吊橋便隨著你的體重輕輕搖晃，發出古老的吱呀聲響。"
+monsters: []
+exits:
+  back: "/rooms/canopy_refuge/room"
+
+reveal_exits:
+  roost:
+    dest: "/rooms/bird_roost/room"
+    requires_factor: "fiber_strength"
+    reveal_msg: "加固了橋樑後，你看到吊橋另一端通往一個鳥類棲息地 (roost)！"
+
+sensory_signals:
+  smell: "藤蔓特有的草腥氣息，以及橋下兩側深淵傳來的濕潤腐爛氣，混合成一股複雜的野性氣味。"
+  sound: "吊橋在風中搖晃的吱呀聲，以及腳步引發的共振聲，如同樂器般在深淵上方迴盪。"
+  wind: "高空的橫風使吊橋不停搖晃，每一陣強風都讓你本能地抓緊橋繩。"
+  ground:
+    default_msg: "（吊橋的藤蔓踏板）部分藤蔓依然堅韌，但整體結構感覺有幾個薄弱環節。"
+    discovery:
+      set_temp: "found_weak_vines"
+      msg: "【 🔍 發現 】你蹲下仔細檢查橋面，有幾段藤蔓明顯已經腐朽變色，輕輕一拉便有斷裂的危險。（reinforce bridge / repair）"
+
+interactions:
+  - action: "cross"
+    target:
+      - "bridge"
+      - "walk forward"
+    prerequisites_not:
+      factor: "structural_load"
+      temp_state: "bridge_reinforced"
+    hp_change: -100
+    success_msg: "你踏上吊橋，腳下的腐朽藤蔓突然斷裂！你猛地抓住橋繩，才免於墜落，但仍受了重傷。"
+
+  - action: "reinforce"
+    target:
+      - "bridge"
+      - "repair"
+    prerequisites:
+      temp_state: "found_weak_vines"
+      factor: "fiber_strength"
+    set_temp: "bridge_reinforced"
+    success_msg: "你用強韌的植物纖維繩索重新綑綁橋面的薄弱環節，並測試每一段的承重。\n補強完成——這座吊橋現在足以安全通行！"
+    fatigue: 15
+
+  - action: "cross"
+    target:
+      - "bridge"
+      - "walk forward"
+    prerequisites:
+      temp_state: "bridge_reinforced"
+    complete_quest: "cross_the_gap"
+    success_msg: "你穩步走過加固的吊橋，腳下的藤蔓紋絲不動。你安全抵達對岸！\n💡 對岸的鳥類棲息地現在對你開放了！"
+    fatigue: 5

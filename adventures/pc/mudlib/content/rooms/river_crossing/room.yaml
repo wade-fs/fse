@@ -1,0 +1,54 @@
+short: "急流渡口"
+long: "一條寬闊的侏羅紀河流橫亙在眼前，水流湍急，白色的浪花拍打著鵝卵石河岸。\n水中偶爾可以看見大型魚龍光滑的脊背若隱若現，牠們的速度和力量令人望而生畏。\n要渡過這條河，需要智慧，而非蠻力。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+reveal_exits:
+  across:
+    dest: "/rooms/obsidian_quarry/room"
+    requires_factor: "fiber_strength"
+    reveal_msg: "搭建了木筏後，你發現對岸有一處黑色光滑的岩石採集場 (across)！"
+
+sensory_signals:
+  smell: "河水帶著清冽的魚腥味，岸邊堆積著腐爛的水草，散發出一股發酵的酸味。"
+  sound: "急流的轟鳴聲幾乎蓋過一切，偶爾夾雜著魚龍破水而出的嘩聲，令人緊張。"
+  wind: "河面吹來的涼風帶著水霧，是整個侏羅紀河谷最涼爽的一處。"
+  ground:
+    default_msg: "河岸是光滑的鵝卵石，濕滑難行，一不小心就會滑入急流。"
+    discovery:
+      set_temp: "found_river_stones"
+      msg: "【 🔍 發現 】你在淺灘水中看到幾塊扁平的石片，邊緣光滑，重量適中，是理想的投擲工具。（throw stone / throw）"
+
+interactions:
+  - action: "swim"
+    target:
+      - "river"
+      - "wade river"
+      - "wade"
+    hp_change: -50
+    trigger_confusion: "river_predator"
+    success_msg: "你剛踏入河中，一條魚龍如閃電般衝來！強力的撞擊讓你受了重傷，幸好掙扎回到了岸邊。"
+
+  - action: "build"
+    target:
+      - "raft"
+      - "tie logs"
+      - "build raft"
+    prerequisites:
+      factor: "fiber_strength"
+    complete_quest: "cross_river"
+    set_temp: "has_raft"
+    success_msg: "你用植物纖維繩索綁紮河邊的浮木，搭建了一個簡易木筏！有了它，渡河將變得安全許多。\n💡 對岸的地形現在對你開放了！"
+    fatigue: 20
+
+  - action: "throw"
+    target:
+      - "stone"
+      - "throw stone"
+    prerequisites:
+      temp_state: "found_river_stones"
+      factor: "motion_stillness"
+    set_temp: "distracted_ichthyosaur"
+    success_msg: "你精準地投出扁平石片，擊打水面激起巨大水花。魚龍被吸引到遠端去追逐聲響，渡河的視窗打開了！"
+    fatigue: 5

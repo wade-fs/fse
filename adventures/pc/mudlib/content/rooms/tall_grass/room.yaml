@@ -1,0 +1,53 @@
+short: "高草叢"
+long: "一片高達兩三公尺的史前草叢，葉片寬闊而尖銳，能輕易劃破皮膚。\n草叢深處的能見度幾乎為零，每一陣風吹過都會引發整片草原的騷動，讓你完全無法判斷周遭的動靜。\n這裡是絕佳的藏匿場所，但也可能是陷阱——不知道裡面還藏著什麼其他生物。"
+
+exits:
+  back: "/rooms/migration_trail/room"
+
+sensory_signals:
+  smell: "清新的青草香夾帶著濃郁的植物汁液氣息，但其中隱約混著一股尖銳的肉食動物尿液氣味——那是領域標記，警告闖入者。"
+  sound: "草叢中不斷傳來東西移動的窸窣聲，聲音來自四面八方，讓人完全無法判斷方向與距離。"
+  wind: "草叢阻擋了大部分風，形成了一個相對靜止的空氣環境，只有偶爾的陣風才能穿透。"
+  ground:
+    default_msg: "草根與積累了數年的腐葉層，腳踩下去會發出輕微的響聲。地面可見細小的爪痕與巢穴入口。"
+    discovery:
+      requires_no_factor: "nest_raiding"
+      msg: "【 🔍 發現 】在草叢動物巢穴旁，你發現幾顆色彩斑斕的小型恐龍蛋，整齊地排列在用草葉鋪成的圓形巢中。"
+      set_temp: "found_grass_nest"
+
+interactions:
+  - action: "hide"
+    success_msg: "你慢慢臥倒在草叢中，調整呼吸，讓自己的輪廓與草叢融為一體。偽裝效果極佳！草叢的高度完全遮住了你的身形。"
+    set_temp: "hidden_in_grass"
+    fatigue: 5
+
+  - action: "lie"
+    target: "down"
+    success_msg: "你慢慢臥倒在草叢中，調整呼吸，讓自己的輪廓與草叢融為一體。偽裝效果極佳！草叢的高度完全遮住了你的身形。"
+    set_temp: "hidden_in_grass"
+    fatigue: 5
+
+  - action: "rush"
+    target: "through"
+    prerequisites:
+      not_factor: "stealth_camouflage"
+    hp_change: -30
+    success_msg: "你猛地衝入草叢！草葉劃破你的皮膚，更糟的是——你驚動了草叢中潛伏的一隻小型肉食恐龍！牠憤怒地衝了出來，爪子在你身上留下了幾道深深的血痕！"
+
+  - action: "run"
+    prerequisites:
+      not_factor: "stealth_camouflage"
+    hp_change: -30
+    success_msg: "你猛地衝入草叢！草葉劃破你的皮膚，更糟的是——你驚動了草叢中潛伏的一隻小型肉食恐龍！牠憤怒地衝了出來，爪子在你身上留下了幾道深深的血痕！"
+
+  - action: "take"
+    target: "eggs"
+    prerequisites:
+      temp_state: "found_grass_nest"
+    give_item:
+      id: "dino_eggs"
+      name: "彩色恐龍蛋"
+      desc: "幾顆帶有斑紋的彩色小型恐龍蛋，蛋殼堅硬，蛋黃飽滿，烤熟後是珍貴的高蛋白食物來源。"
+      durability: 2
+    success_msg: "你小心翼翼地從巢中取走了幾顆恐龍蛋，放入懷中妥善保存。"
+    fatigue: 5

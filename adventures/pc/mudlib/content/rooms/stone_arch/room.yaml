@@ -1,0 +1,65 @@
+short: "天然石拱門"
+long: "你站在一座被風蝕出的巨大天然石拱門下。\n拱形跨度足有十五公尺，在蒼茫的荒漠景色中形成一個獨特的取景框。\n拱頂的岩縫中，一個龐大的巢穴用枯枝、骨骸碎片和黏土堆砌而成。\n偶爾有翼龍幼鳥探頭張望，以好奇而警惕的眼神注視著你。"
+presence: []
+
+exits:
+  back: "/rooms/desert_canyon/room"
+
+sensory_signals:
+  smell: "巢穴糞便的腥臭從拱頂飄落，混合著乾燥岩石的塵埃味與風中攜帶的曠野氣息。"
+  sound: "拱頂傳來幼鳥嗷嗷待哺的鳴叫聲，以及風穿過拱形空間時形成的低沉共鳴，如同巨大的樂器。"
+  wind: "風穿過石拱形成獨特的氣流渦旋，在拱門下方形成一個相對靜風的空間。"
+  ground:
+    default_msg: "地面散布著翼龍幼鳥遺落的碎蛋殼、未消化的骨頭與魚鱗，白色的糞便痕跡分布在整個拱門範圍內。"
+    discovery:
+      requires_no_factor: "thermodynamics"
+      set_temp: "found_nest_debris"
+      msg: "【 🔍 發現 】你低頭查看地面上的遺骸：碎蛋殼、魚骨、磷片交混在一起。\n你撿起一枚蛋殼碎片，質地輕薄而堅韌，內壁還有細小的血管痕跡——\n那隻幼鳥不久前才孵化。你估算了一下巢穴的規模，\n親鳥的翼展至少有三公尺以上。"
+
+interactions:
+  - action: "look"
+    target:
+      - "nest"
+      - "up"
+    prerequisites:
+      temp_state: "found_nest_debris"
+    success_msg: "你抬頭仰望拱頂的巢穴。\n幾隻翼龍幼鳥正好奇地俯視著你，長長的喙張合著，發出嗲聲嗲氣的叫聲。\n⚠️ 警告：巢穴旁邊，你隱約看見一個更大的翼龍身影在岩縫後方移動——\n那是守護巢穴的親鳥。如果你靠近，後果不堪設想。"
+    fatigue: 2
+
+  - action: "climb"
+    target:
+      - "arch"
+      - "rock"
+      - "wall"
+    hp_change: -30
+    fatigue: 20
+    success_msg: "你剛攀上岩壁的第一公尺，親鳥瞬間從岩縫中衝出！\n牠的翼展達到三公尺，以驚人的速度俯衝而來，用有力的翅膀和尖銳的喙對你發動猛烈攻擊！\n你用手臂護住頭部，慘叫著從岩壁上滾落到地面。\n全身多處傷口，體力嚴重損耗，但你還活著。"
+    trigger_confusion: "pterosaur_attack"
+
+  - action: "wait"
+    set_temp: "observed_pterosaur_pattern"
+    success_msg: "你耐心地在拱門下方靜靜等待，觀察翼龍親鳥的行為模式。\n你注意到親鳥每隔約二十分鐘就會離開巢穴，乘著上升熱氣流盤旋而上，螺旋狀地攀升高度。\n牠不是靠拍打翅膀飛行，而是完全依賴氣流——\n翅膀展開，身體微傾，順著熱氣流的螺旋上升，幾乎不費任何力氣。\n那個圓形螺旋的路徑揭示了這個區域熱氣流的確切位置與強度。"
+    fatigue: 5
+
+  - action: "observe"
+    target:
+      - "pterosaur"
+      - "bird"
+    set_temp: "observed_pterosaur_pattern"
+    success_msg: "你耐心地在拱門下方靜靜等待，觀察翼龍親鳥的行為模式。\n你注意到親鳥每隔約二十分鐘就會離開巢穴，乘著上升熱氣流盤旋而上，螺旋狀地攀升高度。\n牠不是靠拍打翅膀飛行，而是完全依賴氣流——\n翅膀展開，身體微傾，順著熱氣流的螺旋上升，幾乎不費任何力氣。\n那個圓形螺旋的路徑揭示了這個區域熱氣流的確切位置與強度。"
+    fatigue: 5
+
+  - action: "collect"
+    target:
+      - "eggshell"
+      - "feather"
+      - "scales"
+    prerequisites:
+      temp_state: "found_nest_debris"
+    give_item:
+      id: "pterosaur_scale"
+      name: "翼龍鱗片"
+      desc: "從地面遺骸中收集的翼龍鱗片，質地輕薄堅韌，表面光滑。也許可以作為某種輕量防護材料。"
+      durability: 4
+    success_msg: "你從地面的遺骸中小心地挑選了幾片翼龍鱗片，質地出乎意料地輕薄卻堅韌。"
+    fatigue: 3

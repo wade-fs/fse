@@ -1,0 +1,47 @@
+short: "琥珀水池"
+long: "你沿著隱密的洞壁小徑，來到了一處靜謐的史前水池旁。\n四周聳立著幾棵巨大的松科針葉木，它們粗壯的樹幹上正流出亮橙色的新鮮松脂。\n樹脂滴落在池邊的岩石上，凝固成無數半透明、散發著光芒的琥珀晶體。\n水面平滑如鏡，在暗沉的史前天光下折射出金黃色的波光。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 1.0
+  hunger_decay: 1.0
+
+exits:
+  back: "/rooms/triassic_shade/room"
+
+sensory_signals:
+  smell: "空氣中瀰漫著濃烈而清新的針葉樹脂清香，在史前炎熱潮濕的環境中，讓人精神一振。"
+  sound: "四周十分安靜，只有樹脂緩慢從樹皮裂口滲出、滴在岩石上發出的極其微弱的「嗒、嗒」聲。"
+  wind: "微風拂過，針葉林發出沙沙的輕響，將松脂的氣味帶到更遠的地方。"
+  ground:
+    default_msg: "鋪滿松針與半固化樹脂的岩石地面。在靠近池水邊的一塊巨大橙黃色琥珀中，隱約封存著一隻三疊紀昆蟲的完整外殼。"
+    discovery:
+      requires_no_factor: "arthropod_nutrition"
+      set_temp: "found_amber_insect"
+      msg: "【 🔍 發現 】你透過那塊半透明的天然琥珀 (amber)，看到裡面封印著一隻史前巨大甲蟲的構造。\n如果你仔細觀察（look amber / focus ground），或許能重構對這些史前昆蟲肌肉與甲殼結構的認知，領悟它們的營養價值。"
+
+interactions:
+  - action: "collect"
+    target:
+      - "resin"
+      - "amber"
+    success_msg: "你用磨尖的石片小心地從樹幹裂口處刮下了一大團黏稠、富含松脂油的樹脂，包裹在乾燥的葉片裡。"
+    give_item:
+      id: "pine_resin"
+      name: "新鮮松脂"
+      desc: "從史前針葉樹上採集的新鮮樹脂，黏性極強且極度易燃。可以用來補強工具結構、或是作為完美的引火燃料。"
+      durability: 4
+    repeat_msg: "樹皮上的樹脂需要時間重新流出，目前已經沒有可刮取的松脂了。"
+    fatigue: 3
+
+  - action: "look"
+    target:
+      - "amber"
+      - "insect"
+      - "amber insect"
+    prerequisites:
+      temp_state: "found_amber_insect"
+    discover_factor: "arthropod_nutrition"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】琥珀生物結構與高能營養！\n==================================================\n你拿起琥珀，迎著光線仔細觀察其中封存的巨大昆蟲外殼。\n你發現這些甲蟲雖然有堅硬的幾丁質外殼防禦，但其腹部和關節深處全是由高密度蛋白質與脂類組成的白色肌肉群。\n這是一道高能量且安全的野外營養源！你領悟了『節肢動物營養學 (arthropod_nutrition)』！"
+    repeat_msg: "你已經透過琥珀理解了節肢動物的生物結構與食用價值，無需重複觀察。"
+    fatigue: 2

@@ -1,0 +1,70 @@
+short: "余燼凹地"
+long: "你走入一個被岩石圍繞的天然圓形凹地，直徑約十公尺。\n凹地中央的地面是深黑色的，土壤已被反覆高溫炭化，與周圍紅褐色的砂岩地形成鮮明對比。\n一圈排列得相當整齊的石頭圍成了一個直徑約一公尺的圓形——那不是自然形成的。\n周圍的岩壁被煙燻成黑色，某些地方隱約有模糊的圖案痕跡。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 0.8
+  hunger_decay: 0.9
+
+exits:
+  back: "/rooms/triassic_shade/room"
+
+sensory_signals:
+  smell: "遠古炭灰的煙燻氣息深入每一寸空氣，混合著周圍濕潤苔蘚的土腥味，形成一種複雜而安撫人心的氣息。"
+  sound: "偶爾有風穿過凹地，讓殘留的炭渣發出細微而空洞的嗡嗡聲，像是遠古歲月在低語。"
+  wind: "凹地的碗型地形使風速降低，形成一個相對平靜的微環境，非常適合生火。"
+  ground:
+    default_msg: "中央是深黑色的炭化土壤，四周圍著一圈排列整齊的石頭。外圍岩壁被煙燻黑，有模糊的圖案痕跡。"
+    discovery:
+      requires_no_factor: "cave_painting"
+      set_temp: "found_ancient_firepit"
+      msg: "【 🔍 發現 】你仔細觀察這個圓形石圈：石頭的排列太整齊了，不可能是偶然形成的。\n炭化的土壤顯示這個地方長期、反覆地被用來生火——可能是幾十年、甚至幾百年。\n在你之前，有人或某種生物曾在這裡生活。你不是第一個來到這裡尋求庇護的存在。"
+
+interactions:
+  - action: "make"
+    target:
+      - "fire"
+      - "campfire"
+    prerequisites:
+      factor: "thermodynamics"
+      temp_state: "found_ancient_firepit"
+    complete_quest: "build_shelter"
+    set_temp: "has_campfire_hollow"
+    success_msg: "利用天然的石圈擋風，再加上炭化土壤中殘留的引火介質，\n你迅速地在古老的火坑中生起了一堆溫暖的篝火！\n火焰穩定而有力，煙柱被凹地的形狀導向天空，不會嗆到你自己。\n🔥 利用現成的引火點，這比在荒野中重新搭建火堆省力了一半！"
+    fatigue: 8
+
+  - action: "light"
+    target:
+      - "fire"
+      - "campfire"
+    prerequisites:
+      factor: "thermodynamics"
+      temp_state: "found_ancient_firepit"
+    complete_quest: "build_shelter"
+    set_temp: "has_campfire_hollow"
+    success_msg: "利用天然的石圈擋風，再加上炭化土壤中殘留的引火介質，\n你迅速地在古老的火坑中生起了一堆溫暖的篝火！\n火焰穩定而有力，煙柱被凹地的形狀導向天空，不會嗆到你自己。\n🔥 利用現成的引火點，這比在荒野中重新搭建火堆省力了一半！"
+    fatigue: 8
+
+  - action: "dig"
+    target:
+      - "ground"
+      - "center"
+      - "soil"
+    prerequisites:
+      temp_state: "found_ancient_firepit"
+    discover_factor: "cave_painting"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】你不是第一個——古老的生存記憶！\n==================================================\n你用尖銳的石頭在炭化土壤中挖掘，鬆動的黑土一層一層翻起。\n在大約二十公分深處，你挖出了幾塊炭化的骨骸碎片，以及一個用赭石顏料畫在扁平石板上的圖案——\n一個人形、一堆火、以及幾條放射狀的線條，代表陽光或溫暖。\n在這個時代，在這片荒原，有人與你做過同樣的事情。\n那個認知讓你感到一種奇特的安慰，也帶來了一份沉重的責任。"
+    fatigue: 15
+    give_item:
+      id: "ancient_stone_tablet"
+      name: "古代石板畫"
+      desc: "一塊表面繪有赭石圖案的扁平石板，記錄著某個史前存在的生存記憶：人形、火焰、陽光。"
+      durability: 10
+
+  - action: "look"
+    target:
+      - "wall"
+      - "markings"
+      - "paintings"
+    success_msg: "你靠近岩壁，仔細觀察被煙燻黑的表面。\n隱約可以看出幾個用手指或枝條描繪的圖案，但大部分已因長期煙燻而模糊。\n能辨識出的有：一個四腳動物的輪廓、幾個手掌印、以及一系列橫線，也許是計數記號。\n這些記號說明這個地方不只是臨時避難所，而是某種固定的聚居點。"
+    fatigue: 3

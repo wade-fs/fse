@@ -1,0 +1,94 @@
+short: "蘆葦沼澤"
+long: "你涉水走入了一片廣闊的史前蘆葦沼澤。\n四周長滿了三公尺高的巨型蘆葦，視線完全被密密麻麻的綠色稈莖遮擋。\n地表的泥土呈黑褐色，極度鬆軟，每走一步雙腳都會深深陷入滑膩的泥炭中。\n腳下的水流冰冷，水底似乎有不知名的史前爬行類游過，泛起微弱的波紋。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 0.8
+  hunger_decay: 1.3
+
+exits:
+  back: "/rooms/triassic_riverbed/room"
+
+sensory_signals:
+  smell: "空氣中充斥著強烈刺鼻的沼氣與發酵植物的酸臭臭味，吸入後胃部感到微微不適。"
+  sound: "四周是蘆葦在風中摩擦的颯颯聲，伴隨著沼澤氣泡冒出水面爆裂的「咕嚕」聲，顯得格外的詭譎無常。"
+  wind: "微弱的偏南風吹過，搖曳著高大的蘆葦，發出沙沙的巨響。"
+  ground:
+    default_msg: "泥濘濕滑的黑泥地表。在密林般的蘆葦根部深處，你隱約看見一個半埋在爛泥裡的巨大恐龍蛋。"
+    discovery:
+      requires_no_factor: "arthropod_nutrition"
+      set_temp: "found_reptile_egg"
+      msg: "【 🔍 發現 】在爛泥與蘆葦根基交錯的隱密處，有一顆革質外殼的「史前爬行動物蛋 (egg)」。\n這顆蛋被埋在發熱的泥炭中孵化，你可以嘗試去收集它 (take egg / collect egg)。但在此之前，請小心這片容易下陷的沼澤！"
+
+interactions:
+  - action: "step"
+    target: "forward"
+    success_msg: "你盲目地在泥濘沼澤中大步向前快跑。突然，腳下地表一空，你整個人陷入了深達大腿的致命泥炭陷阱中！泥土的強大阻力將你牢牢鎖住，掙扎讓你精疲力竭..."
+    set_temp: "stuck_in_mud"
+    hp_change: -10
+    fatigue: 25
+
+  - action: "rush"
+    success_msg: "你盲目地在泥濘沼澤中大步向前快跑。突然，腳下地表一空，你整個人陷入了深達大腿的致命泥炭陷阱中！泥土的強大阻力將你牢牢鎖住，掙扎讓你精疲力竭..."
+    set_temp: "stuck_in_mud"
+    hp_change: -10
+    fatigue: 25
+
+  - action: "wade"
+    success_msg: "你放慢腳步，雙手扶著蘆葦桿，試探性地一步步在爛泥中涉水前進。雖然速度緩慢，但你成功避免了陷入深泥，安全穿越了這片區域！"
+    fatigue: 5
+
+  - action: "move"
+    target: "slow"
+    success_msg: "你放慢腳步，雙手扶著蘆葦桿，試探性地一步步在爛泥中涉水前進。雖然速度緩慢，但你成功避免了陷入深泥，安全穿越了這片區域！"
+    fatigue: 5
+
+  - action: "take"
+    target:
+      - "egg"
+      - "reptile_egg"
+    prerequisites:
+      temp_state: "found_reptile_egg"
+    success_msg: "你小心地扒開黏稠的黑泥，將這顆溫熱、革質外殼的史前爬行動物蛋抱了出來，收入背包。"
+    give_item:
+      id: "reptile_egg"
+      name: "史前爬行動物蛋"
+      desc: "一顆大如拳頭、帶有韌性革質外殼的恐龍卵。裡面含有豐富的蛋黃，是極高密度的能量來源。"
+      durability: 2
+    repeat_msg: "蘆葦深處的巢穴空了，只剩下一些破碎的蘆葦根。"
+    fatigue: 5
+
+  - action: "collect"
+    target:
+      - "egg"
+      - "reptile_egg"
+    prerequisites:
+      temp_state: "found_reptile_egg"
+    success_msg: "你小心地扒開黏稠的黑泥，將這顆溫熱、革質外殼的史前爬行動物蛋抱了出來，收入背包。"
+    give_item:
+      id: "reptile_egg"
+      name: "史前爬行動物蛋"
+      desc: "一顆大如拳頭、帶有韌性革質外殼的恐龍卵。裡面含有豐富的蛋黃，是極高密度的能量來源。"
+      durability: 2
+    repeat_msg: "蘆葦深處的巢穴空了，只剩下一些破碎的蘆葦根。"
+    fatigue: 5
+
+  - action: "eat"
+    target:
+      - "egg"
+      - "reptile_egg"
+    prerequisites:
+      temp_state: "has_campfire"
+      factor: "thermodynamics"
+    success_msg: "你用石片敲開蛋殼，將其倒在洗淨的石板上，放在營火的微熱邊緣炙烤。片刻後，蛋液凝固，散發出獨特的香氣。烤熟的恐龍蛋消除了所有的寄生蟲，大口吞下後體力瞬間充盈！"
+    hunger_change: -50
+    fatigue: 5
+
+  - action: "eat"
+    target:
+      - "egg"
+      - "reptile_egg"
+    success_msg: "你直接捏碎蛋殼，將生冷黏稠的生蛋液一口吞下。野生的生卵帶有嚴重的古菌與寄生蟲，你吞下後胃部開始劇烈絞痛，冷汗直流..."
+    trigger_confusion: "raw_egg"
+    hp_change: -15
+    fatigue: 10

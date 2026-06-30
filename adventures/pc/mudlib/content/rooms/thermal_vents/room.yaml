@@ -1,0 +1,73 @@
+short: "地熱噴口"
+long: "你踏入一片地面如同巨大龜背般龜裂的地帶。\n大小不一的蒸汽噴口散布其中，每隔幾秒就會噴出一道白色的高溫蒸汽柱。\n噴口邊緣沉澱著白色與淡黃色的礦物結晶，閃爍著細碎的光芒。\n幾株頑強的史前植物在噴口之間夾縫中生存，葉片邊緣帶有明顯的燙傷痕跡，卻仍然翠綠。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 3.0
+  hunger_decay: 1.2
+
+exits:
+  back: "/rooms/desert_canyon/room"
+
+sensory_signals:
+  smell: "高溫蒸汽夾帶著濃烈的礦物質氣味，硫磺、鐵銹、鈣質混合成一股刺鼻的複雜氣息，與沙漠的乾燥形成強烈對比。"
+  sound: "噴口定期噴出蒸汽時發出尖銳的嘶嘶聲，地底則傳來岩漿流動的低沉轟鳴，地面微微震動。"
+  wind: "噴口噴發時產生的熱浪向四周衝散，讓整片地帶空氣都帶有高溫水汽的潮熱感。"
+  ground:
+    default_msg: "龜裂的灰黑色地面，噴口邊緣沉澱著白色的鹵水結晶與淡黃色的硫磺結晶。幾株頑強的植物在裂縫間生長，葉片有燙傷痕跡。"
+    discovery:
+      requires_no_factor: "thermodynamics"
+      set_temp: "found_vent_minerals"
+      msg: "【 🔍 發現 】你在噴口邊緣發現了兩種不同的白色晶體沉澱：\n一種質地粗糙，像是鹽類結晶；另一種更加細緻，帶有淡黃色，像是硫磺結晶 (crystals)。\n旁邊那幾株被蒸汽燙過卻仍然存活的植物讓你印象深刻——生命的適應力令人驚嘆。"
+
+interactions:
+  - action: "collect"
+    target:
+      - "crystals"
+      - "sulfur"
+      - "minerals"
+    prerequisites:
+      temp_state: "found_vent_minerals"
+    give_item:
+      id: "sulfur_crystals"
+      name: "硫磺結晶"
+      desc: "從地熱噴口邊緣採集的硫磺結晶，細如粉末，帶有刺鼻的硫化物氣味。燃點極低，也許可以作為引火助燃材料。"
+      durability: 3
+    success_msg: "你用樹枝小心地從噴口邊緣颳取那些淡黃色的硫磺結晶，收集到一小包細粉狀的礦物質。\n這些結晶在指間散發著微弱的熱感，燃點應該相當低。"
+    fatigue: 8
+    repeat_msg: "你已經收集了足夠的硫磺結晶，噴口邊緣的量需要一段時間才能再次積累。"
+
+  - action: "touch"
+    target: "vent"
+    hp_change: -60
+    discover_factor: "thermodynamics"
+    trigger_confusion: "steam_burn"
+    success_msg: "你伸手觸碰噴口邊緣——恰好此時噴口噴發！\n超過 150°C 的高溫蒸汽直接噴射到你的手臂和臉部，劇烈的灼痛讓你慘叫著向後躍開！\n你的皮膚大面積燙傷，但在痛苦中你的大腦也完成了一個認知：\n這種地熱能量可以被利用，如果你能找到安全的方式的話。"
+    repeat_msg: "你已經深刻理解了這些噴口的危險性，沒有必要再次親身體驗。"
+
+  - action: "inhale"
+    target:
+      - ""
+      - "air"
+      - "steam"
+    hp_change: -15
+    fatigue: 20
+    trigger_confusion: "vent_gas"
+    success_msg: "你深吸一口這裡的空氣。\n高濃度的硫化氫和二氧化硫瞬間湧入肺部，你感到劇烈的窒息感，視野開始旋轉！\n你跌跌撞撞地退出了這片區域，勉強保持住意識。\n💡 在這種地方，淺而緩慢的呼吸是必要的求生技巧。"
+
+  - action: "breathe"
+    target:
+      - "deep"
+      - "air"
+    hp_change: -15
+    fatigue: 20
+    trigger_confusion: "vent_gas"
+    success_msg: "你深吸一口這裡的空氣。\n高濃度的硫化氫和二氧化硫瞬間湧入肺部，你感到劇烈的窒息感，視野開始旋轉！\n你跌跌撞撞地退出了這片區域，勉強保持住意識。\n💡 在這種地方，淺而緩慢的呼吸是必要的求生技巧。"
+
+  - action: "examine"
+    target:
+      - "plant"
+      - "plants"
+    success_msg: "你仔細觀察那幾株被蒸汽週期性燙傷的植物：\n葉片邊緣呈現褐色的燙傷痕跡，但葉脈部分依然翠綠充滿活力。\n它們似乎在每次噴發之間迅速完成生長與光合作用，以極短的生命週期適應這個極端環境。"
+    discover_factor: "triassic_flora"
+    fatigue: 3

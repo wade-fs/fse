@@ -1,0 +1,48 @@
+short: "化石峭壁"
+long: "你沿著狹窄的裂縫，來到了一面無比壯觀的巨大沉積岩峭壁之下。\n峭壁的岩層節理清晰，層層疊疊，訴說著百萬年來地殼運動的軌跡。\n在裸露的垂直岩面上，密密麻麻地嵌入了無數遠古海洋生物的化石。\n高空的風在這裡猛烈吹拂，遠處隱約可以看見翼龍在峭壁頂端的輪廓。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 1.5
+  hunger_decay: 1.0
+
+exits:
+  back: "/rooms/hidden_ravine/room"
+
+sensory_signals:
+  smell: "空氣中滿是乾燥的沉積砂岩與風化石灰的古老粉塵味，完全沒有谷底的硫化毒氣。"
+  sound: "高空傳來陣陣風聲的狂嘯，以及遠處巨大的掠食翼龍（Pterosaur）拍打空氣的嗡嗡巨響。"
+  wind: "猛烈的高空強風從下往上劇烈吹拂著峭壁，這股上升熱對流非常平穩。"
+  ground:
+    default_msg: "堆滿峭壁滾落碎石的地面。在一塊剛滾落不久的巨大石灰岩板表面，你可以清晰看到一個精美、呈螺旋狀的遠古海洋生物印記。"
+    discovery:
+      requires_no_factor: "migration_cycle"
+      set_temp: "found_ammonite"
+      msg: "【 🔍 發現 】在崩落的沉積岩上，你注意到一塊精美的「菊石化石 (ammonite)」。\n這隻古海洋生物的螺殼紋理揭示了遠古地層的演變以及生命的規律遷徙。你可以嘗試仔細觀察它 (look ammonite / examine fossil)。"
+
+interactions:
+  - action: "look"
+    target:
+      - "ammonite"
+      - "fossil"
+      - "ammonite fossil"
+    prerequisites:
+      temp_state: "found_ammonite"
+    discover_factor: "migration_cycle"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】菊石結構與地層生命遷徙！\n==================================================\n你仔細端詳菊石的螺旋解理面。它那呈規律數值遞增的腔室結構，不僅僅是幾何之美，更是古海洋生物為了因應季節性洋流、進行規律性垂直升降與遷徙的浮力調解構造！\n這與三疊紀陸地巨獸為了水草進行的季節性大遷徙有著相同的規律。你領悟了『生物遷徙週期 (migration_cycle)』！"
+    repeat_msg: "你撫摸著螺紋清晰的菊石化石，心中已洞察了生命依循物理週期遷徙的偉大規律。"
+    fatigue: 2
+
+  - action: "climb"
+    target: "cliff"
+    success_msg: "你徒手攀上陡峭的峭壁，試圖直接往上爬。然而，高處的岩石在高空橫風與溫差下嚴重風化，你剛爬了三公尺，一塊岩石斷裂，你慘叫著從半空摔落下來，砸在堅硬的亂石堆上..."
+    hp_change: -30
+    fatigue: 30
+
+  - action: "climb"
+    target: "cliff"
+    prerequisites:
+      factor: "fiber_strength"
+    complete_quest: "reach_high_ground"
+    success_msg: "你利用背包中堅韌的植物纖維繩索，牢牢套住上方突出的堅硬玄武岩柱。\n你雙腳蹬在粗糙的沉積岩層上，借助繩索的結構強度分擔體重，一步步輕巧而安全地攀登上了這面陡峭的峭壁頂端！"
+    fatigue: 15

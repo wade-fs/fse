@@ -1,0 +1,64 @@
+short: "火山口"
+long: "你站在一座活躍火山的火山口邊緣，腳下的黑色玄武岩滾燙得幾乎無法久站。\n下方數百公尺處，橙紅色的熔岩緩緩流動，表面不時形成黑色的冷卻岩殼，隨後再次裂開，露出灼熱的岩漿。\n高溫氣流從火山口向上奔騰，讓幾隻翼龍得以完全不用扇動翅膀，只靠熱氣流就能在此長時間盤旋。"
+
+exits:
+  back: "/rooms/pterosaur_cliff/room"
+
+environmental_multipliers:
+  thirst_decay: 3.5
+  hunger_decay: 1.5
+
+sensory_signals:
+  smell: "極度強烈的硫磺氣味滲透進每一次呼吸，讓喉嚨與眼睛都產生灼燒感。長時間停留可能造成呼吸道損傷。"
+  sound: "火山口內部傳來持續不斷的岩漿沸騰轟鳴，如同巨獸的呼吸，偶爾有熔岩噴出的爆裂聲震動大地。"
+  wind: "從火山口向上噴湧的熾熱氣流，溫度極高，讓置身其中的翼龍猶如乘坐無形的電梯般盤旋上升。"
+  ground:
+    default_msg: "火山口邊緣的黑色玄武岩地面，表面充滿氣泡狀的孔洞，是火山噴出後快速冷卻的痕跡。地面溫度極高，赤腳站立會被燙傷。"
+    discovery:
+      requires_no_factor: "extractive_metallurgy"
+      msg: "【 🔍 發現 】在火山口邊緣的岩縫中，嵌著一種橙紅色、帶有光澤的礦石（朱砂 Cinnabar, HgS）。\n它的顏色異常鮮艷，與周圍的黑色玄武岩形成強烈對比，顯然是從地底深處隨熔岩帶上來的。"
+      set_temp: "found_cinnabar"
+
+interactions:
+  - action: "collect"
+    target: "cinnabar"
+    prerequisites:
+      temp_state: "found_cinnabar"
+    give_item:
+      id: "cinnabar_ore"
+      name: "朱砂礦石"
+      desc: "一塊橙紅色的朱砂礦石（HgS），含有汞元素，加熱後能分解析出銀白色的液態汞，但會產生有毒汞蒸氣。同時也是珍貴的礦物顏料原料。"
+      durability: 3
+    success_msg: "你用石塊撬出了火山口邊的朱砂礦石，它在掌心散發著微微的溫熱。"
+    fatigue: 10
+
+  - action: "take"
+    target: "ore"
+    prerequisites:
+      temp_state: "found_cinnabar"
+    give_item:
+      id: "cinnabar_ore"
+      name: "朱砂礦石"
+      desc: "一塊橙紅色的朱砂礦石（HgS），含有汞元素，加熱後能分解析出銀白色的液態汞，但會產生有毒汞蒸氣。同時也是珍貴的礦物顏料原料。"
+      durability: 3
+    success_msg: "你用石塊撬出了火山口邊的朱砂礦石，它在掌心散發著微微的溫熱。"
+    fatigue: 10
+
+  - action: "heat"
+    target: "cinnabar"
+    prerequisites:
+      item: "cinnabar_ore"
+      factor: "thermodynamics"
+      factor2: "fire_control"
+    discover_factor: "extractive_metallurgy"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】提取冶金術！\n==================================================\n你將朱砂礦石放置在火山口邊的高溫熔岩區旁。\n隨著溫度升高，礦石開始發黑，隨後你看到令人震驚的現象——\n銀白色的液滴從礦石中滲出，在岩石縫隙中緩緩流動，如同液體銀鏡般閃耀！\n💡 這是汞！化合物在高溫下能分解為單質！物質是可以被「提取」和「精煉」的！"
+    fatigue: 15
+
+  - action: "smelt"
+    prerequisites:
+      item: "cinnabar_ore"
+      factor: "thermodynamics"
+      factor2: "fire_control"
+    discover_factor: "extractive_metallurgy"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】提取冶金術！\n==================================================\n你將朱砂礦石放置在火山口邊的高溫熔岩區旁。\n隨著溫度升高，礦石開始發黑，隨後你看到令人震驚的現象——\n銀白色的液滴從礦石中滲出，在岩石縫隙中緩緩流動，如同液體銀鏡般閃耀！\n💡 這是汞！化合物在高溫下能分解為單質！物質是可以被「提取」和「精煉」的！"
+    fatigue: 15

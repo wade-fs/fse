@@ -1,0 +1,63 @@
+short: "紅樹林海岸"
+long: "一片史前紅樹林沿著海岸線蔓延，龐大的板根系從水中伸出，形成錯綜複雜的拱形迷宮。\n淺水區的水質清澈，可以清楚看見各種史前海洋生物在根系之間穿梭——這是一個生機盎然的天然育嬰場。\n海風帶著鹹濕的霧氣，遠處的白堊紀海洋在陽光下閃爍著湛藍的光芒。"
+
+exits:
+  back: "/rooms/cretaceous_shore/room"
+
+environmental_multipliers:
+  thirst_decay: 1.0
+  hunger_decay: 1.5
+
+sensory_signals:
+  smell: "海水混合著腐爛有機物的濃郁海洋氣息，夾帶著新鮮魚腥味，是生命力旺盛的象徵。"
+  sound: "海浪輕柔地拍打著根系，螃蟹類和其他甲殼動物在根系間爬動的細碎聲響，偶爾有魚類躍出水面的濺水聲。"
+  wind: "潮濕的海風穿過根系的縫隙，帶著海洋的氣息吹拂，讓人感到清爽。"
+  ground:
+    default_msg: "紅樹林根系形成錯綜複雜的地形，部分根系在水中，部分露出水面，形成天然的踏腳石。"
+    discovery:
+      requires_no_factor: "marine_ecology"
+      msg: "【 🔍 發現 】在淺水的根系之間，你看到了各種史前海洋生物：造型奇特的鸚鵡螺、巨大的史前甲殼動物，以及幾種完全陌生的游魚。\n這是白堊紀的海洋生態縮影！"
+      set_temp: "found_sea_creatures"
+
+interactions:
+  - action: "catch"
+    target: "fish"
+    prerequisites:
+      factor: "flint_knapping"
+    give_item:
+      id: "raw_fish"
+      name: "生鮮魚類"
+      desc: "一條從史前紅樹林捕獲的新鮮魚類，魚鱗閃閃發光，肉質飽滿。需要烤熟才能安全食用，避免感染史前寄生蟲。"
+      durability: 2
+    success_msg: "你用磨利的石刃製成的魚叉，猛地刺入淺水中，成功叉住了一條肥碩的史前魚！"
+    fatigue: 15
+
+  - action: "fish"
+    prerequisites:
+      factor: "flint_knapping"
+    give_item:
+      id: "raw_fish"
+      name: "生鮮魚類"
+      desc: "一條從史前紅樹林捕獲的新鮮魚類，魚鱗閃閃發光，肉質飽滿。需要烤熟才能安全食用，避免感染史前寄生蟲。"
+      durability: 2
+    success_msg: "你用磨利的石刃製成的魚叉，猛地刺入淺水中，成功叉住了一條肥碩的史前魚！"
+    fatigue: 15
+
+  - action: "collect"
+    target: "shellfish"
+    give_item:
+      id: "shellfish"
+      name: "史前甲殼類"
+      desc: "幾隻史前甲殼動物，外殼堅硬厚實，肉質飽滿。可生食，但建議烤熟食用——高溫能殺滅史前寄生蟲與細菌。"
+      durability: 2
+    success_msg: "你在根系縫隙中摸索，收集了幾隻藏在其中的史前甲殼動物。"
+    fatigue: 10
+
+  - action: "gather"
+    give_item:
+      id: "shellfish"
+      name: "史前甲殼類"
+      desc: "幾隻史前甲殼動物，外殼堅硬厚實，肉質飽滿。可生食，但建議烤熟食用——高溫能殺滅史前寄生蟲與細菌。"
+      durability: 2
+    success_msg: "你在根系縫隙中摸索，收集了幾隻藏在其中的史前甲殼動物。"
+    fatigue: 10

@@ -1,0 +1,50 @@
+short: "知識保存庫入口"
+long: "洞穴最深處的一個隱密角落，一扇由數塊精密咬合的巨大岩石板組成的厚重石門嵌在岩壁中。\n這顯然是人類精心設計的傑作——每一塊石板的角度都經過計算，讓整扇門在不用任何黏合劑的情況下，只靠石塊的重量和槓桿原理就能嚴密封合。\n這是這個文明最後、也是最重要的遺產。"
+
+exits:
+  back: "/rooms/ancestor_cave/room"
+
+sensory_signals:
+  smell: "石門周圍幾乎沒有任何氣味——完美的密封意味著幾乎沒有空氣流通。這正是長久保存易腐材料的理想條件。"
+  sound: "厚重的岩石板幾乎完全隔絕了外部的末日轟鳴聲，只有你自己的心跳聲清晰可聞。"
+  wind: "在石門的接縫處，你能感受到一股極其微弱的氣壓差——裡面有空氣，意味著這個密室設計了某種通氣系統，以維持長期的空氣循環。"
+  ground:
+    default_msg: "入口前的地面刻有複雜的機關符號，那些符號的排列絕非裝飾——它們是開門的步驟說明，以及觸發警告裝置的陷阱標記。"
+    discovery:
+      requires_no_factor: "information_preservation"
+      msg: "【 🔍 發現 】這些機關符號的設計意圖非常清晰：\n必須先理解符號的意義，才能知道哪些石塊可以按壓，哪些是陷阱。\n設計者的意圖是——只有真正理解知識永存重要性的人，才有資格打開這扇門。"
+      set_temp: "found_mechanism"
+
+interactions:
+  - action: "solve"
+    target: "mechanism"
+    prerequisites:
+      temp_state: "found_mechanism"
+      factor: "symbol_abstraction"
+      factor2: "information_preservation"
+    complete_quest: "secure_knowledge"
+    set_temp: "vault_opened"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】知識的守護者！\n==================================================\n你按照符號指示，依序輕觸正確的石塊序列。\n石門內部傳來一連串精密的岩石摩擦聲，重達數噸的石門在完美的力學設計下，緩緩向內旋轉開啟！\n裡面是一個乾燥恆溫的密室，整齊堆放著無數刻有文字的石板——\n一個文明的所有知識，完整地等待著未來的繼承者。\n機關解開！知識保存庫向你敞開！"
+    fatigue: 20
+
+  - action: "open"
+    target: "door"
+    prerequisites:
+      temp_state: "found_mechanism"
+      factor: "symbol_abstraction"
+      factor2: "information_preservation"
+    complete_quest: "secure_knowledge"
+    set_temp: "vault_opened"
+    success_msg: "==================================================\n  🌟【 完成任務 (Quest Complete) 】知識的守護者！\n==================================================\n你按照符號指示，依序輕觸正確的石塊序列。\n石門內部傳來一連串精密的岩石摩擦聲，重達數噸的石門在完美的力學設計下，緩緩向內旋轉開啟！\n裡面是一個乾燥恆溫的密室，整齊堆放著無數刻有文字的石板——\n一個文明的所有知識，完整地等待著未來的繼承者。\n機關解開！知識保存庫向你敞開！"
+    fatigue: 20
+
+  - action: "force"
+    target: "door"
+    hp_change: -10
+    trigger_confusion: "trapped_mechanism"
+    success_msg: "你用力推撞石門！但這是一個錯誤——石門的陷阱機關被觸發，一塊石板從上方彈出砸中了你，同時發出一聲沉重的轟響作為警告！你的蠻力在精密的工程面前毫無用處。"
+
+  - action: "break"
+    hp_change: -10
+    trigger_confusion: "trapped_mechanism"
+    success_msg: "你試圖破壞石門！但這是一個錯誤——石門的陷阱機關被觸發，一塊石板從上方彈出砸中了你，同時發出一聲沉重的轟響作為警告！你的蠻力在精密的工程面前毫無用處。"

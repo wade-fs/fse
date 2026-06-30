@@ -38,3 +38,26 @@
   6. 新路徑 (Path)：玩家解鎖了 「營火 (Campfire)」 節點。這時原本因為黑暗而看不見的森林邊緣，在火光照亮下被
   Reveal 了，玩家可以走向下一個空間。
 
+
+  ──────
+  ### 4. 關卡詳細攻略與引導指南 (Stage Guidelines)
+
+  *   **[新手教學與保護機制指南](docs/guidelines/novice_tutorial.md)**：新手安全區防護、復活點與通關機制。
+  *   **[開發與 Presence 生物手冊](docs/guidelines/stages_manual.md)**：無戰鬥系統、Presence 偵測模型與關卡開發手冊。
+
+  每個階段均有獨立、詳盡的情境故事、地圖互連以及 Discovery 解謎領悟路徑指南：
+
+  *   [Stage 01 — 初來乍到 (Novice)](docs/guidelines/01-novice.md)
+  *   [Stage 02 — 第零天 (Day Zero)](docs/guidelines/02-day_zero.md)
+  *   [Stage 03 — 第一夜 (First Night)](docs/guidelines/03-first_night.md)
+  *   [Stage 04 — 吃蟲人 (Bug Eater)](docs/guidelines/04-bug_eater.md)
+  *   [Stage 05 — 風中潛行者 (Wind Stalker)](docs/guidelines/05-wind_stalker.md)
+  *   [Stage 06 — 大氣與對流考驗 (Convection Navigation)](docs/guidelines/06-convection_navigation.md)
+  *   [Stage 07 — 侏羅紀降臨 (Jurassic Arrival)](docs/guidelines/07-jurassic_arrival.md)
+  *   [Stage 08 — 樹冠建築師 (Canopy Builder)](docs/guidelines/08-canopy_builder.md)
+  *   [Stage 09 — 異特龍考驗 (Allosaurus Gauntlet)](docs/guidelines/09-allosaurus_gauntlet.md)
+  *   [Stage 10 — 火的主人 (Fire Master)](docs/guidelines/10-fire_master.md)
+  *   [Stage 11 — 白堊紀黎明 (Cretaceous Dawn)](docs/guidelines/11-cretaceous_dawn.md)
+  *   [Stage 12 — 最後的文明 (Last Stand)](docs/guidelines/12-last_stand.md)
+
+
