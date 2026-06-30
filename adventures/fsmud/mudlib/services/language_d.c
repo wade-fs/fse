@@ -423,9 +423,35 @@ void create() {
             "desc_rainy": "下雨",
             "desc_foggy": "浓雾",
             "desc_snowy": "下雪",
-            "weather_time_format": "【 %s / %s 】"
         ])
     ]);
+
+    // 🚀 新增：動態載入並合併 content/locales/ 下的外部語言設定
+    string locales_dir = "/content/locales/";
+    if (file_size(locales_dir) == -2) {
+        string *files = get_dir(locales_dir);
+        if (files) {
+            foreach (string file in files) {
+                if (strlen(file) < 5 || file[strlen(file)-5..] != ".yaml") continue;
+                string path = locales_dir + file;
+                string content = read_file(path);
+                if (!content) continue;
+                mapping yaml_data = yaml_decode(content);
+                if (!yaml_data) continue;
+                
+                // 解析語系名稱 (例如 zh_TW.yaml -> zh-TW, en.yaml -> en)
+                string lang_name = file[0..strlen(file)-6];
+                if (lang_name == "zh_TW") lang_name = "zh-TW";
+                else if (lang_name == "zh_CN") lang_name = "zh-CN";
+                
+                if (!translations[lang_name]) translations[lang_name] = ([]);
+                
+                foreach (string k, string v in yaml_data) {
+                    translations[lang_name][k] = v;
+                }
+            }
+        }
+    }
 }
 
 string translate(string key, string lang) {

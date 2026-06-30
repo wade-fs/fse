@@ -1,0 +1,5 @@
+core.progress.quest_completed: "$HIG$✅ 任務完成：[{qid}]$NOR$\n"
+core.executor.confusion: "$HIY$🌀 【困惑】 事情沒有照預期發展，這讓你開始思索...$NOR$\n"
+core.factor.insight_transition: "\n$HIC$🌟 【領悟】 之前的疑惑瞬間有了答案！$NOR$\n"
+core.quest.accepted: "$HIY$📖 接受了新任務：{quest}$NOR$\n"
+core.quest.item_missing: "$HIR$❌ 缺少必要物品：{item} ({got}/{req})$NOR$\n"

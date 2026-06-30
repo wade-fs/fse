@@ -1,0 +1,5 @@
+core.progress.quest_completed: "$HIG$✅ Quest Completed: [{qid}]$NOR$\n"
+core.executor.confusion: "$HIY$🌀 [Confusion] Things didn't go as expected, which makes you ponder...$NOR$\n"
+core.factor.insight_transition: "\n$HIC$🌟 [Insight] The previous confusion suddenly has an answer!$NOR$\n"
+core.quest.accepted: "$HIY$📖 Accepted new quest: {quest}$NOR$\n"
+core.quest.item_missing: "$HIR$❌ Missing required items: {item} ({got}/{req})$NOR$\n"
