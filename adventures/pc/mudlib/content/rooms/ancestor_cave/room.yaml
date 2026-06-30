@@ -1,0 +1,21 @@
+short: "祖先洞穴"
+long: "你走進了這座位於山脊最高處的深邃洞穴。\n這裡曾有無數代開拓者在此避雨和歇息。\n巨大的岩壁平整而寬闊，上面密密麻麻地刻滿了用紅色、黃色礦石描繪的圖騰與符號。\n這裡記錄了這個物種在這個地獄難度的星球上，掙扎求生的全部史詩。"
+monsters: []
+exits:
+  back: "/rooms/settlement_ridge/room"
+
+sensory_signals:
+  smell: "古老、乾燥且充滿時間厚重感的岩石氣味。"
+  sound: "空谷回響，只有你自己的呼吸與心跳聲。"
+  wind: "極其微弱，洞穴深處的空氣幾乎是靜止的，這保證了岩畫萬年不腐。"
+  ground: "平整的岩石地面，散落著許多用於研磨礦物顏料的石碾與赤鐵礦石塊。"
+
+interactions:
+  - action: "draw"
+    target: "wall"
+    prerequisites:
+      # 需要玩家背包裡有精製黑曜石獵刀，用於在岩壁上刻畫
+      item: "obsidian_knife"
+    discover_factor: "symbol_abstraction"
+    success_msg: "你拿起黑曜石獵刀，蘸上研磨好的赤鐵礦粉末，在石壁上畫下了代表「火」與「風」的符號。\n當你畫下最後一筆時，一陣奇特的共鳴在腦海中響起——\n這不再只是你個人的記憶。透過符號，你的領悟將超越肉體的極限，傳遞給萬年之後的後來者。\n這就是文明的起點。"
+    fatigue: 20

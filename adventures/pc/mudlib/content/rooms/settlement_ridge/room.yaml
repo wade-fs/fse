@@ -1,0 +1,31 @@
+short: "聚落山脊"
+long: "你爬上了一座地勢開闊、視野良好的山脊。\n這裡搭建著幾處用巨型蕨類葉片與恐龍皮革搭建的簡陋遮蔽棚屋。\n中央有一個精心用石塊圍繞的舊火塘，周圍散落著一些破損的泥碗與陶器碎屑。\n這裡是人族抵禦掠食者與大自然暴雨的第一個安全聚落。"
+monsters: []
+exits:
+  back: "/rooms/cretaceous_shore/room"
+
+reveal_exits:
+  # 領悟符號抽象與文字的雛形後，開啟通往記載歷史的祖先洞穴路徑
+  cave:
+    dest: "/rooms/ancestor_cave/room"
+    requires_factor: "symbol_abstraction"
+
+sensory_signals:
+  smell: "草木灰燼、皮革，以及泥土在火烤後散發出的特有陶土芬芳。"
+  sound: "風吹過棚屋皮膜時發出的低沉抖動聲，伴隨著火塘邊木柴爆裂的劈啪聲。"
+  wind: "山脊上的風勢較大，但被棚屋的擋風石牆阻隔。"
+  ground: "被踩踏得極為結實的黃土地面，火塘邊有一堆質地細膩、黏性極佳的濕黏土。"
+
+interactions:
+  - action: "bake"
+    target: "clay"
+    prerequisites:
+      factor: "thermodynamics"
+    discover_factor: "pottery_craft"
+    success_msg: "你將黏土揉捏成中空的碗狀，放置在火塘的餘燼旁緩慢烘烤。\n隨者水分蒸發，原本柔軟的泥土在高溫下發生了不可逆的物理相變，變得堅硬無比且不再溶於水！\n💡 領悟：火不僅能燒熟食物，還能將泥土塑造成永久保存水和糧食的器皿（陶器）。"
+    give_item:
+      id: "clay_pot"
+      name: "粗製陶罐"
+      desc: "一個用黃土經篝火烘烤製成的史前陶罐，質地粗糙但能防水，是保存液體與食物的絕佳工具。"
+      durability: 5
+    fatigue: 15

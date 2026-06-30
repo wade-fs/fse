@@ -1,0 +1,30 @@
+short: "沿海鹽灘"
+long: "你來到了一片因潮汐退去、海水高溫蒸發後形成的天然白堊質鹽灘。\n地面結滿了厚厚一層雪白的鹽晶，在強烈的陽光下反射出刺眼的光芒。\n這裡極度乾燥，幾乎沒有任何植物能在此生存。"
+monsters: []
+exits:
+  back: "/rooms/cretaceous_shore/room"
+
+sensory_signals:
+  smell: "極度濃烈的海鹽氣味，空氣乾燥得像要吸乾鼻腔的所有水分。"
+  sound: "踩在厚實鹽晶地表上時，傳來乾脆的吱呀折斷聲。"
+  wind: "微弱但炎熱的陸風，吹動地上的乾鹽粉末。"
+  ground:
+    default_msg: "白茫茫的鹽顆粒結晶。在一些乾涸的鹽池邊，殘留著幾隻被鹽分風乾、沒有腐爛痕跡的小型節肢動物屍體。"
+    discovery:
+      requires_no_factor: "salt_preservation"
+      msg: "【 🔍 發現 】這些風乾的節肢動物屍體完全沒有腐敗的惡臭。\n💡 領悟：極高濃度的鹽分結晶似乎能鎖住水分，阻止有機物腐爛！這將是長期保存食物的關鍵機制。"
+      set_temp: "observed_mummy"
+
+interactions:
+  - action: "observe"
+    target: "mummy"
+    prerequisites:
+      temp_state: "observed_mummy"
+    discover_factor: "salt_preservation"
+    success_msg: "你仔細觀察並觸摸被鹽結晶包裹的風乾屍體。\n你理解了：鹽分提取了水分，抑制了腐敗 Entropy 的增長。只要學會收集這些鹽晶 (salt)，你的食物就能保存得比個體壽命更長！"
+    give_item:
+      id: "salt"
+      name: "粗製海鹽晶"
+      desc: "從沿海鹽灘收集的粗製海鹽，可以用於防腐保存食物，或者在烹飪時作為調味。"
+      durability: 3
+    fatigue: 10

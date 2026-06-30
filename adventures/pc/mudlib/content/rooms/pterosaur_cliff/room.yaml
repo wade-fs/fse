@@ -1,0 +1,24 @@
+short: "翼龍峭壁"
+long: "你站在高聳入雲的紅色砂岩峭壁邊緣。\n強烈的高空氣流在此呼嘯，發出震耳欲聾的怒吼聲。\n峭壁的岩縫中築有許多巨大的巢穴，幾隻翼展超過 8 米的翼龍（Pteranodon）在空中盤旋盤旋，偶爾落在崖邊打量著你。"
+monsters: []
+exits:
+  back: "/rooms/migration_trail/room"
+
+reveal_exits:
+  # 與翼龍建立信賴關係後，藉由牠的雙翼滑翔，越過廣袤荒原，降落至白堊紀海岸
+  shore:
+    dest: "/rooms/cretaceous_shore/room"
+    requires_factor: "pterosaur_bond"
+
+sensory_signals:
+  smell: "刺鼻的鳥糞石氣味，夾雜著高空冷冽而乾淨的空氣。"
+  sound: "風在耳邊尖銳地呼嘯，伴隨著翼龍掠過頭頂時雙翼震動空氣的啪啪聲。"
+  wind: "極其猛烈的高空強風，幾乎要把你吹落懸崖。"
+  ground: "光滑且被風蝕嚴重的岩石邊緣，地面殘留著幾根粗糙發灰的巨大羽毛與吃剩的魚骨。"
+
+interactions:
+  - action: "feed"
+    target: "pterosaur"
+    success_msg: "你從背包中拿出在河谷捕獲的新鮮史前魚類，緩步走近一隻落單的年輕翼龍。\n翼龍警惕地歪了歪頭，隨後快速啄走魚肉吞下。牠收起雙翼，發出一聲溫和的鳴叫，甚至允許你輕輕撫摸牠粗糙的皮質雙翼！\n💡 成功建立信賴！這隻翼龍願意帶你越過原本無法逾越的深谷峭壁。"
+    discover_factor: "pterosaur_bond"
+    fatigue: 15

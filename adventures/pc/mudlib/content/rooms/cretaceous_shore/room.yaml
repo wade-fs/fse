@@ -1,0 +1,13 @@
+short: "白堊紀海岸"
+long: "你從高空降落在一片開闊的白堊紀沙灘上。\n天空呈現出明亮的湛藍色，空氣無比清澈，每一口呼吸都讓你感到神清氣爽。\n沙灘一側延伸至無垠的古地中海，另一側則是生機勃勃的被子植物灌木叢，開滿了史前最早的原始花朵。"
+monsters: []
+exits:
+  back: "/rooms/pterosaur_cliff/room"
+  flats: "/rooms/salt_flats/room"
+  ridge: "/rooms/settlement_ridge/room"
+
+sensory_signals:
+  smell: "微鹹的海風，混雜著大量針葉林與原始花卉散發出的淡淡花香。"
+  sound: "規律的浪濤拍擊沙灘的聲音，遠處叢林傳來陣陣清脆的鳥鳴。"
+  wind: "溫和的海陸風交替吹拂，令人感到十分舒適。"
+  ground: "細軟且潔白如雪的沙灘，混雜著許多貝殼殘骸與被沖上岸的巨型木炭碎片。"

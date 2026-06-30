@@ -1,0 +1,13 @@
+short: "侏羅紀河谷"
+long: "你穿過黑暗的裂縫，眼前豁然開朗。\n這是一個極其宏偉的高濕熱帶河谷，奔流的溪水兩側長滿了巨大的桫欏與銀杏樹。\n遠處可以看見巨大的梁龍（Diplodocus）如小山般在林間緩慢移動。\n這裡的植被高大茂密，地面被厚實的落葉與青苔覆蓋。"
+monsters: []
+exits:
+  back: "/rooms/dark_cave/room"
+  quarry: "/rooms/obsidian_quarry/room"
+  trail: "/rooms/migration_trail/room"
+
+sensory_signals:
+  smell: "濃郁的青草香、濕潤泥土，以及大型草食恐龍糞便散發出的溫熱氣息。"
+  sound: "潺潺的流水聲，伴隨著遠方巨獸腳步落地時傳來的低沉悶響。"
+  wind: "溫暖而濕潤的微風迎面吹來，夾雜著水蒸氣。"
+  ground: "鬆軟的青苔地毯，踩上去像海綿一樣，地面踩踏出了許多巨大的網格狀植物根系。"

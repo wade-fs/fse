@@ -1,0 +1,31 @@
+short: "遷徙走廊"
+long: "這是一條夾在茂密針葉林之間的開闊泥地通道。\n泥地上縱橫交錯著無數巨大的獸類足跡，有些足跡甚至像小水坑一樣深。\n這是恐龍前往水源與避冬地的古老遷徙走廊。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+reveal_exits:
+  # 觀察並解鎖遷徙規律後，得知往懸崖方向是翼龍的棲息巢穴，開啟 cliff 出口
+  cliff:
+    dest: "/rooms/pterosaur_cliff/room"
+    requires_factor: "migration_cycle"
+
+sensory_signals:
+  smell: "混雜著多種恐龍體味與新鮮排泄物的泥土腥氣。"
+  sound: "林間傳來不知名小型生物恐慌的尖叫，隨即被一聲沉悶的巨響切斷。"
+  wind: "微風拂過，被森林葉片過濾後變得涼爽。"
+  ground:
+    default_msg: "泥濘不堪的地面。在各種混亂的足跡中，有一排巨大的三趾足跡明顯朝向懸崖方向。"
+    discovery:
+      requires_no_factor: "migration_cycle"
+      msg: "【 🔍 發現 】這些足跡的邊緣泥土風乾程度不一。\n新鮮的足跡全都堅定地朝向同一個方向——北方的翼龍峭壁。\n💡 領悟：動物的移動並非無序，牠們遵循著與氣候和繁衍規律同步的「遷徙週期」。"
+      set_temp: "observed_tracks"
+
+interactions:
+  - action: "follow"
+    target: "tracks"
+    prerequisites:
+      temp_state: "observed_tracks"
+    discover_factor: "migration_cycle"
+    success_msg: "你順著那些巨大的三趾足跡，在茂密的針葉林與棘藤中穿行。\n你逐漸看清了牠們踩踏出的規律路徑，前方的樹木漸漸稀疏，視野開始變得開闊。\n【 🌲 顯現 (Reveal) 】你來到了懸崖邊緣，上方巨大的翼龍峭壁清晰地展現在眼前！"
+    fatigue: 10

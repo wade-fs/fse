@@ -4,21 +4,32 @@ monsters: []
 exits:
   back: "/rooms/fern_forest/room"
 
+reveal_exits:
+  # 用火種照亮溶洞
+  wood:
+    dest: "/rooms/dark_cave/room"
+    requires_factor: "thermodynamics"
+    reveal_msg: "你點燃了火堆，跳動的火光照亮了整座溶洞，岩壁上隱約顯現出史前壁畫！"
+  
+  # 理解地鳴震動後，發覺溶洞深處的岩石裂縫有風吹出，可通往侏羅紀
+  rift:
+    dest: "/rooms/jurassic_valley/room"
+    requires_factor: "vibration_translation"
+    reveal_msg: "在持續低頻的地鳴震動中，溶洞深處的一堵鬆動岩牆崩塌了，露出一條散發著溫熱植物氣息的幽深地底裂縫 (rift)！"
+
 sensory_signals:
   smell: "濃烈的霉味與濕氣，隱約夾雜著某種食肉動物留下的陳舊血腥氣息。"
   sound: "滴答... 滴答... 水滴擊打石筍的聲音，在空曠的洞穴中被放大得格外清晰。"
   wind: "幾乎沒有風，空氣凝滯得令人窒息。"
   ground: "潮濕且高低不平的岩石地面。在微弱的光線死角中，似乎堆積著一些大型動物的碎骨骸。"
 
-# 🌟 溶洞互動：用火種點燃洞穴中的舊乾柴
 interactions:
   - action: "burn"
     target: "wood"
     prerequisites:
-      # 需要玩家背包裡有 embers 火種
       item: "embers"
     discover_factor: "cave_painting"
-    success_msg: "你小心翼翼地取出背包中的火種，引燃了溶洞中央一堆前人留下的乾枯獸皮與木柴。\n火光瞬間騰起！跳躍的火焰照亮了整座岩洞，也驅散了令人窒息的陰冷。\n【 🔍 發現 】在跳動的火光下，你驚訝地發現溶洞深處的岩壁上，刻著幾幅簡陋但線條粗獷的史前壁畫！"
+    success_msg: "你引燃了溶洞中央一堆前人留下的乾枯獸皮與木柴。火焰騰起，照亮了岩壁上的壁畫！"
     repeat_msg: "火堆仍在燃燒，跳動的火光照亮了牆上的壁畫。"
     fatigue: 5
 
@@ -26,5 +37,5 @@ interactions:
     target: "painting"
     prerequisites:
       factor: "cave_painting"
-    success_msg: "你湊近觀察石壁上的壁畫。\n壁畫上用紅色的赤鐵礦粉末畫著一隻巨大的、長著三趾與匕首般巨牙的野獸。\n野獸的頭部畫著一個類似「風」的波浪符號，而人的圖樣則站在下風處。\n💡 領悟：這幅畫似乎是先人留下的生存警告——風向會帶走你的氣味，逆風接近獵手才是生路。"
+    success_msg: "你湊近觀察壁畫。壁畫上用紅色赤鐵礦畫著巨獸，風向朝著巨獸吹去。\n💡 領悟：這幅畫警告你風向會帶走你的氣味，逆風接近捕食者才是生路。"
     discover_factor: "wind_direction"

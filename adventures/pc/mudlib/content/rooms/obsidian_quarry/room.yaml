@@ -1,0 +1,25 @@
+short: "黑曜石採石場"
+long: "你來到了一片古老火山噴發留下的冷卻熔岩台地。\n地面呈現一片漆黑，到處散落著質地純淨、在陽光下反射著玻璃般光澤的優質黑曜石礦脈。\n這裡溫度很高，空氣中瀰漫著淡淡的硫磺餘溫。"
+monsters: []
+exits:
+  back: "/rooms/jurassic_valley/room"
+
+sensory_signals:
+  smell: "乾燥且帶有火山硫磺微粒的刺鼻氣味。"
+  sound: "風吹過鋒利石柱邊緣時，發出嗚嗚的哨音。"
+  wind: "帶有熱度的乾燥谷風，一陣陣吹過台地。"
+  ground: "堅硬的黑色熔岩地面，到處都是鋒利的片狀碎石，稍有不慎就會割傷腳底。"
+
+interactions:
+  - action: "strike"
+    target: "obsidian quarry"
+    prerequisites:
+      factor: "flint_knapping"
+    discover_factor: "hardness_index"
+    success_msg: "你挑選了一塊高硬度的玄武岩作為石錘，精確敲擊黑色熔岩脈。\n隨著清脆的崩裂聲，一塊長條形、帶有貝殼狀凹槽的完美石刃剝落了下來！\n💡 領悟：你掌握了「硬度差異」的物理規律——只有比目標更硬的硬擊物，才能精確塑形黑曜石。"
+    give_item:
+      id: "obsidian_knife"
+      name: "精製黑曜石獵刀"
+      desc: "一把經過精細剝片打製的黑曜石獵刀，邊緣有鋸齒，極為鋒利，能用於剝皮與伐木。"
+      durability: 30
+    fatigue: 15
