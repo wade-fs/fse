@@ -11,6 +11,8 @@ private string respawn_room;
 private int respawn_delay;
 private string *detection_factors;
 private mapping failure_consequence;
+private string *identifiable_by;
+private string unknown_name;
 
 void create() {
     ::create();
@@ -18,6 +20,8 @@ void create() {
     respawn_delay = 30;
     detection_factors = ({});
     failure_consequence = ([]);
+    identifiable_by = ({});
+    unknown_name = "一個隱約的生物身影";
     
     // 初始化虛擬路徑與 YAML 設定
     setup_virtual("presence", "presence.yaml");
@@ -31,6 +35,8 @@ void create() {
         if (data["detection_factors"]) detection_factors = data["detection_factors"];
         if (data["failure_consequence"]) failure_consequence = data["failure_consequence"];
         if (data["respawn_delay"]) respawn_delay = data["respawn_delay"];
+        if (data["identifiable_by"]) identifiable_by = data["identifiable_by"];
+        if (data["unknown_name"]) unknown_name = data["unknown_name"];
     }
 }
 
@@ -41,6 +47,9 @@ string query_long()      { return long_desc; }
 
 void set_respawn_room(string r) { respawn_room = r; }
 string query_respawn_room()     { return respawn_room; }
+
+string *query_identifiable_by_factors() { return identifiable_by; }
+string query_unknown_name()             { return unknown_name; }
 
 // 檢查是否擁有所有偵測防護因子
 int _player_has_required_factors(object player) {
@@ -88,14 +97,15 @@ void on_death(object killer) {
         }
         room->leave(this_object());
     }
-    if (respawn_room != "") {
+    if (stringp(respawn_room) && respawn_room != "" && respawn_delay > 0) {
         call_out("respawn", respawn_delay);
     }
 }
 
 void respawn() {
+    if (!stringp(respawn_room) || respawn_room == "") return;
     set_hp(query_max_hp());
-    object room = load_object(respawn_room);
+    object room = catch(load_object(respawn_room));
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());

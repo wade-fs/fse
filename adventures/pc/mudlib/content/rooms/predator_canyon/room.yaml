@@ -13,8 +13,17 @@ reveal_exits:
     reveal_msg: "避開了掠食者，前方露出了通往未知深處的「荒野峽谷 (desert)」通道！"
 
 sensory_signals:
-  smell: "風中傳來極度腥臭的野獸體味，混雜著腐肉的臭氣。"
-  sound: "岩壁上方不時傳來碎石滾落的沙沙聲，伴隨著低沉且帶有威脅的喉音。"
+  smell:
+    default_msg: "風中傳來極度腥臭的野獸體味，混雜著腐肉的臭氣。"
+    discovery:
+      requires_factor: "predator_scent"
+      msg: "【 👃 生態分析 - 氣味 】這種腥臭味特徵符合中大型掠食者（如赫氏翼龍），距離你非常近！"
+      failure_confusion: "identify_scent"
+  sound:
+    default_msg: "岩壁上方不時傳來碎石滾落的沙沙聲，伴隨著低沉且帶有威脅的喉音。"
+    discovery:
+      requires_factor: "vibration_translation"
+      msg: "【 💡 領悟 】低頻的震動聲頻率規律，代表有一隻恐龍正踏著碎步在附近踱步。"
   wind:
     default_msg: "強烈而冰冷的風正從峽谷出口（你前進的方向）直吹向你。"
     discovery:
