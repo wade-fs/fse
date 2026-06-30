@@ -25,8 +25,10 @@ void create() {
 // --- 帳號 ---
 void   set_id(string s)  { id = s; }
 string get_id()          { return id; }
+string query_entity_id() { return id ? "user:" + id : "user:unknown"; }
 
 void save_state() {
+
     if (!id || id == "") return;
     if (file_size("/data/state/players/") < 0) mkdir("/data/state/players/");
     save_object("/data/state/players/" + id);
@@ -77,11 +79,13 @@ void on_death(string reason) {
     fatigue = 0;
     save_state();
 
-    object room = load_object("/rooms/triassic_plains.c");
+    object room = load_object("/rooms/triassic_plains/room");
+
     if (room) {
         move_object(this_object(), room);
     }
 }
+
 
 // 標記困惑狀態 (FSE)
 void player_confused(string challenge_id) {
@@ -151,7 +155,8 @@ void new_password(string pwd) {
 }
 
 void _enter_world() {
-    object room = load_object("/rooms/triassic_plains.c");
+    object room = load_object("/rooms/triassic_plains/room");
+
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());
@@ -160,6 +165,7 @@ void _enter_world() {
             "你可以集中注意力去感知環境: focus [smell/sound/wind/ground]\n" + NOR);
     }
 }
+
 
 // --- 指令分派 ---
 string query_role()          { return "player"; }

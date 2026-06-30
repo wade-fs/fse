@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "thermodynamics"
+name: "摩擦生熱與引火"
+description: "你明白了乾燥介質與劇烈摩擦是將機械能轉化為熱能並點燃火種的關鍵物理機制。"
+category: "survival"
+level: 1

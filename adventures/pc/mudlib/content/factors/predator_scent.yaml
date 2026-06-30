@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "predator_scent"
+name: "捕食者氣味解讀"
+description: "你學會了從腥臭的風中辨識捕食者的威脅等級與距離。"
+category: "survival"
+level: 1

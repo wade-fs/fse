@@ -154,6 +154,14 @@ string query_sensory_signal(object player, string sense) {
         }
     }
 
+    if (sense == "ground") {
+        player->set_temp("found_roots", 1);
+        return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
+               YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
+               "這些根部極度乾燥且富含纖維，或許是絕佳的引火火種 (kindling)！" + NOR;
+    }
+
     return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
 }
+
 

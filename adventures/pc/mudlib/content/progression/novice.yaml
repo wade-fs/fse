@@ -1,9 +1,10 @@
 version: "1.0"
 stage_id: "novice"
 name: "初來乍到"
-description: "你剛剛落入三疊紀。徒手、無知，必須在這個死亡世界撐過第一關。"
+description: "你剛剛落入三疊紀。徒手、無知，必須在這個死亡世界撐過第一關（鑽木取火）。"
 spawn_node: ""
 requires:
   quests:
-    - "first_kill"
+    - "first_fire"
 next: "survivor"
+
