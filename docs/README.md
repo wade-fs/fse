@@ -38,6 +38,7 @@ FSE 在任何技術之上都成立的核心思想。
 | [08-Mapping](philosophy/08-Mapping.md) | Adventure 如何對應到 Runtime |
 | [09-Runtime](philosophy/09-Runtime.md) | Runtime 是 Core 的實作 |
 | [10-Glossary](philosophy/10-Glossary.md) | 所有核心術語的快速查閱表 |
+| [11-FSE-Manifesto](philosophy/11-FSE-Manifesto.md) | 十條不可逆的靈魂設計原則 |
 
 ---
 

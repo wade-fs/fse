@@ -38,11 +38,14 @@
 08-Mapping.md             → Adventure 如何對應到 Runtime
 09-Runtime.md             → Runtime 是 Core 的實作
 10-Glossary.md            → 所有核心術語的快速查閱表 ← 從這裡開始翻
+11-FSE-Manifesto.md       → 十條不可逆的靈魂設計原則
 ```
 
 Runtime 放最後，因為它是哲學的實作，不是哲學本身。
 
 Glossary 放在最後，因為它是查閱用的，不是閱讀用的。
+
+Manifesto 是 FSE 的核心信仰與設計邊界。
 
 ---
 
