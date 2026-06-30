@@ -1,0 +1,48 @@
+ignite:
+  aliases: ["燃燒", "點燃", "引燃", "生火", "點火"]
+look:
+  aliases: ["看", "觀察", "查看", "端詳", "聚焦", "凝視"]
+hide:
+  aliases: ["躲", "隱藏", "潛伏", "藏"]
+dig:
+  aliases: ["挖", "挖掘", "刨", "開墾"]
+focus:
+  aliases: ["專注", "感受", "感應", "感覺"]
+strike:
+  aliases: ["打製", "打磨", "敲擊", "擊打", "打"]
+rub:
+  aliases: ["摩擦", "磨擦", "鑽"]
+burn:
+  aliases: ["燒", "引燃"]
+twist:
+  aliases: ["擰", "編織", "搓", "搓揉"]
+build:
+  aliases: ["搭建", "建造", "構築", "蓋"]
+freeze:
+  aliases: ["靜止", "凍結", "僵住", "不動"]
+sneak:
+  aliases: ["潛行", "偷溜", "繞過"]
+follow:
+  aliases: ["跟隨", "追蹤", "循著"]
+feed:
+  aliases: ["餵食", "餵養", "餵"]
+draw:
+  aliases: ["刻寫", "繪製", "畫", "刻"]
+lick:
+  aliases: ["舔", "嚐"]
+drink:
+  aliases: ["喝", "飲用"]
+heat:
+  aliases: ["加熱", "烤熱"]
+drop:
+  aliases: ["投", "丟進", "扔進", "放入"]
+boil:
+  aliases: ["煮沸", "燒開"]
+hunt:
+  aliases: ["獵捕", "捕獲", "打獵", "捉"]
+roast:
+  aliases: ["烘烤", "烤熟", "烤"]
+eat:
+  aliases: ["食用", "吃下", "吃"]
+write:
+  aliases: ["刻寫", "記錄", "寫下", "寫"]

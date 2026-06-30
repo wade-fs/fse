@@ -120,3 +120,9 @@ int discover_factor(object player, string fid) {
 
     return 1;
 }
+
+void remove_factor(object player, string fid) {
+    if (player && function_exists("remove_factor", player)) {
+        player->remove_factor(fid);
+    }
+}

@@ -73,6 +73,12 @@ void discover_factor(string fid, mapping metadata) {
     }
 }
 
+void remove_factor(string fid) {
+    if (!factors) factors = ([]);
+    map_delete(factors, fid);
+    save_state();
+}
+
 // 疲勞與 Entropy 控制
 int query_fatigue() { return fatigue; }
 void add_fatigue(int val) { 
@@ -313,6 +319,16 @@ mixed process_input(string cmd) {
     if (sscanf(cmd, "%s %s", verb, arg) != 2) {
         verb = cmd;
         arg  = "";
+    }
+
+    // 支援中文輸入正規化與同義詞對照轉換服務
+    object loc_svc = load_object("/runtime/services/localization_service.c");
+    if (loc_svc) {
+        mapping trans = loc_svc->translate_input(verb, arg);
+        if (trans) {
+            verb = trans["action"];
+            arg  = trans["target"];
+        }
     }
 
     // 支援常用簡短指令別名映射

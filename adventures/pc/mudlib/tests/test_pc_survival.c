@@ -509,6 +509,26 @@ int run_all_tests() {
     
     write(HIG "  ✓ 通過: 成功在末日前夕燒製陶罐、在溶洞中建立祭壇並刻下文明符號記憶，終局挑戰圓滿完成。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 20：驗證中文指令正規化與同義詞對照轉換服務
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 20] 測試中文指令別名翻譯與別名輸入對照...\n" NOR);
+    // 重設 civilization_meaning 因子，以便透過中文重新觸發解鎖
+    object fs = load_object("/runtime/services/factor_service.c");
+    if (fs) {
+        fs->remove_factor(player, "civilization_meaning");
+    }
+    
+    // 測試帶空格與不帶空格的中文指令輸入
+    player->force_me("寫下傳承"); // 不帶空格，應翻譯為 "write legacy"
+    
+    if (!player->has_factor("civilization_meaning")) {
+        write(HIR "❌ 測試 20 失敗: 中文指令 '寫下傳承' 未能正確解析並觸發解鎖！\n" NOR);
+        return 1;
+    }
+    
+    write(HIG "  ✓ 通過: 中文別名『寫下傳承』成功正規化並觸發對應英文指令解鎖。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +
