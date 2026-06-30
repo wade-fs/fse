@@ -4,11 +4,19 @@ monsters: []
 exits:
   back: "/rooms/triassic_plains/room"
 
+# 🌟 非線性網狀 Reveal 分叉
 reveal_exits:
+  # 只要學會生火(thermodynamics)，火光就可以照亮並開啟通往黑暗溶洞的路徑
+  cave:
+    dest: "/rooms/dark_cave/room"
+    requires_factor: "thermodynamics"
+    reveal_msg: "在微弱的火光映照下，你注意到一側隱密的巨型樹根後方，露出了一個黑漆漆的溶洞入口 (cave)！"
+
+  # 必須學會打製石器(flint_knapping)獲得石刃，才能割開荊棘屏障，開啟通往峽谷的路徑
   canyon:
     dest: "/rooms/predator_canyon/room"
     requires_factor: "flint_knapping"
-    reveal_msg: "在森林深處，一堵由粗壯荊棘組成的天然屏障擋在路前。\n現在，你可以用手中鋒利的黑曜石片將其割開了！"
+    reveal_msg: "在森林深處，一堵由粗壯荊棘組成的天然屏障擋在路前。\n現在，你可以用手中鋒利的黑曜石片將其割開了 (canyon)！"
 
 sensory_signals:
   smell: "濃厚的腐植土氣味中，隱隱有一絲雨水的清新。"
@@ -23,7 +31,7 @@ sensory_signals:
       set_temp: "found_obsidian"
       msg: "【 🔍 發現 】在鬆軟的落葉堆下，露出了幾塊質地極為堅硬且邊緣銳利的黑曜石 (obsidian)。\n這似乎是打製石器的絕佳材料。你可以嘗試敲擊 (strike) 它們，看看會發生什麼。"
 
-# 🌟 統一物理互動宣告
+# 統一物理互動宣告
 interactions:
   - action: "strike"
     target: "obsidian obsidian"
