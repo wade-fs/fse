@@ -30,22 +30,28 @@ all: fsmud fsmud.exe
 clean-txt:
 	@ rm -f *txt *log
 
+sync-includes:
+	@echo "🔄 Syncing global includes from runtime..."
+	@mkdir -p mudlib/include testlib/include
+	@cp -f ../../runtime/include/ansi.h mudlib/include/
+	@cp -f ../../runtime/include/ansi.h testlib/include/
+
 $(OUT):
 	@mkdir -p $(OUT)
 
 # 編譯 Linux 版本
-fsmud: $(OUT)
+fsmud: $(OUT) sync-includes
 	@echo "🔨 Building $@ (Linux Standard)..."
 	@cd ../.. && go mod tidy && $(COMMON_ENV) $(GO_EXE) build $(GO_FLAGS) -tags fsmud -o adventures/fsmud/bin/$@ ./adventures/cmd/fse
 	@ls -l $(OUT)/$@
 
 # 編譯 Windows 版本 (.exe)
-fsmud.exe: $(OUT)
+fsmud.exe: $(OUT) sync-includes
 	@echo "🔨 Building $@ (Windows Standard)..."
 	@cd ../.. && go mod tidy && $(ENVW) $(GO_EXE) build $(GO_FLAGS) -tags fsmud -o adventures/fsmud/bin/$@ ./adventures/cmd/fse
 	@ls -l $(OUT)/$@
 
-mudscript: $(OUT)
+mudscript: $(OUT) sync-includes
 	@echo "🔨 Building $@ (Linux Pure)..."
 	@cd ../.. && go mod tidy && $(COMMON_ENV) $(GO_EXE) build $(GO_FLAGS) -o adventures/fsmud/bin/$@ ./adventures/cmd/fse
 	@ls -l $(OUT)/$@
