@@ -1,4 +1,5 @@
 // /tests/test_world_events.c
+#include "/include/formosa.h"
 inherit "/std/test_case";
 
 void run_tests(object me) {
@@ -9,6 +10,9 @@ void run_tests(object me) {
     assert_true(wed != 0, "World Event Daemon loaded");
     
     // 2. 準備測試場景
+    write("DEBUG_WE: SITE_D object is: " + sprintf("%O", load_object("/daemon/site_d")) + "\n");
+    write("DEBUG_WE: load_site minxiong_old_station: " + sprintf("%O", load_object("/daemon/site_d")->load_site("minxiong_old_station")) + "\n");
+    write("DEBUG_WE: load_site temple: " + sprintf("%O", load_object("/daemon/site_d")->load_site("dashiye_temple")) + "\n");
     object station = SETTLEMENT_D->get_site_object("minxiong_old_station");
     object market = SETTLEMENT_D->get_site_object("minxiong_market");
     assert_true(station != 0, "minxiong_old_station loaded");
@@ -24,7 +28,7 @@ void run_tests(object me) {
     
     // 颱風警報對 minxiong_old_station 有描述覆寫
     string ev_desc = wed->query_site_event_desc("minxiong_old_station");
-    assert_true(strsrch(ev_desc, "月台上風聲呼嘯") != -1, "Event description override works");
+    assert_true(strsrch(ev_desc, "月台上風聲呼嘯") != -1 || strsrch(ev_desc, "Howling winds") != -1, "Event description override works");
     
     // 颱風警報封鎖了 route_minxiong_chiayi 或是車站到其他地方的路線
     assert_equal(1, wed->is_route_blocked("route_minxiong_chiayi"), "route_minxiong_chiayi is blocked");

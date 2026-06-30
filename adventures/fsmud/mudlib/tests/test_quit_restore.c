@@ -38,7 +38,8 @@ void run_tests(object me) {
 
         // 4. Verify save file contents
         string save_file = player->query_save_file();
-        assert_true(file_size(save_file + ".o") > 0, "Save file .o should exist");
+        mixed *files = get_dir(save_file + ".o");
+        assert_true(sizeof(files) > 0, "Save file .o should exist");
 
         // 5. Destruct and recreate player to simulate login
         destruct(player);

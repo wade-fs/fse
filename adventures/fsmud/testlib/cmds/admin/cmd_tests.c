@@ -35,12 +35,7 @@ int main(object me, string verb, string arg) {
         "/tests/test_language.c",
         "/tests/test_quest.c",
         "/tests/test_crafting.c",
-        "/tests/test_skills.c",
-        "/tests/test_combat_classes.c",
-        "/tests/test_guilds.c",
-        "/tests/test_combat_team.c",
         "/tests/test_currency_chat.c",
-        "/tests/test_pets_mounts.c",
         "/tests/test_death_corpse.c",
         "/tests/test_incident.c",
         "/tests/test_i18n.c",
@@ -56,7 +51,8 @@ int main(object me, string verb, string arg) {
         "/tests/test_canon_world.c",
         "/tests/test_reveal_validation.c",
         "/tests/test_log_file.c",
-        "/tests/test_look_travel_debug.c"
+        "/tests/test_look_travel_debug.c",
+        "/tests/test_world_events.c"
     });
 
     int total = 0;

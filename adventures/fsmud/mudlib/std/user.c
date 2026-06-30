@@ -6,18 +6,14 @@
 #include "/include/formosa.h"
 
 inherit "/std/living.c";
-inherit "/std/combat.c";
 
 // ── 屬性宣告 ────────────────────────────────────────────
 string id, password, role;
 string full_id;  // Fantasy Space 全域識別字：username@mudlib_id，例如 wade@fantasy.space
 string nature;
-string guild; // 🚀 新增：職業/公會
-string guild_rank; // 🚀 新增：公會職位
 string lang; // 🚀 新增：語系設定
 string in_edit; // 🚀 新增：Web IDE 正在編輯的檔案路徑
 string cwd;     // 🚀 新增：當前工作目錄 (CWD)
-int    guild_exp;  // 🚀 新增：公會貢獻/經驗
 int    bank_balance; // 🚀 新增：銀行存款
 int    last_bank_time; // 🚀 新增：上次計算利息時間
 string *write_paths;
@@ -420,7 +416,12 @@ void setup() {
         move_to_start();
     }
 
-    call_other(load_object("/cmds/player/cmd_help.c"), "do_help_list", this_object(), "");
+    object help_ob = find_object("/cmds/player/cmd_help.c");
+    if (!help_ob) catch(help_ob = load_object("/cmds/player/cmd_help.c"));
+    if (!help_ob) catch(help_ob = load_object("/cmds/cmd_help.c"));
+    if (help_ob) {
+        call_other(help_ob, "do_help_list", this_object(), "");
+    }
 
     mapping socials = load_object("/daemon/social_d.c")->get_ui_list();
     write(sprintf("{\"ui\": \"socials\", \"title\": \"%s\", \"data\": %s}", 
@@ -529,14 +530,8 @@ void remote_look() {
     }
 }
 
-void set_guild(string g) { guild = g; }
-string query_guild() { return guild; }
-void set_guild_rank(string r) { guild_rank = r; }
-string query_guild_rank() { return guild_rank; }
 void set_lang(string l) { lang = l; }
 string query_lang() { return lang; }
-void add_guild_exp(int v) { guild_exp += v; }
-int query_guild_exp() { return guild_exp; }
 
 // ── 銀行系統介面 ─────────────────────────────────────────────
 int query_bank_balance() { return bank_balance; }
@@ -575,11 +570,7 @@ void update_quest_progress(string qid, string key, mixed val) {
 }
 mapping query_quest(string qid) { return quests[qid]; }
 
-// ── 寵物與坐騎介面 ─────────────────────────────────────────────
-object query_pet() { return active_pet; }
-void   set_pet(object ob) { active_pet = ob; }
-int    query_riding() { return is_riding; }
-void   set_riding(int v) { is_riding = v; }
+
 
 // ── 地圖探索介面 ─────────────────────────────────────────────
 mapping query_explored_rooms() { return explored_rooms; }
@@ -603,9 +594,6 @@ void remove_write_path(string p) {
 int heart_beat_count = 0;
 void heart_beat() {
     if (is_dead) return;
-    
-    // 執行戰鬥回合
-    combat_heart_beat();
 
     // 🚀 每 5 秒發送一次狀態資訊給前端 UI (減少洗頻)
     heart_beat_count++;

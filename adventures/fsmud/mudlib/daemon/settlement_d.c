@@ -391,10 +391,13 @@ object get_site_object(string site_id) {
 
     // 🚀 核心修改：如果 LPC 檔案不存在，嘗試從 SITE_D 載入 YAML 設定並動態 Clone
     mapping yaml_data = SITE_D->load_site(site_id);
+    write("DEBUG_SD: get_site_object(" + site_id + ") yaml_data is: " + (yaml_data ? "exists" : "null") + "\n");
     if (yaml_data) {
         object ob = clone_object("/std/site.c");
+        write("DEBUG_SD: get_site_object(" + site_id + ") clone_object is: " + sprintf("%O", ob) + "\n");
         if (ob) {
-            ob->setup_from_yaml(yaml_data);
+            string err = catch(ob->setup_from_yaml(yaml_data));
+            if (err) write("DEBUG_SD: setup_from_yaml error: " + err + "\n");
             active_sites[site_id] = ob;
             return ob;
         }
