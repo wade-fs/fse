@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "convection_currents"
+name: "熱對流引導"
+description: "你理解了空氣的熱對流規律。透過觀察煙霧偏折，你能找到富氧的對流氣流並引導至呼吸區。"
+category: "survival"
+level: 1

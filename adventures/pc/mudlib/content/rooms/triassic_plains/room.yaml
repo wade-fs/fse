@@ -2,7 +2,8 @@ short: "三疊紀荒原"
 long: "你置身在一片詭異而炎熱的史前荒原。\n天空是橘紅色的，空氣中瀰漫著硫磺的氣味。\n腳下是紅棕色的砂岩地，偶有低矮的蕨類植物在石縫間掙扎求存。\n遠方可以看見巨大的蕨類森林輪廓。\n這裡處於下風處，細心感知周圍的訊息，否則你將寸步難行。"
 presence: []
 
-exits: {}
+exits:
+  canyon: "/rooms/wind_canyon/room"
 
 reveal_exits:
   forest:

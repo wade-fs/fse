@@ -1,0 +1,58 @@
+short: "風切大峽谷"
+long: "你來到了一處無比陡峭的風切大峽谷中。\n兩側的峭壁如刀削般直插雲霄，形成了一個天然的風洞。\n狂暴的烈風在峽谷中呼嘯，將砂石與枯葉吹得滿天飛舞，打在臉上隱隱作痛。\n大風堵住了前進的方向，你必須頂風前行。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 2.0
+  hunger_decay: 1.2
+
+exits:
+  back: "/rooms/triassic_plains/room"
+
+reveal_exits:
+  forward:
+    dest: "/rooms/lava_tube/room"
+    requires_factor: "convection_currents"
+    reveal_msg: "在成功掌握氣流對流規律後，你頂著狂風，找到了通往裂谷深處火山管線的「前進通道 (forward)」！"
+
+sensory_signals:
+  smell: "狂風帶來了地底火山管線逸出的濃烈硫磺味，嗆得你直咳嗽。"
+  sound: "刺耳的風聲在耳邊咆哮，如同一頭史前巨獸在對你怒吼。"
+  wind: "猛烈的西北風迎面吹來，夾雜著大量細小的岩屑。風向似乎是從谷底深處對流吹上來的。"
+  ground:
+    default_msg: "鋪滿碎石的峽谷地面。在兩側的岩縫間，散落著一些在狂風中發出微弱折射光的片狀岩石。"
+    discovery:
+      requires_no_factor: "polarization_navigation"
+      set_temp: "found_mica"
+      msg: "【 🔍 發現 】在峭壁的一處避風岩縫中，你看到夾著幾片透明、層狀且質地輕薄的「偏振雲母石片 (mica)」。\n這些石片在日光下能折射出奇特的光澤，你可以嘗試將它們撿起來 (pickup mica / take mica)。"
+
+interactions:
+  - action: "pickup"
+    target:
+      - "mica"
+      - "stone"
+    prerequisites:
+      temp_state: "found_mica"
+    success_msg: "你小心翼翼地伸手進入岩縫，拔出了一片半透明的偏振雲母石片。\n這片石片折射出奇異的偏振偏光。它或許能在視線模糊的極端環境中，為你指引正確的方向。"
+    give_item:
+      id: "mica"
+      name: "偏振雲母石片"
+      desc: "一片自然形成的透明雲母石片。其晶體結構具有天然的偏光性質，若透過它觀測天空，能辨識出陽光的偏振條紋。"
+      durability: 10
+    repeat_msg: "岩縫裡只剩下一堆無用的碎石，那片獨特的雲母石片已經在你的背包中了。"
+    fatigue: 2
+
+  - action: "take"
+    target:
+      - "mica"
+      - "stone"
+    prerequisites:
+      temp_state: "found_mica"
+    success_msg: "你小心翼翼地伸手進入岩縫，拔出了一片半透明的偏振雲母石片。\n這片石片折射出奇異的偏振偏光。它或許能在視線模糊的極端環境中，為你指引正確的方向。"
+    give_item:
+      id: "mica"
+      name: "偏振雲母石片"
+      desc: "一片自然形成的透明雲母石片。其晶體結構具有天然的偏光性質，若透過它觀測天空，能辨識出陽光的偏振條紋。"
+      durability: 10
+    repeat_msg: "岩縫裡只剩下一堆無用的碎石，那片獨特的雲母石片已經在你的背包中了。"
+    fatigue: 2

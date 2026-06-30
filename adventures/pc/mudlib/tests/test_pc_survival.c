@@ -298,13 +298,96 @@ int run_all_tests() {
         return 1;
     }
     
-    // 領悟後進度檢查，晉升至 jurassic_arrival
+    // 領悟後進度檢查，晉升至 convection_navigation
     pm->check_player_stage_advancement(player, "main");
-    if (pm->query_current_stage(player, "main") != "jurassic_arrival") {
-        write(HIR "❌ 測試 13 失敗: 領悟震動翻譯後未晉升至 jurassic_arrival 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+    if (pm->query_current_stage(player, "main") != "convection_navigation") {
+        write(HIR "❌ 測試 13 失敗: 領悟震動翻譯後未晉升至 convection_navigation 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
         return 1;
     }
-    write(HIG "  ✓ 通過: 成功獵捕巨蜈蚣、食熟肉，並前往河床觀察地鳴震動，順利解鎖震動翻譯並晉級侏羅紀階段。\n" NOR);
+    write(HIG "  ✓ 通過: 成功獵捕巨蜈蚣、食熟肉，並前往河床觀察地鳴震動，順利解鎖震動翻譯並晉級大氣與對流考驗階段。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 13-2：驗證 convection_navigation 階段（火山熔岩對流與沙塵暴偏振定位）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 13-2] 測試 convection_navigation 階段 (wind_canyon / lava_tube / alkali_flats)...\n" NOR);
+    
+    // 1. 大峽谷拾取雲母
+    object canyon_room = load_object("/rooms/wind_canyon/room");
+    move_object(player, canyon_room);
+    canyon_room->enter(player);
+    
+    player->force_me("focus ground");
+    player->force_me("pickup mica");
+    
+    // 檢查是否獲得 mica 道具
+    object *inv = all_inventory(player);
+    int has_mica = 0;
+    foreach (object ob in inv) {
+        if (ob->query_item_id() == "mica") {
+            has_mica = 1;
+            break;
+        }
+    }
+    if (!has_mica) {
+        write(HIR "❌ 測試 13-2 失敗: 拾取雲母石片後背包內未找到 mica 道具！\n" NOR);
+        return 1;
+    }
+
+    // 2. 火山熔岩管熱對流觀測與引導
+    object tube_room = load_object("/rooms/lava_tube/room");
+    move_object(player, tube_room);
+    tube_room->enter(player);
+    
+    // 原地等待或奔跑應該被扣 HP 導致死亡並送回起點（驗證失敗是信息）
+    player->force_me("run");
+    string env_name = environment(player) ? base_name(environment(player)) : "none";
+    if (strsrch(env_name, "wind_canyon") == -1) {
+        write(HIR "❌ 測試 13-2 失敗: 熔岩管缺氧奔跑未觸發致死與起點 (wind_canyon) 轉移！實際位置: " + env_name + "\n" NOR);
+        return 1;
+    }
+    
+    // 重新走回熔岩管，進行對流觀測測試
+    move_object(player, tube_room);
+    tube_room->enter(player);
+    
+    // 利用火種觀測對流
+    player->force_me("focus wind");
+    player->force_me("harness convection");
+    
+    if (!player->has_factor("convection_currents")) {
+        write(HIR "❌ 測試 13-2 失敗: harness convection 後未能領悟 convection_currents！\n" NOR);
+        return 1;
+    }
+
+    // 3. 鹽鹼荒灘沙塵暴偏振導航定位
+    object flats_room = load_object("/rooms/alkali_flats/room");
+    move_object(player, flats_room);
+    flats_room->enter(player);
+    
+    // 直接亂走應該迷失並扣 HP
+    player->set_hp(100);
+    old_hp = player->query_hp();
+    player->force_me("go north");
+    if (player->query_hp() >= old_hp) {
+        write(HIR "❌ 測試 13-2 失敗: 沙塵暴盲目探索未受迷失方向與割傷懲罰！\n" NOR);
+        return 1;
+    }
+    player->set_hp(100);
+    
+    // 使用雲母觀測偏振光
+    player->force_me("look clouds through mica");
+    if (!player->has_factor("polarization_navigation")) {
+        write(HIR "❌ 測試 13-2 失敗: 觀測偏振後未能領悟 polarization_navigation！\n" NOR);
+        return 1;
+    }
+    
+    // 觸發進度檢驗，晉升至 jurassic_arrival
+    pm->check_player_stage_advancement(player, "main");
+    if (pm->query_current_stage(player, "main") != "jurassic_arrival") {
+        write(HIR "❌ 測試 13-2 失敗: 領悟偏振導航與熱對流後未晉升至 jurassic_arrival 階段！目前: " + pm->query_current_stage(player, "main") + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功在大峽谷取得雲母、熔岩管導引對流、鹽鹼荒灘辨識偏振，晉級侏羅紀降臨階段。\n" NOR);
 
     // ----------------------------------------------------
     // 🧪 測試 14：驗證 jurassic_arrival 階段（製作抓鉤並爬樹）

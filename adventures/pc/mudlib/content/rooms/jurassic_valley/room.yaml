@@ -5,6 +5,7 @@ exits:
   back: "/rooms/dark_cave/room"
   quarry: "/rooms/obsidian_quarry/room"
   trail: "/rooms/migration_trail/room"
+  flats: "/rooms/alkali_flats/room"
 
 reveal_exits:
   up:

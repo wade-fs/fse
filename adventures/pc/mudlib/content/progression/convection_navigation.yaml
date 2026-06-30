@@ -1,0 +1,10 @@
+version: "1.0"
+stage_id: "convection_navigation"
+name: "大氣與對流考驗"
+description: "你將面對缺氧火山熔岩管的窒息威脅，以及鹽鹼荒灘上的漫天沙塵暴。觀測空氣熱對流，並利用雲母石片進行偏振光導航定位，穿透史前暴風！"
+spawn_node: "/rooms/wind_canyon/room"
+requires:
+  factors:
+    - "convection_currents"
+    - "polarization_navigation"
+next: "jurassic_arrival"

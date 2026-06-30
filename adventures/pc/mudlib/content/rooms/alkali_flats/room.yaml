@@ -1,0 +1,61 @@
+short: "鹽鹼荒灘"
+long: "你置身於一片極度荒涼的白色鹽鹼荒灘上。\n狂烈而致命的沙塵暴正在這裡肆虐，漫天黃沙漫捲，能見度降低到了極點。\n四周沒有任何地標或參照物，呼嘯的風砂打在裸露的皮膚上，帶來刀割般的灼痛。\n如果不辨明方向盲目亂走，你將永遠困死在這片風暴肆虐的死亡之海。"
+presence: []
+
+environmental_multipliers:
+  thirst_decay: 3.5
+  hunger_decay: 1.5
+
+exits:
+  back: "/rooms/lava_tube/room"
+
+reveal_exits:
+  valley:
+    dest: "/rooms/jurassic_valley/room"
+    requires_factor: "polarization_navigation"
+    reveal_msg: "透過雲母石片觀測到精確的南北磁極後，你終於穿透了漫天風沙，隱約看到了通往「侏羅紀谷地 (valley)」的安全出口！"
+
+sensory_signals:
+  smell: "空氣中充滿了嗆人的乾燥鹽鹼粉塵，吸入肺部帶有火辣辣的刺痛感。"
+  sound: "黃沙漫天的沙沙聲與狂風的咆哮聲充斥著整個世界，使你的耳膜隱隱作痛。"
+  wind: "猛烈的狂風捲著黃沙從四面八方席捲而來，根本分不清風的方向。"
+  ground: "厚厚的白色鹽鹼外殼在烈日與風沙下不斷剝落，地表在高溫下崩裂開來。"
+
+interactions:
+  # 偏振光導航觀測
+  - action: "look"
+    target:
+      - "clouds through mica"
+      - "sky through mica"
+      - "sun through mica"
+    prerequisites:
+      item: "mica"
+    discover_factor: "polarization_navigation"
+    complete_quest: "navigate_storm"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】偏振光偏光條紋與磁極定位！\n==================================================\n你將背包中的偏振雲母石片舉到眼前，透過它望向被沙塵遮蔽、原本均勻刺眼的天空。\n在雲母石片的晶體結構濾光下，天空的黃沙殘影退去，空氣中隱約浮現出了交錯、深淺分明的偏振光條紋！\n你根據太陽光大氣偏振規律，精確地校對出了南北磁極的方向。你領悟了『偏振導航 (polarization_navigation)』！"
+    repeat_msg: "你透過雲母石片確認了南北磁極方向，南北軸線已在心中校對完成。"
+    fatigue: 5
+
+  # 如果直接亂走，會迷失方向
+  - action: "go"
+    target:
+      - "north"
+      - "south"
+      - "east"
+      - "west"
+      - "forward"
+      - "left"
+      - "right"
+    success_msg: "你試圖在漫天黃沙中憑直覺前行。但沒有任何地標，你在強烈的沙塵暴中打轉，最終精疲力竭地走回了原地，身上被岩屑劃出無數血痕..."
+    hp_change: -10
+    fatigue: 15
+
+  # 也支援 focus 或 look sky 直接看天，此時會給予困惑提示
+  - action: "look"
+    target:
+      - "sky"
+      - "clouds"
+      - "sun"
+    success_msg: "【 🌀 產生困惑 】你抬頭望向天空。只有刺眼而渾濁的黃砂，漫天沙塵遮蔽了太陽與雲朵，你根本無法分辨哪裡是東南西北。\n💡 難道沒有辦法過濾掉這些沙塵的干擾嗎？你需要一種類似「透鏡」或「偏光晶體」的石片..."
+    trigger_confusion: "lost_in_sandstorm"
+    fatigue: 5

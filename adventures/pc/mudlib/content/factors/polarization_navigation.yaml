@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "polarization_navigation"
+name: "偏振導航"
+description: "你學會了透過偏振雲母石片片觀測天空，過濾沙塵暴干擾以判定天體光偏振條紋並校對磁極方向。"
+category: "survival"
+level: 1

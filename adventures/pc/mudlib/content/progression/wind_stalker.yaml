@@ -6,4 +6,4 @@ spawn_node: "/rooms/predator_canyon/room"
 requires:
   factors:
     - "vibration_translation"
-next: "jurassic_arrival"
+next: "convection_navigation"
