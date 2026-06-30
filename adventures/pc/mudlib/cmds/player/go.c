@@ -25,6 +25,13 @@ void main(object me, string arg) {
 
     mapping exits = room->query_exits(me);
     if (!exits || undefinedp(exits[arg])) {
+        // 🌟 FSE 萬用互動處理：查無出口時，先詢問房間是否特別處理了該方向的 go 動作
+        if (function_exists("resolve_interaction", room)) {
+            if (room->resolve_interaction(me, "go", arg)) {
+                return;
+            }
+        }
+
         tell_object(me, YEL + "「" + arg + "」方向沒有出路。\n" + NOR);
 
         // 若玩家知道有出口但還沒解鎖，給一點方向感
