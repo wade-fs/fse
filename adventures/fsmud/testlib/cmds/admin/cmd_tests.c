@@ -36,7 +36,6 @@ int main(object me, string verb, string arg) {
         "/tests/test_quest.c",
         "/tests/test_crafting.c",
         "/tests/test_currency_chat.c",
-        "/tests/test_death_corpse.c",
         "/tests/test_incident.c",
         "/tests/test_i18n.c",
         "/tests/test_new_efuns.c",

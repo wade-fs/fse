@@ -31,17 +31,7 @@ int     mp;
 int     attack;     // 攻擊力
 int     defence;    // 防禦力
 
-// ── 裝備欄位 ─────────────────────────────────────────────
-object  equip_weapon;
-object  equip_head;
-object  equip_body;
-object  equip_hands;
-object  equip_feet;
-object  equip_shield;
-
 // ── 狀態旗標 ─────────────────────────────────────────────
-int     in_combat;     // 是否正在戰鬥
-object  combat_target; // 當前戰鬥目標
 int     is_dead;
 
 // 🚀 新增：PK 系統
@@ -120,28 +110,6 @@ void recalc_stats() {
     max_mp  = stat_int * 5 + stat_wis * 3 + level * 3;
     attack  = BASE_ATTACK  + stat_str * 2;
     defence = BASE_DEFENCE + stat_con;
-
-    // 🚀 新增：技能加成
-    if (equip_weapon) {
-        string w_type = equip_weapon->query_weapon_type();
-        attack += query_skill(w_type);
-        attack += equip_weapon->query_attack();
-    } else {
-        attack += query_skill("unarmed");
-    }
-
-    // 防禦加成 (閃避與招架)
-    defence += query_skill("dodge") / 2;
-    defence += query_skill("parry") / 2;
-
-    // 套上防具加成
-    int armour_def = 0;
-    if (equip_head)   { armour_def = armour_def + equip_head->query_defence(); }
-    if (equip_body)   { armour_def = armour_def + equip_body->query_defence(); }
-    if (equip_hands)  { armour_def = armour_def + equip_hands->query_defence(); }
-    if (equip_feet)   { armour_def = armour_def + equip_feet->query_defence(); }
-    if (equip_shield) { armour_def = armour_def + equip_shield->query_defence(); }
-    defence = defence + armour_def;
 
     // 確保 HP/MP 不超上限
     if (hp > max_hp) { hp = max_hp; }
@@ -255,44 +223,7 @@ int use_mp(int amount) {
     return 1;
 }
 
-// ── 裝備管理 ───────────────────────────────────────────────
-int equip(object item) {
-    if (!item) { return 0; }
-    string slot = item->query_slot();
 
-    if (slot == SLOT_WEAPON) { equip_weapon = item; }
-    else if (slot == SLOT_HEAD)   { equip_head   = item; }
-    else if (slot == SLOT_BODY)   { equip_body   = item; }
-    else if (slot == SLOT_HANDS)  { equip_hands  = item; }
-    else if (slot == SLOT_FEET)   { equip_feet   = item; }
-    else if (slot == SLOT_SHIELD) { equip_shield = item; }
-    else { return 0; }
-
-    recalc_stats();
-    return 1;
-}
-
-int unequip_slot(string slot) {
-    if (slot == SLOT_WEAPON) { equip_weapon = 0; }
-    else if (slot == SLOT_HEAD)   { equip_head   = 0; }
-    else if (slot == SLOT_BODY)   { equip_body   = 0; }
-    else if (slot == SLOT_HANDS)  { equip_hands  = 0; }
-    else if (slot == SLOT_FEET)   { equip_feet   = 0; }
-    else if (slot == SLOT_SHIELD) { equip_shield = 0; }
-    else { return 0; }
-    recalc_stats();
-    return 1;
-}
-
-object query_equip(string slot) {
-    if (slot == SLOT_WEAPON) { return equip_weapon; }
-    if (slot == SLOT_HEAD)   { return equip_head; }
-    if (slot == SLOT_BODY)   { return equip_body; }
-    if (slot == SLOT_HANDS)  { return equip_hands; }
-    if (slot == SLOT_FEET)   { return equip_feet; }
-    if (slot == SLOT_SHIELD) { return equip_shield; }
-    return 0;
-}
 
 // ── 經驗值與升級 ───────────────────────────────────────────
 void gain_exp(int amount) {

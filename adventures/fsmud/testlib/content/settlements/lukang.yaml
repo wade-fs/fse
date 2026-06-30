@@ -1,0 +1,71 @@
+# /data/yaml/settlements/lukang.yaml
+#
+# 鹿港鎮 靜態設定
+# Canon 參照：docs/locations/lukang.md
+
+id: "lukang"
+canonical_name: "鹿港"
+tier: "town"
+admin_level: "鎮"
+county: "changhua_county"
+
+# 六維初始值
+population: 55
+industry:   60
+culture:    75
+memory:     68
+trade:      65
+cohesion:   72
+
+# 失源者（初始無）
+specters_active: []
+
+# 歷史脈絡
+eras_present:
+  - "qing"
+  - "japanese"
+  - "modern"
+
+names:
+  - era: qing
+    name: "鹿港"
+  - era: japanese
+    name: "鹿港街"
+  - era: modern
+    name: "鹿港鎮"
+
+# 地方產業
+industries:
+  - "木雕"
+  - "香業"
+  - "糕餅"
+  - "傳統工藝"
+
+# 信仰
+temples:
+  - name: "鹿港天后宮"
+    deity: "媽祖"
+  - name: "鹿港龍山寺"
+    deity: "觀世音菩薩"
+
+# 地標（Site id 列表）
+sites:
+  - "lukang_tianhou_temple"
+  - "lukang_longshan_temple"
+  - "lukang_old_street"
+  - "lukang_mazu_folk_arts_museum"
+  - "lukang_banyue_well"
+  - "lukang_woodcarving_workshop"
+  - "lukang_yi_crossing"
+  - "lukang_mojing_alley"
+  - "lukang_shi_feng"
+  - "lukang_incense_garden"
+  - "lukang_pastry_shop"
+  - "lukang_guichao_port"
+
+# 記憶子項目完成度（初始值）
+memory_breakdown:
+  history_events: 0.30   # 歷史事件記錄
+  oral_tradition: 0.35   # 口述傳統
+  named_persons:  0.20   # 人物記憶
+  sites:          0.25   # 地景記憶

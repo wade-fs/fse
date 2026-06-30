@@ -1,0 +1,19 @@
+# /world/map.yaml
+# 世界坐標對應表 (Static World Map coordinates)
+
+# 特定單一坐標對應
+fixed_rooms:
+  "10,0,0": "/area/water/lake_0_0_0.c"
+  "0,0,-1": "/area/cave/cave_0_0_minus1.c"
+  "0,1,-1": "/area/cave/cave_0_1_minus1.c"
+  "0,5,0": "/area/tower/tower_1f.c"
+  "0,5,1": "/area/tower/tower_2f.c"
+
+# 動態範圍規則對應
+range_rooms:
+  - z: 0
+    x_min: 0
+    x_max: 7
+    y_min: 0
+    y_max: 7
+    pattern: "/area/newbie/room_%d_%d.c"

@@ -1,0 +1,12 @@
+id: "v0_1"
+name: "荒蠻紀"
+time_range: "史前～1624"
+description: "這是在荷蘭東印度公司與漢人移民大舉到來之前的島嶼。山林間充滿了原始的生命力，平埔族群與原住民族在各個部落中繁衍，遵循著祖靈與土地的規矩。"
+next_era: "v0_2"
+min_progress: 100
+memory_eras:
+  - "aboriginal"
+forces:
+  - "西拉雅"
+settlement_tier_cap: 4
+announce: "荒蠻紀：山海無聲，島嶼沉睡於古老祖靈的守護之中。"

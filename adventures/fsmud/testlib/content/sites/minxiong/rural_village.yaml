@@ -1,0 +1,14 @@
+id: rural_village
+settlement: minxiong
+canonical_name: 農村聚落
+is_heritage: false
+
+names:
+  - era: modern
+    name: 農村聚落
+
+connections:
+  - school
+  - waterway
+  - fengli_field
+  - sugarcane_field
