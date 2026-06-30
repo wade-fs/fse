@@ -248,7 +248,18 @@ int resolve_interaction(object player, string action, string target) {
     if (!interactions || !arrayp(interactions)) return 0;
 
     foreach (mapping act in interactions) {
-        if (act["action"] == action && act["target"] == target) {
+        int target_matched = 0;
+        mixed t_cfg = act["target"];
+        
+        if (act["action"] == action) {
+            if (stringp(t_cfg) && t_cfg == target) {
+                target_matched = 1;
+            } else if (arrayp(t_cfg) && member_array(target, t_cfg) != -1) {
+                target_matched = 1;
+            }
+        }
+
+        if (target_matched) {
             
             // ── 檢查守衛：防重複 ──
             string success_factor = act["discover_factor"];
@@ -301,6 +312,22 @@ int resolve_interaction(object player, string action, string target) {
 
                 int hp_change = act["hp_change"];
                 if (hp_change) player->add_hp(hp_change);
+
+                // ── 🌟 FSE 宣告式物品生成 ──
+                mapping give_item = act["give_item"];
+                if (give_item) {
+                    object ob = clone_object("/std/item.c");
+                    if (ob) {
+                        ob->set_item_id(give_item["id"] || "item");
+                        ob->set_name(give_item["name"] || "未知物品");
+                        ob->set_long(give_item["desc"] || "無詳細描述。");
+                        if (!undefinedp(give_item["durability"])) {
+                            ob->set_durability(give_item["durability"]);
+                        }
+                        move_object(ob, player);
+                        tell_object(player, HIY + "🎁 你獲得了物品：[" + ob->query_name() + "]，已放入背包(i)。\n" + NOR);
+                    }
+                }
 
             } else {
                 // ── 失敗路徑 ──

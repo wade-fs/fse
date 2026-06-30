@@ -132,6 +132,20 @@ int run_all_tests() {
     }
     write(HIG "  ✓ 通過: 實體互動成功解析，毒水反應與傷害生效。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 10：驗證背包 (inventory) 攜帶物品系統與查詢
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 10] 驗證實體物品攜帶與背包查詢 (i/inventory)...\n" NOR);
+    object *items = all_inventory(player);
+    items = filter(items, (: function_exists("query_item_id", $1) :));
+    if (sizeof(items) < 2) {
+        write(HIR "❌ 測試 10 失敗: 玩家背包中找不到預期生成的火種與黑曜石石刀！\n" NOR);
+        return 1;
+    }
+    // 執行背包列印指令確保無 runtime 錯誤
+    player->force_me("i");
+    write(HIG "  ✓ 通過: 背包物資狀態記錄與動態物品攜帶驗證成功。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +

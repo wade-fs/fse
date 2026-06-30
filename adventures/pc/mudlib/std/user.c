@@ -193,6 +193,7 @@ mixed process_input(string cmd) {
     // 支援常用簡短指令別名映射
     if (verb == "l") verb = "look";
     if (verb == "f") verb = "focus";
+    if (verb == "i") verb = "inventory";
 
     // 史前文明廢除傳統 MUD 戰鬥指令
     if (verb == "kill" || verb == "attack") {
