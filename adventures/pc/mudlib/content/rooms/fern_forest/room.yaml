@@ -14,4 +14,28 @@ sensory_signals:
   smell: "濃厚的腐植土氣味中，隱隱有一絲雨水的清新。"
   sound: "高大的葉片在風中摩擦，發出沙沙的浪潮聲。"
   wind: "森林深處的微風很小，你的氣味暫時不會擴散。"
-  ground: "厚厚的落葉堆，踩上去十分鬆軟，但也可能隱藏著捕食者的陷阱。"
+  
+  # 🌟 宣告式感官發現
+  ground:
+    default_msg: "厚厚的落葉堆，踩上去十分鬆軟，但也可能隱藏著捕食者的陷阱。"
+    discovery:
+      requires_no_factor: "flint_knapping"
+      set_temp: "found_obsidian"
+      msg: "【 🔍 發現 】在鬆軟的落葉堆下，露出了幾塊質地極為堅硬且邊緣銳利的黑曜石 (obsidian)。\n這似乎是打製石器的絕佳材料。你可以嘗試敲擊 (strike) 它們，看看會發生什麼。"
+
+# 🌟 統一物理互動宣告
+interactions:
+  - action: "strike"
+    target: "obsidian obsidian"
+    prerequisites:
+      temp_state: "found_obsidian"
+    discover_factor: "flint_knapping"
+    success_msg: "==================================================\n  🌟【 困惑 ➔ 領悟 (Insight) 】燧石打製與刃口形成！\n==================================================\n你將兩塊黑曜石以大約 45 度的夾角猛烈碰擊。\n隨著清脆的破裂聲，石塊邊緣呈貝殼狀剝落，露出了薄如蟬翼、極為鋒利的邊緣！\n🔪 你獲得了 [ 鋒利的黑曜石片 ]。它可以用來切割堅韌的史前植物藤蔓。"
+    set_temp: "has_sharp_obsidian"
+    repeat_msg: "你嫻熟地調整敲擊角度，輕敲黑曜石，剝落出薄而鋒利的石片。\n🔪 你手中已經擁有極為鋒利的黑曜石工具了。"
+    fatigue: 10
+
+  - action: "strike"
+    target: "obsidian"
+    success_msg: "💡 敲擊黑曜石需要兩塊互相撞擊，試著輸入：strike obsidian obsidian"
+    fatigue: 2

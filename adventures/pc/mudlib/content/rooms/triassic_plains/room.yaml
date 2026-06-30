@@ -17,10 +17,43 @@ sensory_signals:
   smell: "一陣潮濕的風吹來，夾雜著令人作嘔的腥臭味，彷彿是某種腐肉與巨獸口水混合的氣息。"
   sound: "一陣低頻的震動聲從遠處灌木叢傳來，地面沙礫隨之微微抖動。"
   wind: "東南風呼嘯，將你身上的氣味帶往了森林深處。"
-  ground: "紅棕色的乾硬砂岩，留有一排深陷的、呈三趾狀的巨大腳印殘跡。"
+  
+  # 宣告式感官發現
+  ground:
+    default_msg: "紅棕色的乾硬砂岩，留有一排深陷的、呈三趾狀的巨大腳印殘跡。"
+    discovery:
+      requires_no_factor: "thermodynamics"
+      set_temp: "found_roots"
+      msg: "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n這些根部極度乾燥且富含纖維。你可以嘗試將它們與這片荒野隨處可見的松科樹枝 (branches) 劇烈摩擦 (rub) 來產生火花！"
 
-# 🌟 FSE 萬用實體互動宣告
+# 🌟 萬用實體互動宣告
 interactions:
+  - action: "rub"
+    target: "branches roots"
+    prerequisites:
+      temp_state: "found_roots"
+    discover_factor: "thermodynamics"
+    complete_quest: "first_fire"
+    success_msg: "你用乾燥的耐旱蕨類根部作為火絨，將質地堅硬的松科樹枝急速旋轉摩擦。\n一縷青煙冒出，伴隨著微小的火星，火被點燃了！"
+    repeat_msg: "你嫻熟地用耐旱蕨類根部與樹枝摩擦，火苗輕易地跳躍而出。\n🔥 營火已在燃燒中。"
+    fatigue: 10
+    failure_msg: "【 🌀 產生困惑 】你用力拿樹枝去磨擦普通的岩石與濕土，除了一身汗之外，什麼也沒發生。\n大雨將至，寒風吹過，你的體溫正在迅速流失！\n💡 這裡有乾燥的引火介質嗎？也許你應該觀察地面 (focus ground)..."
+    trigger_confusion: "rub_without_kindling"
+    fail_fatigue: 15
+
+  - action: "rub"
+    target: "roots branches" # 支援顛倒的輸入順序
+    prerequisites:
+      temp_state: "found_roots"
+    discover_factor: "thermodynamics"
+    complete_quest: "first_fire"
+    success_msg: "你用乾燥的耐旱蕨類根部作為火絨，將質地堅硬的松科樹枝急速旋轉摩擦。\n一縷青煙冒出，伴隨著微小的火星，火被點燃了！"
+    repeat_msg: "你嫻熟地用耐旱蕨類根部與樹枝摩擦，火苗輕易地跳躍而出。\n🔥 營火已在燃燒中。"
+    fatigue: 10
+    failure_msg: "【 🌀 產生困惑 】你用力拿樹枝去磨擦普通的岩石與濕土，除了一身汗之外，什麼也沒發生。\n大雨將至，寒風吹過，你的體溫正在迅速流失！\n💡 這裡有乾燥的引火介質嗎？也許你應該觀察地面 (focus ground)..."
+    trigger_confusion: "rub_without_kindling"
+    fail_fatigue: 15
+
   - action: "kick"
     target: "rocks"
     prerequisites:

@@ -152,52 +152,72 @@ string query_sensory_signal(object player, string sense) {
         ]);
     }
 
-    string raw_msg = signals[sense];
-    if (!raw_msg) raw_msg = "什麼也沒感知到。";
+    mixed sense_data = signals[sense];
+    if (!sense_data) return HIG + "[ 👁️ 感知 ] " + NOR + "什麼也沒感知到。";
 
-    // 🌟 FSE 精神所在：根據玩家擁有的 Factor 對感官訊號進行「翻譯」或「顯現 (Reveal)」
+    string display_msg;
+    
+    // 如果配置是個結構 (mapping)，說明有宣告式動態發現機制
+    if (mappingp(sense_data)) {
+        display_msg = sense_data["default_msg"] || "周圍沒有什麼特別的。";
+        mapping disc = sense_data["discovery"];
+        if (disc && player) {
+            int can_discover = 1;
+            
+            // 檢查前置攔截：例如 requires_no_factor (尚未掌握該概念時才顯示)
+            string no_factor = disc["requires_no_factor"];
+            if (no_factor && player->has_factor(no_factor)) {
+                can_discover = 0;
+            }
+            
+            // 檢查必要前置因素：requires_factor
+            string req_factor = disc["requires_factor"];
+            if (req_factor && !player->has_factor(req_factor)) {
+                can_discover = 0;
+            }
+
+            if (can_discover) {
+                // 設定暫時標記 (found_roots / found_obsidian 等)
+                string set_temp = disc["set_temp"];
+                if (set_temp) player->set_temp(set_temp, 1);
+                
+                // 附加發現的文字提示
+                string disc_msg = disc["msg"] || "";
+                if (disc_msg != "") {
+                    display_msg += "\n" + YEL + disc_msg + NOR;
+                }
+            }
+        }
+    } else if (stringp(sense_data)) {
+        display_msg = sense_data;
+    }
+
+    // 🌟 原有生態 Factor 動態翻譯 (smell/sound) 保持不變
     if (sense == "smell") {
         if (player->has_factor("predator_scent")) {
-            return HIG + "[ 👃 生態分析 - 氣味 ] " + NOR + raw_msg + "\n" +
+            return HIG + "[ 👃 生態分析 - 氣味 ] " + NOR + display_msg + "\n" +
                    RED + "【 ⚠️ 警告 】這種腥臭味特徵符合中大型捕食者（如原雞龍或初獸），距離你非常近！" + NOR;
         } else {
-            // 觸發 Confusion 標記（因為玩家聞到了但不懂其危險，為之後被襲擊死亡做鋪墊）
             player->player_confused("identify_scent");
-            return HIG + "[ 👃 感知 - 氣味 ] " + NOR + raw_msg + " (你對這種氣味感到些許困惑...)";
+            return HIG + "[ 👃 感知 - 氣味 ] " + NOR + display_msg + " (你對這種氣味感到些許困惑...)";
         }
     }
 
     if (sense == "sound") {
         if (player->has_factor("vibration_translation")) {
-            return HIG + "[ 👂 生態分析 - 聲音 ] " + NOR + raw_msg + "\n" +
+            return HIG + "[ 👂 生態分析 - 聲音 ] " + NOR + display_msg + "\n" +
                    YEL + "【 💡 領悟 】低頻的震動聲頻率規律，代表有一隻恐龍正踏著碎步在附近踱步。" + NOR;
         } else {
-            return HIG + "[ 👂 感知 - 聲音 ] " + NOR + raw_msg;
+            return HIG + "[ 👂 感知 - 聲音 ] " + NOR + display_msg;
         }
     }
 
-    if (sense == "ground") {
-        string bname = base_name(this_object());
-        // 如果是三疊紀荒野且尚未獲得 thermodynamics (鑽木取火) 概念，則引導玩家尋找 root
-        if (strsrch(bname, "triassic_plains") != -1 && !player->has_factor("thermodynamics")) {
-            player->set_temp("found_roots", 1);
-            return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
-                   YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
-                   "這些根部極度乾燥且富含纖維。你可以嘗試將它們與這片荒野隨處可見的松科樹枝 (branches) 劇烈摩擦 (rub) 來產生火花！" + NOR;
-        }
-        
-        // 如果是巨型蕨類森林，專注地面則引導發現黑曜石，提示敲擊 strike 指令的物理機制
-        if (strsrch(bname, "fern_forest") != -1) {
-            player->set_temp("found_obsidian", 1);
-            return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
-                   YEL + "【 🔍 發現 】在鬆軟的落葉堆下，露出了幾塊質地極為堅硬且邊緣銳利的黑曜石 (obsidian)。\n" +
-                   "這似乎是打製石器的絕佳材料。你可以嘗試敲擊 (strike) 它們，看看會發生什麼。" + NOR;
-        }
-
-        return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg;
-    }
-
-    return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
+    // 統一格式化輸出
+    string sense_label = "感知";
+    if (sense == "ground") sense_label = "感知 - 地面";
+    if (sense == "wind") sense_label = "感知 - 風向";
+    
+    return HIG + "[ 👁️ " + sense_label + " ] " + NOR + display_msg;
 }
 
 // 🌟 FSE 核心 Reveal 機制：主動檢索是否有新出口因解鎖 factor 而顯現，並回傳其配置的提示字句
