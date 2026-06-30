@@ -14,8 +14,6 @@ string nature;
 string lang; // 🚀 新增：語系設定
 string in_edit; // 🚀 新增：Web IDE 正在編輯的檔案路徑
 string cwd;     // 🚀 新增：當前工作目錄 (CWD)
-int    bank_balance; // 🚀 新增：銀行存款
-int    last_bank_time; // 🚀 新增：上次計算利息時間
 string *write_paths;
 mapping aliases;
 mapping quests; // 🚀 新增：任務紀錄
@@ -332,7 +330,6 @@ void setup() {
     if (!footprint_atlas) footprint_atlas = ([]);
     if (!unlocked_memories) unlocked_memories = ({});
     if (!aliases) aliases = ([]);
-    if (!last_bank_time) last_bank_time = time();
     if (!encyclopedia) encyclopedia = ([ "memory": ([]), "quest": ([]), "incident": ([]) ]);
     init_aliases();
     set_heart_beat(1);
@@ -533,12 +530,7 @@ void remote_look() {
 void set_lang(string l) { lang = l; }
 string query_lang() { return lang; }
 
-// ── 銀行系統介面 ─────────────────────────────────────────────
-int query_bank_balance() { return bank_balance; }
-void set_bank_balance(int v) { bank_balance = v; }
-void add_bank_balance(int v) { bank_balance += v; if (bank_balance < 0) bank_balance = 0; }
-int query_last_bank_time() { return last_bank_time; }
-void set_last_bank_time(int v) { last_bank_time = v; }
+
 
 void set_nickname(string n) { set_name(n); }
 
