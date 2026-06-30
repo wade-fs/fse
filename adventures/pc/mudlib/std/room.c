@@ -100,12 +100,60 @@ string describe(object looker) {
         result += GRN + "出口：" + NOR + implode(dirs, "  ") + "\n";
     }
 
-    // 在場生物
+    // 在場生物 (僅在擁有基礎觀測或特定生存技能時，顯示生物名字，否則只給予感官提示)
     foreach (object ob in query_occupants()) {
         if (ob == looker) continue;
-        if (function_exists("query_short", ob)) {
-            result += CYN + ob->query_name() + NOR + " 在這裡。\n";
+        if (function_exists("query_name", ob)) {
+            if (looker->has_factor("combat_survival")) {
+                result += CYN + ob->query_name() + NOR + " 在這裡。\n";
+            } else {
+                result += YEL + "某個未知的低矮身影在陰影中移動...\n" + NOR;
+            }
         }
     }
     return result;
 }
+
+// 供 focus 指令調用的感官聚焦系統
+string query_sensory_signal(object player, string sense) {
+    mapping config = query_virtual_config();
+    if (!config) return "周圍一片死寂。";
+
+    // 自 YAML 中獲取定義的感官訊號 (若無，給予預設值)
+    mapping signals = config["sensory_signals"];
+    if (!signals) {
+        signals = ([
+            "smell" : "一陣潮濕的風吹來，夾雜著泥土的氣味。",
+            "sound" : "微弱的蟲鳴與遠方低沉的風聲。",
+            "wind"  : "東南風徐徐吹過，帶著些許熱氣。",
+            "ground": "紅棕色的乾硬砂岩，留有一些破碎的蕨類葉片。"
+        ]);
+    }
+
+    string raw_msg = signals[sense];
+    if (!raw_msg) raw_msg = "什麼也沒感知到。";
+
+    // 🌟 FSE 精神所在：根據玩家擁有的 Factor 對感官訊號進行「翻譯」或「顯現 (Reveal)」
+    if (sense == "smell") {
+        if (player->has_factor("predator_scent")) {
+            return HIG + "[ 👃 生態分析 - 氣味 ] " + NOR + raw_msg + "\n" +
+                   RED + "【 ⚠️ 警告 】這種腥臭味特徵符合中大型捕食者（如原雞龍或初獸），距離你非常近！" + NOR;
+        } else {
+            // 觸發 Confusion 標記（因為玩家聞到了但不懂其危險，為之後被襲擊死亡做鋪墊）
+            player->player_confused("identify_scent");
+            return HIG + "[ 👃 感知 - 氣味 ] " + NOR + raw_msg + " (你對這種氣味感到些許困惑...)";
+        }
+    }
+
+    if (sense == "sound") {
+        if (player->has_factor("vibration_translation")) {
+            return HIG + "[ 👂 生態分析 - 聲音 ] " + NOR + raw_msg + "\n" +
+                   YEL + "【 💡 領悟 】低頻的震動聲頻率規律，代表有一隻恐龍正踏著碎步在附近踱步。" + NOR;
+        } else {
+            return HIG + "[ 👂 感知 - 聲音 ] " + NOR + raw_msg;
+        }
+    }
+
+    return HIG + "[ 👁️ 感知 ] " + NOR + raw_msg;
+}
+

@@ -1,26 +1,23 @@
 // /std/user.c  (史前文明 PC)
-// 玩家載體：繼承 living，加入登入、經驗值、升級、存檔、指令分派
+// 玩家載體：移除 RPG 等級，加入 FSE 狀態與感官感知
 #include "/include/ansi.h"
 inherit "/std/living";
 
 private string id;
 private string password_hash;
-private int exp;              // 當前經驗值
-private int exp_to_next;      // 升下一級所需經驗值
+private int fatigue;          // 疲勞值 (Entropy 的一部分)
 private mapping progression;  // 進度 (同步給 progress_manager)
 private mapping factors;      // 已解鎖因素 (供 factor_service 讀寫)
 
 void create() {
     ::create();
-    set_name("冒險者");
-    set_max_hp(50);
-    set_attack(5);
-    set_defense(2);
-    set_level(0);   // 初始 Level 0，打過一隻後升到 1
+    set_name("穿越者");
+    set_max_hp(100);
+    set_hp(100);
+    set_level(1);
     id           = "";
     password_hash = "";
-    exp          = 0;
-    exp_to_next  = 20;
+    fatigue      = 0;
     progression  = ([]);
     factors      = ([]);
 }
@@ -58,63 +55,44 @@ void discover_factor(string fid, mapping metadata) {
     save_state();
 }
 
-// --- 經驗值與升級 ---
-varargs void gain_exp(int amount, object from_monster) {
-    exp += amount;
-    string from_name = from_monster ? from_monster->query_name() : "未知";
-    tell_object(this_object(), sprintf(
-        HIG + "✦ 你獲得了 %d 點經驗值（來自 %s）。" + NOR +
-        " 當前經驗：%d / %d\n", amount, from_name, exp, exp_to_next));
-
-    // 使用 progress_manager 完成挑戰並檢查升階，同時解鎖生存因素
-    object pm = load_object("/runtime/services/progress_manager.c");
-    object factor_svc = load_object("/runtime/services/factor_service.c");
-    
-    if (pm) {
-        // 升到1級需完成 "first_kill" 任務
-        if (query_level() < 1 && from_monster) {
-            pm->complete_player_quest(this_object(), "first_kill", "main");
-            
-            // 解鎖 PC 專屬的戰鬥生存因素
-            if (factor_svc) {
-                factor_svc->discover_factor(this_object(), "combat_survival");
-            }
-        }
+// 疲勞與 Entropy 控制
+int query_fatigue() { return fatigue; }
+void add_fatigue(int val) { 
+    fatigue += val; 
+    if (fatigue < 0) fatigue = 0;
+    if (fatigue > 100) {
+        tell_object(this_object(), RED + "⚠️ 你感到極度疲憊，精神恍惚...\n" + NOR);
     }
-
-    // 簡單 EXP 升級
-    while (exp >= exp_to_next) {
-        exp -= exp_to_next;
-        int new_level = query_level() + 1;
-        set_level(new_level);
-        exp_to_next = exp_to_next * 2;  // 每級翻倍
-        int new_max_hp = query_max_hp() + 10;
-        set_max_hp(new_max_hp);
-        set_hp(new_max_hp);  // 升級時補滿 HP
-        set_attack(query_attack() + 2);
-        set_defense(query_defense() + 1);
-        tell_object(this_object(), sprintf(
-            HIG + BOLD_YEL + "\n★ 恭喜！你升到了第 %d 級！\n" + NOR +
-            "  HP: %d  攻擊: %d  防禦: %d\n\n",
-            new_level, new_max_hp, query_attack(), query_defense()));
-    }
-    save_state();
 }
 
 // 玩家死亡
-void on_death(object killer) {
+void on_death(string reason) {
     stop_combat();
     tell_object(this_object(), RED +
-        "\n你被 " + (killer ? killer->query_name() : "未知") +
-        " 殺死了！\n回到起點重新來過...\n" + NOR);
-    // 復活：回到起點，HP 恢復一半
-    set_hp(query_max_hp() / 2);
+        "\n【 💀 死亡 】" + reason + "\n回到起點重新探索...\n" + NOR);
+    
+    // 扣減狀態，並標記 Confusion
+    player_confused("death_by_predator");
+    set_hp(query_max_hp());
+    fatigue = 0;
     save_state();
-    // 回到初始房間
+
     object room = load_object("/rooms/triassic_plains.c");
     if (room) {
         move_object(this_object(), room);
-        room->enter(this_object());
+    }
+}
+
+// 標記困惑狀態 (FSE)
+void player_confused(string challenge_id) {
+    set_temp("is_confused", 1);
+    object event_bus = load_object("/runtime/services/event_bus.c");
+    if (event_bus) {
+        event_bus->publish("PlayerConfused", ([
+            "player": this_object(),
+            "challenge_id": challenge_id,
+            "node_id": environment(this_object()) ? environment(this_object())->query_short() : "triassic"
+        ]));
     }
 }
 
@@ -124,8 +102,11 @@ void check_password(string pwd);
 void new_password(string pwd);
 
 void logon() {
-    write("歡迎來到【史前文明】三疊紀求生冒險！\n");
-    write("請輸入帳號: ");
+    write("==================================================\n");
+    write("          歡迎來到 FSE【史前文明】生態求生！\n");
+    write("     這不是一個打怪升級的遊戲。請注意感官，學習生存規則。\n");
+    write("==================================================\n");
+    write("請輸入玩家代號: ");
     input_to("get_account");
 }
 
@@ -138,7 +119,7 @@ void get_account(string acc) {
         write("請輸入密碼: ");
         input_to("check_password");
     } else {
-        write("新帳號，請設定密碼: ");
+        write("新探索者，請設定密碼: ");
         input_to("new_password");
     }
 }
@@ -151,7 +132,7 @@ void check_password(string pwd) {
         return;
     }
     set_living_name(get_id());
-    write(HIG + "登入成功！歡迎回來，" + get_id() + "！\n" + NOR);
+    write(HIG + "登入成功！世界已載入。\n" + NOR);
     _enter_world();
 }
 
@@ -162,26 +143,26 @@ void new_password(string pwd) {
     save_state();
     set_living_name(get_id());
 
-    // 新玩家：由 progress_manager 設定初始 stage
     object pm = load_object("/runtime/services/progress_manager.c");
     if (pm) pm->set_initial_stage(this_object(), "novice", "main");
 
-    write(HIG + "註冊成功！歡迎加入，" + get_id() + "！\n" + NOR);
+    write(HIG + "註冊成功！世界已載入。\n" + NOR);
     _enter_world();
 }
 
-// 進入世界
 void _enter_world() {
     object room = load_object("/rooms/triassic_plains.c");
     if (room) {
         move_object(this_object(), room);
         room->enter(this_object());
-        tell_object(this_object(), room->describe(this_object()));
+        // 初始提示
+        tell_object(this_object(), YEL + "\n💡 你在一片炎熱的荒原甦醒。在這裡，直接觀察 (look) 或許不是最好的主意。\n" +
+            "你可以集中注意力去感知環境: focus [smell/sound/wind/ground]\n" + NOR);
     }
 }
 
 // --- 指令分派 ---
-string query_role()          { return "god"; }
+string query_role()          { return "player"; }
 string *query_write_paths()  { return ({ "/" }); }
 
 mixed process_input(string cmd) {
@@ -194,13 +175,20 @@ mixed process_input(string cmd) {
         arg  = "";
     }
 
+    // 史前文明廢除傳統 MUD 戰鬥指令
+    if (verb == "kill" || verb == "attack") {
+        write("在史前文明，赤手空拳去攻擊恐龍無異於自殺。\n");
+        return 1;
+    }
+
     object cmd_ob = load_object("/cmds/" + verb + ".c");
     if (cmd_ob) {
         cmd_ob->main(this_object(), arg);
         return 1;
     }
-    write("什麼？(" + verb + ")\n");
+    write("你感到迷茫，不知道如何做出這個動作。(" + verb + ")\n");
     return 0;
 }
 
 int force_me(string cmd) { return process_input(cmd); }
+
