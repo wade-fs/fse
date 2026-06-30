@@ -18,7 +18,7 @@ difficulty:
             damage_multiplier: 1
             decay_multiplier: 1
             fatigue_multiplier: 1
-initial_stage: day_zero
+initial_stage: novice
 name: Prehistoric Civilization
 requires_runtime: '>=1.0'
 version: "0.1"
