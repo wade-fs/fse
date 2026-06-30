@@ -50,17 +50,25 @@ void create() {
                 progress_svc->register_progression_path(content_paths["progression"]);
                 progress_svc->set_default_initial_stage(0, init_stage, "main");
             }
+            // 4. 註冊宣告式虛擬物件規則
+            if (manifest["virtual_rules"]) {
+                object virtual_core = load_object("/runtime/core/virtual.c");
+                if (virtual_core) {
+                    foreach (string prefix, string std_file in manifest["virtual_rules"]) {
+                        virtual_core->register_virtual_rule(prefix, std_file);
+                    }
+                }
+            }
             write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
         }
     } else {
         write("  [master] 警告：找不到 /manifest.yaml 檔案，請檢查配置。\n");
-    }
-
-    // 註冊虛擬物件規則
-    object virtual_core = load_object("/runtime/core/virtual.c");
-    if (virtual_core) {
-        virtual_core->register_virtual_rule("rooms", "/std/room.c");
-        virtual_core->register_virtual_rule("monsters", "/std/monster.c");
+        // 警告後降級為預設硬編碼註冊
+        object virtual_core = load_object("/runtime/core/virtual.c");
+        if (virtual_core) {
+            virtual_core->register_virtual_rule("rooms", "/std/room.c");
+            virtual_core->register_virtual_rule("monsters", "/std/monster.c");
+        }
     }
 
     // 測試模式

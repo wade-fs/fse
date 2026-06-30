@@ -327,6 +327,16 @@ int resolve_interaction(object player, string action, string target) {
                     }
                 }
 
+                int hunger_change = act["hunger_change"];
+                if (hunger_change && function_exists("add_hunger", player)) {
+                    player->add_hunger(hunger_change);
+                }
+
+                int thirst_change = act["thirst_change"];
+                if (thirst_change && function_exists("add_thirst", player)) {
+                    player->add_thirst(thirst_change);
+                }
+
                 // ── 🌟 FSE 宣告式物品生成 ──
                 mapping give_item = act["give_item"];
                 if (give_item) {

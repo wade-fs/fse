@@ -10,6 +10,9 @@ void main(object me, string arg) {
     int max_hp = me->query_max_hp();
     int fatigue = me->query_fatigue();
 
+    int hunger = me->query_hunger();
+    int thirst = me->query_thirst();
+
     // HP 顏色
     string hp_color = GRN;
     if (hp * 100 / max_hp < 30) hp_color = RED;
@@ -20,6 +23,15 @@ void main(object me, string arg) {
     if (fatigue > 80) fat_color = RED;
     else if (fatigue > 50) fat_color = YEL;
 
+    // Hunger & Thirst 顏色
+    string hunger_color = GRN;
+    if (hunger > 80) hunger_color = RED;
+    else if (hunger > 50) hunger_color = YEL;
+
+    string thirst_color = GRN;
+    if (thirst > 80) thirst_color = RED;
+    else if (thirst > 50) thirst_color = YEL;
+
     tell_object(me,
         HIG + "╔══════════════════════════════╗\n" + NOR +
         HIG + "║      史前文明 — 求生狀態      ║\n" + NOR +
@@ -27,6 +39,8 @@ void main(object me, string arg) {
         sprintf(HIG + "║" + NOR + " 代號  ：%-22s " + HIG + "║\n" + NOR, me->query_id()) +
         sprintf(HIG + "║" + NOR + " 生命值：" + hp_color + "%d/%d" + NOR + "%-20s" + HIG + "║\n" + NOR, hp, max_hp, "") +
         sprintf(HIG + "║" + NOR + " 疲勞值：" + fat_color + "%d / 100" + NOR + "%-17s" + HIG + "║\n" + NOR, fatigue, "") +
+        sprintf(HIG + "║" + NOR + " 飢餓度：" + hunger_color + "%d / 100" + NOR + "%-17s" + HIG + "║\n" + NOR, hunger, "") +
+        sprintf(HIG + "║" + NOR + " 口渴度：" + thirst_color + "%d / 100" + NOR + "%-17s" + HIG + "║\n" + NOR, thirst, "") +
         HIG + "╚══════════════════════════════╝\n" + NOR
     );
 
@@ -42,21 +56,19 @@ void main(object me, string arg) {
     // 顯示已解鎖的 FSE 生存因素
     object factor_svc = load_object("/runtime/services/factor_service.c");
     if (factor_svc) {
-        string *factors_list = keys(me->query_progression() ? me->query_progression() : ([])); // FSE factors mapping
-        // 簡易遍歷 factors 列表
         tell_object(me, YEL + "  🔸 領悟因素 (Discoveries)：\n" + NOR);
         int has_any = 0;
-        if (me->has_factor("predator_scent")) {
-            tell_object(me, GRN + "     - 捕食者氣味解讀 (predator_scent)\n" + NOR);
-            has_any = 1;
-        }
-        if (me->has_factor("vibration_translation")) {
-            tell_object(me, GRN + "     - 低頻地表震動翻譯 (vibration_translation)\n" + NOR);
-            has_any = 1;
-        }
-        if (me->has_factor("combat_survival")) {
-            tell_object(me, GRN + "     - 戰鬥生存智慧 (combat_survival)\n" + NOR);
-            has_any = 1;
+        string *all_factors = ({
+            "thermodynamics", "flint_knapping", "stealth_camouflage",
+            "oxygen_scarcity", "heat_regulation", "co2_toxicity", "water_boiling"
+        });
+        foreach (string fid in all_factors) {
+            if (me->has_factor(fid)) {
+                mapping f_data = factor_svc->load_factor_data(fid);
+                string fname = f_data ? f_data["name"] : fid;
+                tell_object(me, GRN + "     - " + fname + " (" + fid + ")\n" + NOR);
+                has_any = 1;
+            }
         }
         if (!has_any) {
             tell_object(me, GRN + "     (尚無任何領悟。試著 focus 不同的感官，或從失敗中摸索)\n" + NOR);

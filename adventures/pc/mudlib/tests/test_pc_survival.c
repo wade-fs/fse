@@ -193,17 +193,46 @@ int run_all_tests() {
     // ----------------------------------------------------
     write(CYN "🧪 [測試 10] 前往史前河床 (go riverbed) 發現水質問題...\n" NOR);
     player->force_me("go riverbed");
+    player->set_thirst(50);
     player->force_me("lick water");
     if (!player->has_factor("water_boiling")) {
         write(HIR "❌ 測試 10 失敗: 嚐水後未獲得 water_boiling factor！\n" NOR);
         return 1;
     }
-    write(HIG "  ✓ 通過: 成功發現水質有毒，解鎖 water_boiling。\n" NOR);
+    if (player->query_thirst() != 40) {
+        write(HIR "❌ 測試 10 失敗: 舔水後口渴度未扣減！目前口渴度: " + player->query_thirst() + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 成功發現水質有毒，解鎖 water_boiling 且降低口渴度。\n" NOR);
 
     // ----------------------------------------------------
-    // 🧪 測試 11：驗證動態難度切換與 Nightmare 傷害加成乘數
+    // 🧪 測試 11：驗證非安全區背景心跳消耗 (飢餓、口渴與發呆扣 HP)
     // ----------------------------------------------------
-    write(CYN "🧪 [測試 11] 測試 Wizard 動態切換難度為 Nightmare 與傷害放大...\n" NOR);
+    write(CYN "🧪 [測試 11] 驗證非安全區背景心跳消耗機制...\n" NOR);
+    // 移至非安全區乾燥峽谷
+    move_object(player, dcanyon);
+    player->set_hunger(99);
+    player->set_thirst(99);
+    player->set_temp("hb_count", 14); // 模擬已累積 14 次心跳
+    player->set_hp(100);
+    
+    // 觸發第 15 次心跳
+    player->heart_beat();
+    
+    if (player->query_hunger() != 100 || player->query_thirst() != 100) {
+        write(HIR "❌ 測試 11 失敗: 心跳消耗未能正確累加！飢餓: " + player->query_hunger() + "，口渴: " + player->query_thirst() + "\n" NOR);
+        return 1;
+    }
+    if (player->query_hp() != 90) {
+        write(HIR "❌ 測試 11 失敗: 極度飢渴狀態下心跳未扣減生命值！目前 HP: " + player->query_hp() + "\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 背景心跳消耗正常累加，且極度飢渴扣 HP 傷害成立。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 12：驗證動態難度切換與 Nightmare 傷害加成乘數
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 12] 測試 Wizard 動態切換難度為 Nightmare 與傷害放大...\n" NOR);
     move_object(player, plains);
     player->set_temp("found_roots", 0); // 確保失敗
     player->force_me("god difficulty nightmare");
@@ -213,7 +242,7 @@ int run_all_tests() {
     int dmg_taken = 100 - player->query_hp();
     // 5 * 2.5 = 12.5，LPC 轉 int 預期為 12 點傷害
     if (dmg_taken != 12) {
-        write(HIR "❌ 測試 11 失敗: 難度加成未生效，預期扣減 12 HP，實際扣減了 " + dmg_taken + " HP！\n" NOR);
+        write(HIR "❌ 測試 12 失敗: 難度加成未生效，預期扣減 12 HP，實際扣減了 " + dmg_taken + " HP！\n" NOR);
         player->force_me("god difficulty normal");
         return 1;
     }

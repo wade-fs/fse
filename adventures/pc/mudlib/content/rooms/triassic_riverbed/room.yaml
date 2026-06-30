@@ -23,6 +23,7 @@ interactions:
     success_msg: "你用舌尖稍微舔了舔帶有藍綠色澤的河水。\n一股辛辣、苦澀且夾雜著腐敗有機物的異味瞬間直衝腦門，你忍不住乾嘔起來！\n💡 警告：這水顯然含有嚴重的毒素，絕不能直接飲用。需要高溫加熱..."
     trigger_confusion: "poisonous_water"
     hp_change: -10
+    thirst_change: -10
     fatigue: 10
     discover_factor: "water_boiling"
     repeat_msg: "你已經知道這水含有劇毒，不能直接飲用。需要生火將其煮沸。"
@@ -32,6 +33,7 @@ interactions:
     success_msg: "你捧起河水喝了一口。\n一股辛辣、苦澀且夾雜著腐敗有機物的異味瞬間直衝腦門，你忍不住乾嘔起來！\n💡 警告：這水顯然含有嚴重的毒素，絕不能直接飲用。需要高溫加熱..."
     trigger_confusion: "poisonous_water"
     hp_change: -15
+    thirst_change: -40
     fatigue: 15
     discover_factor: "water_boiling"
     repeat_msg: "你已經知道這水含有劇毒，不能直接飲用。需要生火將其煮沸。"

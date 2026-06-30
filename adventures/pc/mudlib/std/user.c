@@ -6,6 +6,8 @@ inherit "/std/living";
 private string id;
 private string password_hash;
 private int fatigue;          // 疲勞值 (Entropy 的一部分)
+private int hunger;           // 飢餓度 (0 - 100, 0 = 飽, 100 = 瀕死)
+private int thirst;           // 口渴度 (0 - 100, 0 = 飽, 100 = 瀕死)
 private mapping progression;  // 進度 (同步給 progress_manager)
 private mapping factors;      // 已解鎖因素 (供 factor_service 讀寫)
 
@@ -18,8 +20,11 @@ void create() {
     id           = "";
     password_hash = "";
     fatigue      = 0;
+    hunger       = 0;
+    thirst       = 0;
     progression  = ([]);
     factors      = ([]);
+    set_heart_beat(1); // 啟動心跳機制
 }
 
 // --- 帳號 ---
@@ -78,6 +83,23 @@ void add_fatigue(int val) {
     }
 }
 
+// 飢餓與口渴控制
+int query_hunger() { return hunger; }
+void set_hunger(int val) { hunger = val; if (hunger < 0) hunger = 0; if (hunger > 100) hunger = 100; }
+void add_hunger(int val) {
+    hunger += val;
+    if (hunger < 0) hunger = 0;
+    if (hunger > 100) hunger = 100;
+}
+
+int query_thirst() { return thirst; }
+void set_thirst(int val) { thirst = val; if (thirst < 0) thirst = 0; if (thirst > 100) thirst = 100; }
+void add_thirst(int val) {
+    thirst += val;
+    if (thirst < 0) thirst = 0;
+    if (thirst > 100) thirst = 100;
+}
+
 // 覆寫生命值變更以實作「新手村不致死保護區」
 void add_hp(int val) {
     object room = environment(this_object());
@@ -85,10 +107,10 @@ void add_hp(int val) {
     
     if (room) {
         string rpath = base_name(room);
-        // 新手村 4 個房間：荒原、森林、黑曜石礦脈、捕食者峽谷
+        // 新手村 4 個房間：荒原、森林、黑曜石礦脈 (dark_cave 也包含)、捕食者峽谷
         if (strsrch(rpath, "triassic_plains") != -1 ||
             strsrch(rpath, "fern_forest") != -1 ||
-            strsrch(rpath, "obsidian_quarry") != -1 ||
+            strsrch(rpath, "dark_cave") != -1 ||
             strsrch(rpath, "predator_canyon") != -1) {
             
             if (target_hp <= 0) {
@@ -101,6 +123,47 @@ void add_hp(int val) {
     ::add_hp(val);
 }
 
+// 生存背景消耗心跳循環 (發呆致死機制)
+void heart_beat() {
+    object room = environment(this_object());
+    if (!room) return;
+
+    string rpath = base_name(room);
+    
+    // 如果不在新手保護區內，則啟動飢餓與口渴的流逝
+    if (strsrch(rpath, "triassic_plains") == -1 &&
+        strsrch(rpath, "fern_forest") == -1 &&
+        strsrch(rpath, "dark_cave") == -1 &&
+        strsrch(rpath, "predator_canyon") == -1) {
+        
+        int hb_count = query_temp("hb_count") + 1;
+        set_temp("hb_count", hb_count);
+        
+        // 為了測試與體驗，每 15 個心跳（30秒）增加飢餓與口渴
+        if (hb_count >= 15) {
+            set_temp("hb_count", 0);
+            add_hunger(1);
+            add_thirst(2); // 口渴速度是飢餓的兩倍
+            
+            if (hunger >= 80) {
+                tell_object(this_object(), RED + "⚠️ 你感到極度飢餓，胃部劇烈抽搐...\n" + NOR);
+            }
+            if (thirst >= 80) {
+                tell_object(this_object(), RED + "⚠️ 你喉嚨乾裂得像火燒，極度渴望水分...\n" + NOR);
+            }
+            
+            // 當達到 100 時扣減 HP
+            if (hunger >= 100 || thirst >= 100) {
+                tell_object(this_object(), HIR + "⚠️ 你因為極度飢餓與脫水，體力正在急速流失！\n" + NOR);
+                add_hp(-10); // 每次扣 10 點 HP
+            }
+        }
+    } else {
+        // 在新手保護區內，飢餓度與口渴度不增加
+        set_temp("hb_count", 0);
+    }
+}
+
 // 玩家死亡
 void on_death(string reason) {
     stop_combat();
@@ -111,6 +174,8 @@ void on_death(string reason) {
     player_confused("death_by_predator");
     set_hp(query_max_hp());
     fatigue = 0;
+    hunger = 0;
+    thirst = 0;
     save_state();
 
     string spawn_room = "/rooms/triassic_plains/room";
@@ -247,7 +312,10 @@ mixed process_input(string cmd) {
         return 1;
     }
 
-    string cmd_path = "/cmds/" + verb + ".c";
+    string cmd_path = "/cmds/player/" + verb + ".c";
+    if (file_size(cmd_path) <= 0) {
+        cmd_path = "/cmds/admin/" + verb + ".c";
+    }
     if (file_size(cmd_path) > 0) {
         object cmd_ob = load_object(cmd_path);
         if (cmd_ob) {
