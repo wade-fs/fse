@@ -13,12 +13,12 @@ object compile_virtual_object(string file) {
     if (sscanf(file, "%s.c", file)) {}
     
     string *parts = explode(file, "/");
-    int offset = (sizeof(parts) > 0 && parts[0] == "") ? 1 : 0;
+    if (!parts || sizeof(parts) == 0) return 0;
     
-    if (sizeof(parts) >= (3 + offset)) {
-        string prefix = parts[offset]; 
-        if (virtual_rules[prefix]) {
-            return clone_object(virtual_rules[prefix]);
+    // 遍歷路徑的各個節點，只要匹配 prefix 規則 (例如 rooms, monsters, nodes) 即可
+    foreach (string part in parts) {
+        if (virtual_rules[part]) {
+            return clone_object(virtual_rules[part]);
         }
     }
     return 0;
