@@ -70,8 +70,21 @@ void create() {
 }
 
 void run_test_mode() {
-    write("[TEST] PC 史前文明啟動測試完成，無自動化測試。\n");
-    shutdown(0);
+    write("[TEST] 開始執行史前文明 (PC) 整合測試...\n");
+    object test_suite = load_object("/tests/test_pc_survival.c");
+    if (!test_suite) {
+        write(HIR "❌ 無法載入測試套件 /tests/test_pc_survival.c\n" NOR);
+        shutdown(1);
+        return;
+    }
+    int result = test_suite->run_all_tests();
+    if (result != 0) {
+        write(HIR "❌ 測試失敗！\n" NOR);
+        shutdown(1);
+    } else {
+        write(HIG "🏆 所有測試成功通過！\n" NOR);
+        shutdown(0);
+    }
 }
 
 string get_root_uid()   { return "Root"; }

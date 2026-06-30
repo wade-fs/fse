@@ -17,7 +17,7 @@ void main(object me, string arg) {
     }
 
     // 若目標是一個已知出口方向，引導玩家用 go 前往
-    mapping room_exits = room->query_exits();
+    mapping room_exits = room->query_exits(me);
     if (room_exits && !undefinedp(room_exits[arg])) {
         tell_object(me, GRN + "你注視著「" + arg + "」的方向。\n" + NOR +
             "💡 輸入 [ go " + arg + " ] 前往那個方向。\n");

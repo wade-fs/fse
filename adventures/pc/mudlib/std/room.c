@@ -72,7 +72,26 @@ void spawn_monsters_from_config() {
 void add_exit(string dir, string dest) {
     exits[dir] = dest;
 }
-mapping query_exits() { return exits; }
+
+mapping query_exits(object player) {
+    // 複製基礎出口
+    mapping actual_exits = copy(exits);
+    
+    // 從 YAML 讀取動態 Reveal 出口配置
+    mapping config = query_virtual_config();
+    if (config && player) {
+        mapping reveal_exits = config["reveal_exits"];
+        if (reveal_exits) {
+            foreach (string dir, mapping data in reveal_exits) {
+                string req_factor = data["requires_factor"];
+                if (req_factor && player->has_factor(req_factor)) {
+                    actual_exits[dir] = data["dest"];
+                }
+            }
+        }
+    }
+    return actual_exits;
+}
 
 // 物件進入/離開房間 (由 move_object 底層呼叫，或手動維護)
 void enter(object ob) {
@@ -97,7 +116,8 @@ string describe(object looker) {
     result += long_desc + "\n";
 
     // 出口
-    string *dirs = keys(exits);
+    mapping actual_exits = query_exits(looker);
+    string *dirs = keys(actual_exits);
     if (sizeof(dirs) > 0) {
         result += GRN + "出口：" + NOR + implode(dirs, "  ") + "\n";
     }
@@ -159,7 +179,7 @@ string query_sensory_signal(object player, string sense) {
     if (sense == "ground") {
         string bname = base_name(this_object());
         // 如果是三疊紀荒野且尚未獲得 thermodynamics (鑽木取火) 概念，則引導玩家尋找 root
-        if ((bname == "/rooms/triassic_plains/room" || bname == "/content/rooms/triassic_plains/room") && !player->has_factor("thermodynamics")) {
+        if (strsrch(bname, "triassic_plains") != -1 && !player->has_factor("thermodynamics")) {
             player->set_temp("found_roots", 1);
             return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
                    YEL + "【 🔍 發現 】在那些碎石縫中，你找到了幾株耐旱蕨類植物乾枯的根部 (roots)。\n" +
@@ -167,7 +187,7 @@ string query_sensory_signal(object player, string sense) {
         }
         
         // 如果是巨型蕨類森林，專注地面則引導發現黑曜石，提示敲擊 strike 指令的物理機制
-        if (bname == "/rooms/fern_forest/room" || bname == "/content/rooms/fern_forest/room") {
+        if (strsrch(bname, "fern_forest") != -1) {
             player->set_temp("found_obsidian", 1);
             return HIG + "[ 👁️ 感知 - 地面 ] " + NOR + raw_msg + "\n" +
                    YEL + "【 🔍 發現 】在鬆軟的落葉堆下，露出了幾塊質地極為堅硬且邊緣銳利的黑曜石 (obsidian)。\n" +

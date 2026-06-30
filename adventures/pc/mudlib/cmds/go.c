@@ -14,7 +14,7 @@ void main(object me, string arg) {
 
     arg = trim(lower_case(arg));
     if (!arg || arg == "") {
-        mapping exits = room->query_exits();
+        mapping exits = room->query_exits(me);
         if (!exits || !sizeof(exits)) {
             tell_object(me, "這裡沒有明顯的出口。\n");
         } else {
@@ -23,7 +23,7 @@ void main(object me, string arg) {
         return;
     }
 
-    mapping exits = room->query_exits();
+    mapping exits = room->query_exits(me);
     if (!exits || undefinedp(exits[arg])) {
         tell_object(me, YEL + "「" + arg + "」方向沒有出路。\n" + NOR);
 
