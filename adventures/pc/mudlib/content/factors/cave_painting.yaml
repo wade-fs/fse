@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "cave_painting"
+name: "岩壁壁畫解讀"
+description: "你發現了溶洞深處隱藏的史前壁畫，上面繪製了某種關於風與捕食的抽象符號。"
+category: "survival"
+level: 1

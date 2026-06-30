@@ -24,6 +24,13 @@ void main(object me, string arg) {
         return;
     }
 
+    // 🌟 嘗試交由房間的實體互動來解析 (例如 look painting)
+    if (function_exists("resolve_interaction", room)) {
+        if (room->resolve_interaction(me, "look", arg)) {
+            return;
+        }
+    }
+
     // 只有解鎖了戰鬥生存或基礎觀察，才能看清恐龍細節
     if (!me->has_factor("combat_survival") && !me->has_factor("predator_scent")) {
         tell_object(me, YEL + "在昏暗而陌生的史前光線下，你無法看清「" + arg + "」的細節，貿然直視只會引起危險。\n" +
@@ -41,6 +48,7 @@ void main(object me, string arg) {
             return;
         }
     }
+
     tell_object(me, "你看不到「" + arg + "」。\n");
 }
 

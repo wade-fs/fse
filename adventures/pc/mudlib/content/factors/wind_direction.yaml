@@ -1,0 +1,6 @@
+version: "1.0"
+factor_id: "wind_direction"
+name: "風向與氣味傳播"
+description: "你明白了風向會帶走並擴散你的身體氣味，逆風接近或避開掠食者是隱藏蹤跡的關鍵。"
+category: "survival"
+level: 1

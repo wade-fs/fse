@@ -1,10 +1,9 @@
 version: "1.0"
 stage_id: "novice"
 name: "初來乍到"
-description: "你剛剛落入三疊紀。徒手、無知，必須在這個死亡世界撐過第一關（鑽木取火）。"
-spawn_node: ""
+description: "你剛剛落入三疊紀。徒手、無知，必須在這個新手村學會基礎生存與潛伏技巧，成功穿過峽谷逃生。"
+spawn_node: "/rooms/triassic_plains/room"
 requires:
   quests:
-    - "first_fire"
-next: "survivor"
-
+    - "first_escape"
+next: "day_zero"

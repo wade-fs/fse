@@ -7,18 +7,28 @@ monsters:
 exits:
   back: "/rooms/fern_forest/room"
 
+reveal_exits:
+  desert:
+    dest: "/rooms/desert_canyon/room"
+    requires_factor: "stealth_camouflage"
+    reveal_msg: "避開了掠食者，前方露出了通往未知深處的「荒野峽谷 (desert)」通道！"
+
 sensory_signals:
   smell: "風中傳來極度腥臭的野獸體味，混雜著腐肉的臭氣。"
   sound: "岩壁上方不時傳來碎石滾落的沙沙聲，伴隨著低沉且帶有威脅的喉音。"
-  wind: "強烈的狂風正從峽谷出口（你前進的方向）直吹向你（逆風前進）。"
+  wind:
+    default_msg: "強烈而冰冷的風正從峽谷出口（你前進的方向）直吹向你。"
+    discovery:
+      set_temp: "observed_wind"
+      msg: "【 🔍 發現 】風正朝著你吹來（逆風）。逆風前進可以使你的氣味不被前方的野獸察覺！你可以嘗試在逆風處隱蔽偽裝前進（hide downwind）。"
   ground: "紅砂岩地表，布滿了深陷的巨爪撕裂痕跡。"
 
 interactions:
   - action: "hide"
     target: "downwind"
     prerequisites:
-      factor: "wind_direction"
-    success_msg: "你立刻俯下身子，利用逆風的優勢，將全身塗滿紅砂泥土以遮蓋體味，藉著岩石陰影匍匐前進。\n那頭巨大的捕食者在上方峭壁聳了聳鼻子，疑惑地往另一個方向走開了。\n💡 成功避開威脅！你發現了通往峽谷深處更安全地帶的路徑。"
-    set_temp: "canyon_escaped"
-    complete_quest: "wind_stealth"
+      temp_state: "observed_wind"
+    success_msg: "你立刻俯下身子，利用逆風的優勢，將全身塗滿紅砂泥土以遮蓋體味，藉著岩石陰影匍匐前進。\n那頭巨大的捕食者在上方峭壁聳了聳鼻子，疑惑地往另一個方向走開了。\n💡 成功避開威脅！"
+    discover_factor: "stealth_camouflage"
+    complete_quest: "first_escape"
     fatigue: 15

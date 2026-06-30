@@ -2,7 +2,7 @@ version: "1.0"
 stage_id: "survivor"
 name: "初級生還者"
 description: "你擊敗了第一個史前生物。你在這個世界活下去的本能開始甦醒。"
-spawn_node: ""
+spawn_node: "/rooms/triassic_shade/room"
 requires:
   quests: []
 next: ""

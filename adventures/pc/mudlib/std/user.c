@@ -78,6 +78,29 @@ void add_fatigue(int val) {
     }
 }
 
+// 覆寫生命值變更以實作「新手村不致死保護區」
+void add_hp(int val) {
+    object room = environment(this_object());
+    int target_hp = query_hp() + val;
+    
+    if (room) {
+        string rpath = base_name(room);
+        // 新手村 4 個房間：荒原、森林、黑曜石礦脈、捕食者峽谷
+        if (strsrch(rpath, "triassic_plains") != -1 ||
+            strsrch(rpath, "fern_forest") != -1 ||
+            strsrch(rpath, "obsidian_quarry") != -1 ||
+            strsrch(rpath, "predator_canyon") != -1) {
+            
+            if (target_hp <= 0) {
+                set_hp(1);
+                tell_object(this_object(), YEL + "⚠️ 新手保護機制生效：你在安全區內力竭，生命值降為 1，並未死亡。\n" + NOR);
+                return;
+            }
+        }
+    }
+    ::add_hp(val);
+}
+
 // 玩家死亡
 void on_death(string reason) {
     stop_combat();
@@ -91,8 +114,12 @@ void on_death(string reason) {
     save_state();
 
     string spawn_room = "/rooms/triassic_plains/room";
-    if (has_factor("thermodynamics")) {
-        spawn_room = "/rooms/desert_canyon/room";
+    object pm = load_object("/runtime/services/progress_manager.c");
+    if (pm) {
+        string node = pm->query_spawn_node(this_object(), "main");
+        if (node && node != "") {
+            spawn_room = node;
+        }
     }
     object room = load_object(spawn_room);
     if (room) {
@@ -170,10 +197,14 @@ void new_password(string pwd) {
 
 void _enter_world() {
     // TODO: 留待日後實作「身世」選擇架構 stub
-    // 依據玩家是否已克服新手期（鑽木取火 thermodynamics）決定不同的房間起點
+    // 依據玩家當前 Stage 所在的 spawn_node 決定不同的房間起點 (完全資料驅動)
     string spawn_room = "/rooms/triassic_plains/room";
-    if (has_factor("thermodynamics")) {
-        spawn_room = "/rooms/desert_canyon/room";
+    object pm = load_object("/runtime/services/progress_manager.c");
+    if (pm) {
+        string node = pm->query_spawn_node(this_object(), "main");
+        if (node && node != "") {
+            spawn_room = node;
+        }
     }
     object room = load_object(spawn_room);
     if (room) {
@@ -184,7 +215,7 @@ void _enter_world() {
             tell_object(this_object(), YEL + "\n💡 你在一片炎熱的荒原甦醒。在這裡，直接觀察 (look) 或許不是最好的主意。\n" +
                 "你可以集中注意力去感知環境: focus [smell/sound/wind/ground]\n" + NOR);
         } else {
-            tell_object(this_object(), YEL + "\n💡 你在一片炙熱乾燥的峽谷中甦醒。在這裡，高溫與稀薄的空氣隨時會奪去你的性命。\n" +
+            tell_object(this_object(), YEL + "\n💡 你在一片安全區外的史前環境中甦醒。注意周遭環境，小心生存！\n" +
                 "你可以集中注意力去感知環境: focus [smell/sound/wind/ground]\n" + NOR);
         }
     }
