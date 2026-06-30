@@ -18,3 +18,23 @@ sensory_signals:
   sound: "一陣低頻的震動聲從遠處灌木叢傳來，地面沙礫隨之微微抖動。"
   wind: "東南風呼嘯，將你身上的氣味帶往了森林深處。"
   ground: "紅棕色的乾硬砂岩，留有一排深陷的、呈三趾狀的巨大腳印殘跡。"
+
+# 🌟 FSE 萬用實體互動宣告
+interactions:
+  - action: "kick"
+    target: "rocks"
+    prerequisites:
+      temp_state: "found_roots"
+    success_msg: "你狠狠踹了碎石堆一腳！滾落的砂岩後方露出了更多乾枯粗壯的蕨類根部。\n💡 現在這片地面到處都是引火物了。"
+    set_temp: "found_roots_easy"
+    fatigue: 5
+    failure_msg: "你一腳猛力踹在堅硬的紅砂岩上，痛得你當場抱腳倒地，岩石紋絲不動。\n💡 或許你得先找到目標物，或者先專注觀察地面 (focus ground)。"
+    fail_fatigue: 10
+    fail_hp: -5
+
+  - action: "lick"
+    target: "water"
+    success_msg: "你用舌尖稍微舔了舔帶有鐵鏽色澤的河水。\n一股辛辣、苦澀且夾雜著腐敗有機物的異味瞬間直衝腦門，你忍不住乾嘔起來！\n💡 警告：這水顯然含有嚴重的毒素，絕不能直接飲用。需要高溫加熱..."
+    trigger_confusion: "poisonous_water"
+    hp_change: -5
+    fatigue: 10

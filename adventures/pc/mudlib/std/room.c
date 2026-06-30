@@ -218,5 +218,93 @@ string *check_new_reveals(object player, string newly_discovered_factor) {
     return msgs;
 }
 
+// 🌟 FSE 萬用實體互動器 (Universal Physical Interactor)
+// 根據玩家輸入的動作 (action) 與目標 (target) 查閱 YAML 的宣告並執行後果
+int resolve_interaction(object player, string action, string target) {
+    mapping config = query_virtual_config();
+    if (!config) return 0;
+
+    mixed interactions = config["interactions"];
+    if (!interactions || !arrayp(interactions)) return 0;
+
+    foreach (mapping act in interactions) {
+        if (act["action"] == action && act["target"] == target) {
+            
+            // ── 檢查守衛：防重複 ──
+            string success_factor = act["discover_factor"];
+            if (success_factor && player->has_factor(success_factor)) {
+                string repeat_msg = act["repeat_msg"] || "你已經熟練地掌握了這個動作的要領，不需要再重試。";
+                tell_object(player, YEL + repeat_msg + "\n" + NOR);
+                return 1;
+            }
+
+            // ── 檢查前置條件 (Prerequisites) ──
+            mapping prereqs = act["prerequisites"];
+            int passed = 1;
+            if (prereqs) {
+                // 1. 檢查暫時狀態 temp_state
+                string req_temp = prereqs["temp_state"];
+                if (req_temp && !player->query_temp(req_temp)) passed = 0;
+
+                // 2. 檢查必要因素 factor
+                string req_factor = prereqs["factor"];
+                if (req_factor && !player->has_factor(req_factor)) passed = 0;
+            }
+
+            if (passed) {
+                // ── 成功路徑 ──
+                // 輸出成功描述
+                if (act["success_msg"]) {
+                    tell_object(player, HIG + act["success_msg"] + "\n" + NOR);
+                }
+
+                // 設定暫時狀態
+                string set_temp = act["set_temp"];
+                if (set_temp) player->set_temp(set_temp, 1);
+
+                // 解鎖 Factor
+                if (success_factor) {
+                    object factor_svc = load_object("/runtime/services/factor_service.c");
+                    if (factor_svc) factor_svc->discover_factor(player, success_factor);
+                }
+
+                // 完成 Quest
+                string comp_quest = act["complete_quest"];
+                if (comp_quest) {
+                    object pm = load_object("/runtime/services/progress_manager.c");
+                    if (pm) pm->complete_player_quest(player, comp_quest, "main", 100);
+                }
+
+                // 疲勞與體力變更
+                int fatigue = act["fatigue"];
+                if (fatigue) player->add_fatigue(fatigue);
+
+                int hp_change = act["hp_change"];
+                if (hp_change) player->add_hp(hp_change);
+
+            } else {
+                // ── 失敗路徑 ──
+                if (act["failure_msg"]) {
+                    tell_object(player, RED + act["failure_msg"] + "\n" + NOR);
+                }
+
+                // 觸發困惑
+                string conf = act["trigger_confusion"];
+                if (conf) player->player_confused(conf);
+
+                // 懲罰
+                int fail_fatigue = act["fail_fatigue"] || 5;
+                player->add_fatigue(fail_fatigue);
+
+                int fail_hp = act["fail_hp"];
+                if (fail_hp) player->add_hp(fail_hp);
+            }
+            return 1; // 成功解析並處理該互動
+        }
+    }
+    return 0; // 當前房間無此互動定義
+}
+
+
 
 

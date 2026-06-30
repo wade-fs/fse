@@ -208,6 +208,16 @@ mixed process_input(string cmd) {
             return 1;
         }
     }
+
+    // 🌟 FSE 核心萬用實體互動處理：
+    // 若找不到專屬的指令程式檔，則嘗試向當前房間詢問是否有宣告此實體互動動作 (例如: kick rocks / lick water)
+    object room = environment(this_object());
+    if (room && function_exists("resolve_interaction", room)) {
+        if (room->resolve_interaction(this_object(), verb, arg)) {
+            return 1;
+        }
+    }
+
     write("你感到迷茫，不知道如何做出這個動作。(" + verb + ")\n");
     return 0;
 }

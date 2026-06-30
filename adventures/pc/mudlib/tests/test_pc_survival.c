@@ -106,6 +106,32 @@ int run_all_tests() {
     }
     write(HIG "  ✓ 通過: 打製石器成功，解鎖 flint_knapping 並獲得工具片。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 8：退回荒野，測試 kick rocks（前置條件已不滿足，應失敗並扣血）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 8] 測試 kick rocks 失敗路徑與懲罰機制...\n" NOR);
+    player->force_me("go back"); // 回到荒原
+    player->set_temp("found_roots", 0); // 清空暫時狀態以模擬未發現狀態
+    int initial_hp = player->query_hp();
+    player->force_me("kick rocks");
+    if (player->query_hp() >= initial_hp) {
+        write(HIR "❌ 測試 8 失敗: kick rocks 失敗時未扣減生命值！\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 實體互動失敗路徑執行正確，扣血懲罰生效。\n" NOR);
+
+    // ----------------------------------------------------
+    // 🧪 測試 9：測試 lick water（觸發毒素並扣血）
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 9] 測試 lick water 動態物理交互...\n" NOR);
+    initial_hp = player->query_hp();
+    player->force_me("lick water");
+    if (player->query_hp() >= initial_hp) {
+        write(HIR "❌ 測試 9 失敗: 舔毒水未扣減生命值！\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 實體互動成功解析，毒水反應與傷害生效。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +

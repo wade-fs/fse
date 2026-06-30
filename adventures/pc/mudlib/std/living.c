@@ -43,6 +43,20 @@ void set_hp(int v)     { hp = v; }
 int  query_hp()        { return hp; }
 void set_max_hp(int v) { max_hp = v; hp = v; }
 int  query_max_hp()    { return max_hp; }
+void add_hp(int val) {
+    hp += val;
+    if (hp < 0) hp = 0;
+    if (hp > max_hp) hp = max_hp;
+    // 檢查玩家是否因扣血而死亡
+    if (hp == 0 && function_exists("on_death", this_object())) {
+        this_object()->on_death("在惡劣的史前環境中力竭身亡");
+    }
+}
+void add_max_hp(int val) {
+    max_hp += val;
+    if (max_hp < 1) max_hp = 1;
+    if (hp > max_hp) hp = max_hp;
+}
 void set_attack(int v) { attack = v; }
 int  query_attack()    { return attack; }
 void set_defense(int v){ defense = v; }
