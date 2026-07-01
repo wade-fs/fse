@@ -304,34 +304,11 @@ int resolve_interaction(object actor, string action, string target) {
             return 1; // 攔截響應，不是沉默
         }
 
-        // 如果互動指定了專屬的 Reality Resolver，我們直接將判定委託給 Reality 引擎，不由互動層寫死成敗
-        string res_challenge = act["resolver"];
-        if (res_challenge) {
-            object node_exec = load_object("/runtime/services/node_executor.c");
-            if (node_exec) {
-                // 構造偽裝的 AST 代表玩家行動的 Predict 預測
-                mapping fake_ast = ([
-                    "action": action,
-                    "target": target
-                ]);
-                
-                // 從 node 載入挑戰設定
-                string node_dir = this_object()->query_node_dir();
-                string chal_path = sprintf("%schallenges/%s.yaml", node_dir, res_challenge);
-                if (file_size(chal_path) > 0) {
-                    string raw = read_file(chal_path);
-                    if (raw) {
-                        mapping chal_data = yaml_decode(raw);
-                        if (chal_data) {
-                            // 呼叫 Reality Resolver Executor
-                            object resolver_exec = load_object("/runtime/executors/reality_resolver.c");
-                            if (resolver_exec) {
-                                resolver_exec->execute(this_object(), actor, fake_ast, chal_data, res_challenge);
-                                return 1;
-                            }
-                        }
-                    }
-                }
+        // ── 互動系統升級：委託給 ActionExecutor 服務派發專屬行動 ──
+        object act_exec = load_object("/runtime/services/action_executor.c");
+        if (act_exec) {
+            if (act_exec->dispatch_action(this_object(), actor, action, target, act)) {
+                return 1; // 行動已被專屬 Resolver 完全接管與處理
             }
         }
 

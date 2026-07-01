@@ -69,6 +69,11 @@ mapping query_factors() {
     return factors;
 }
 
+protected int is_meditating = 0;
+
+int query_meditating() { return is_meditating; }
+void set_meditating(int val) { is_meditating = val; }
+
 // ── SO 專屬修仙屬性 ──────────────────────────────────
 int query_karma()          { return karma; }
 void add_karma(int amount) { karma += amount; save_state(); }
@@ -82,11 +87,44 @@ void add_spiritual_energy(int amount) {
 
 // ── 心跳（由 master.c connect() 呼叫 enable_heart_beat 後觸發）──
 void heart_beat() {
-    // 業力心魔
-    if (karma > 50 && random(10) == 0) {
-        tell_object(this_object(), HIY "【心魔】你感到一陣莫名的煩躁，靈力運轉受阻...\n" NOR);
+    object env = environment(this_object());
+
+    // 1. 打坐與修煉恢復邏輯
+    if (is_meditating) {
+        float recovery_multiplier = 1.0;
+        if (env && function_exists("query_virtual_config", env)) {
+            mapping env_cfg = env->query_virtual_config();
+            if (env_cfg && env_cfg["environmental_multipliers"]) {
+                recovery_multiplier = env_cfg["environmental_multipliers"]["spiritual_recovery"] || 1.0;
+            }
+        }
+        
+        int base_recover = 5;
+        int recovered = to_int(base_recover * recovery_multiplier);
+        add_spiritual_energy(recovered);
+        tell_object(this_object(), HIC "【 🧘 冥想 】你沉入吐納之中，引導天地靈氣流轉，靈力恢復了 " + recovered + " 點。\n" NOR);
+
+        // 2. 隨機悟性 (Insight) 機制 (15% 機率發現微風中的一絲道韻)
+        if (random(100) < 15) {
+            string insight_sig = "wind_insight";
+            if (!this_object()->has_observation(insight_sig)) {
+                this_object()->add_observation(insight_sig);
+                tell_object(this_object(), MAG "【 💡 頓悟 】你在冥想中忽然捕捉到耳邊風聲中夾雜的一絲自然道韻 (wind_insight)！\n" NOR);
+            }
+        }
     }
-    // Entropy：每 N 個心跳，通知 factor_service 進行衰退檢查 (約每 5 分鐘 / 300 秒)
+
+    // 3. 業力心魔與因果天雷天劫 (當業力大於 80 時，極高機率遭受天劫惩罚)
+    if (karma > 80 && random(10) == 0) {
+        tell_object(this_object(), HIR "⚡【 ⚠️ 天劫降臨 】你一身紅塵業力引動了虛空雷霆！一道天雷劈打在你的元神上！\n" NOR);
+        add_spiritual_energy(-15);
+        this_object()->add_observation("chest_tightness"); // 遭受重創，胸口發悶
+        tell_object(this_object(), YEL "💡 提示：你的因果業力 (karma) 過高，請前往「紅塵當舖」典當因果消業，或發願了結塵緣。\n" NOR);
+    } else if (karma > 50 && random(15) == 0) {
+        tell_object(this_object(), HIY "【 🌀 心魔擾動 】你感到一陣莫名的煩躁，心神不寧，體內靈氣運轉有些滯澀...\n" NOR);
+    }
+
+    // 4. Entropy：每 N 個心跳，通知 factor_service 進行衰退檢查 (約每 5 分鐘 / 300 秒)
     if ((time() % 300) == 0) {
         object fs = load_object("/runtime/services/factor_service.c");
         if (fs && function_exists("tick_entropy", fs)) {

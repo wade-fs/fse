@@ -1,0 +1,54 @@
+# /home/wade/src/github/fse/runtime/realities/spiritual/karma.yaml
+# 尋仙問道 — 精神因果律 (Law of Spiritual Karma & Resonance)
+
+law: karma
+knowledges:
+  sutra_focus:
+    description: "心氣共鳴之理：放鬆身心，觀照呼吸，方能與天地紊亂之氣達成共振。"
+    
+    observe:
+      - signal: "howling_wind"
+        always_visible: true
+      - signal: "physical_tension"
+        always_visible: true
+      - signal: "wind_insight" # 打坐時有機會透過心跳頓悟出來
+        always_visible: false
+
+    predict:
+      - "relaxed_body_yields_resonance"
+      - "forced_breathing_causes_qi_backlash"
+
+    evaluate:
+      required_observations:
+        # 🚀 證據鏈：必須同時收集 howling_wind (風向) 與 physical_tension (肌肉緊繃)
+        - "howling_wind"
+        - "physical_tension"
+      aligned_action: "observe_breath"
+      
+      misunderstanding_patterns:
+        # 修行者注意到了身體緊繃，但動作卻依然是 meditate 強求，沒有去數息
+        - has: ["physical_tension"]
+          missing: ["stillness_resonance"]
+          yields: "body_tension_ignored"
+          
+      default_misconception: "power_by_force"
+
+    evolve:
+      understanding:
+        world_change: "actor_aligned_with_stillness"
+        new_signals: ["spiritual_current_aligned"]
+        adventure_effects:
+          spiritual_energy: 20
+          karma_change: 0
+      misunderstanding:
+        world_change: "actor_tension_persists"
+        new_signals: ["chest_tightness"]
+        adventure_effects:
+          spiritual_energy: -5
+          karma_change: 1
+      misconception:
+        world_change: "actor_qi_backlash"
+        new_signals: ["mind_chaos"]
+        adventure_effects:
+          spiritual_energy: -10
+          karma_change: 5

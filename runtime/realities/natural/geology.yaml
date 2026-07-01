@@ -1,0 +1,49 @@
+# /home/wade/src/github/fse/runtime/realities/natural/geology.yaml
+# 尋仙問道 — 自然地質與應力法則 (Law of Geological Stress & Mining)
+
+law: geology
+knowledges:
+  stress_points:
+    description: "地脈應力之理：找出岩石受力支點與靈氣交匯核心，方能以最小力道剝落礦石。"
+    
+    observe:
+      - signal: "rock_veins"
+        always_visible: true
+      - signal: "stress_concentration"
+        requires_observation: "geological_currents"
+
+    predict:
+      - "strike_at_pivot_cleaves_stone"
+      - "forced_hammering_collapses_vein"
+
+    evaluate:
+      required_observations:
+        - "rock_veins"
+      aligned_action: "strike_pivot"
+      
+      misunderstanding_patterns:
+        - has: ["rock_veins"]
+          missing: ["geological_currents"]
+          yields: "blind_striking"
+          
+      default_misconception: "hammer_by_force"
+
+    evolve:
+      understanding:
+        world_change: "rock_cleaved_perfectly"
+        new_signals: ["ore_exposed"]
+        adventure_effects:
+          life_change: 0
+          focus_change: -5
+      misunderstanding:
+        world_change: "rock_chipped_partially"
+        new_signals: ["tool_wear"]
+        adventure_effects:
+          life_change: 0
+          focus_change: -10
+      misconception:
+        world_change: "cave_in_triggered"
+        new_signals: ["rubble_blocked", "trapped"]
+        adventure_effects:
+          life_change: -20
+          focus_change: -20
