@@ -1,0 +1,16 @@
+challenges:
+- id: town_center_first_contact
+description: town_center_desc
+exits:
+  down: /nodes/desire_pavilion/node
+  east: /nodes/herb_garden/node
+  leave: /nodes/town_entrance/node
+  north: /nodes/craft_workshop/node
+  south: /nodes/wind_tavern/node
+  southeast: /nodes/destiny_pawnshop/node
+  southwest: /nodes/spirit_auction/node
+  west: /nodes/array_platform/node
+name: town_center
+node_id: town_center
+type: market
+version: '1.0'

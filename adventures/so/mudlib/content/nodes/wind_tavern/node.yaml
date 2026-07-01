@@ -1,0 +1,10 @@
+challenges:
+- id: wind_tavern_first_contact
+description: wind_tavern_desc
+exits:
+  east: /nodes/pet_sanctuary/node
+  north: /nodes/town_center/node
+name: wind_tavern
+node_id: wind_tavern
+type: social_info
+version: '1.0'

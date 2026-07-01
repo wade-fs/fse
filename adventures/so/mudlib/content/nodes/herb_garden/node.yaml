@@ -1,0 +1,9 @@
+challenges:
+- id: herb_garden_first_contact
+description: herb_garden_desc
+exits:
+  west: /nodes/town_center/node
+name: herb_garden
+node_id: herb_garden
+type: alchemy
+version: '1.0'

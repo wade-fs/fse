@@ -1,0 +1,153 @@
+# adventures/so/novice_map.yaml
+# 尋仙問道 — 全功能驗證沙盒地圖 (Novice Map)
+# 旨在一次性驗證所有大藍圖設計：紅塵商業、拜師傳承、百工煉丹、陣法邏輯與心魔試煉
+
+nodes:
+  # ─── 修行與山門區 ──────────────────────────
+  - id: "meditation_cliff"
+    name: "靜慮崖"
+    type: "cultivation"
+    desc: "蜀山深處一處孤懸的峭壁。四周松濤如海，冷風刺骨。峭壁邊緣有一塊平整 of 青石，似乎是前人打坐之處。此地風勢強勁，靈氣暗流奔湧。"
+    karma_loop_threshold: 50
+    environmental_multipliers:
+      spiritual_recovery: 1.5
+      entropy_decay: 1.0
+    paths:
+      down: "mountain_path"
+    
+    sensory_signals:
+      wind:
+        default_msg: "峭壁上冷風刺骨，松濤如怒吼般在耳邊迴盪。"
+        discovery:
+          requires_no_factor: "stillness_resonance"
+          set_temp: "wind_cold_noticed"
+          msg: "【 🔍 發現 】狂風（howling_wind）攜帶著某種冰冷的波動，吹打著你的身體，你的肌肉在寒冷中產生了緊繃感（physical_tension）。"
+      ground:
+        default_msg: "青石平整，上面覆蓋著薄薄的冰霜。"
+      aura:
+        requires_sutra: "sutra:taiji_yinyang"  # 需要太乙陰陽經才能解讀靈氣
+        default_msg: "空氣中靈力紊亂奔湧，若隱若現。"
+
+    interactions:
+      # 行動 A: 強求納氣
+      - action: "meditate"
+        target: "spiritual_current"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        success_msg: "你強行引導狂風中的混亂靈力注入丹田。" # 雖然寫了 success_msg，但實際會被 reality_resolver 評估為 misconception 走失敗 Evolve
+        failure_msg: "【 🌀 產生困惑 】你緊閉雙眼試圖強行吐納，但寒風順著喉嚨灌入，體內靈氣瞬間暴走，胸口一陣劇痛！\n💡 提示：寒風與身體的緊繃（focus wind）是否正在警告你什麼？強求無功，或需平息心神？"
+        trigger_confusion: "power_by_force"
+        fail_karma: 5
+        fail_hp: -10
+        
+      # 行動 B: 數息靜慮
+      - action: "observe_breath"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        success_msg: "你放鬆身體，屏除雜念，隨著呼吸的節奏，身體的緊繃感漸漸消退。你感到體內氣息與崖上狂風達成了奇妙的共鳴！"
+        discover_factor: "stillness_resonance"
+        complete_quest: "first_meditation"
+        give_item:
+          id: "stillness_bead"
+          name: "定心珠"
+          desc: "一顆散發著溫潤微光的寶珠，是由你在靜慮崖天人共鳴時精氣凝聚而成，能微幅安神。"
+        spiritual_energy: 20
+        karma_change: 0
+
+
+  - id: "mountain_path"
+    name: "蜀山山道"
+    type: "travel"
+    desc: "蜿蜒的石階山道，兩旁古木參天，霧氣隨風飄浮。向山下走通往紅塵鎮，向上通往山門大殿。山道上隱隱有雷霆之意盤旋。"
+    paths:
+      up: "meditation_cliff"
+      down: "town_entrance"
+      east: "sutra_pavilion"
+
+  - id: "sutra_pavilion"
+    name: "藏經閣"
+    type: "sect_heritage"
+    desc: "蜀山派典藏功法秘笈的重地。閣內書架林立，玉簡散發著柔和的光芒。門派長老在此閉目盤坐，等待有緣人來此問道拜師。"
+    paths:
+      west: "mountain_path"
+
+  # ─── 百工與修行輔助區 ──────────────────────
+  - id: "craft_workshop"
+    name: "百工坊"
+    type: "crafting"
+    desc: "爐火熊熊，鐵錘敲擊之聲不絕於耳。這裡是修煉「挖礦」與「打鐵鍛造」的場所。牆上掛著各式鍛造工具，地面堆放著未提煉的礦石。"
+    paths:
+      south: "town_center"
+
+  - id: "herb_garden"
+    name: "神草園"
+    type: "alchemy"
+    desc: "百草芬芳，靈氣氤氳。這裡種植著各式奇花異草，中央擺放著一座青銅大鼎，散發著淡淡的藥香。在此可參悟陰陽藥理相生相剋之術。"
+    paths:
+      west: "town_center"
+
+  - id: "array_platform"
+    name: "八卦壇"
+    type: "logical_array"
+    desc: "地面繪製著巨大精密的八卦圖陣，陣眼處有靈石微微閃爍。這裡是參悟「陣法」與「畫符」的場所，考驗修行者對能量流動的邏輯控制。"
+    paths:
+      east: "town_center"
+
+  # ─── 紅塵鎮商業與民生區 ────────────────────
+  - id: "town_entrance"
+    name: "紅塵鎮牌坊"
+    type: "travel"
+    desc: "紅塵鎮的入口，矗立著一座高大的石牌坊。穿過牌坊就是熱鬧的集市，凡俗的喧囂撲面而來，與山上的清冷截然不同。"
+    paths:
+      up: "mountain_path"
+      enter: "town_center"
+
+  - id: "town_center"
+    name: "紅塵集市"
+    type: "market"
+    desc: "鎮上最繁華的中心。小販的叫賣聲此起彼伏，路邊攤散發著炊煙。此地人流如織，是收集凡間情報與商貿交易的樞紐。"
+    paths:
+      leave: "town_entrance"
+      north: "craft_workshop"
+      east: "herb_garden"
+      west: "array_platform"
+      south: "wind_tavern"
+      southeast: "destiny_pawnshop"
+      southwest: "spirit_auction"
+      down: "desire_pavilion" # 暗示青樓在紅塵的另一面
+
+  - id: "wind_tavern"
+    name: "臨風酒館"
+    type: "social_info"
+    desc: "酒香四溢，南來北往的旅客與凡人在酒肆中喧囂。酒館角落坐著各式各樣的說書人與江湖人士，是傾聽與收集紅塵 Evidence 情報的絕佳場所。"
+    paths:
+      north: "town_center"
+      east: "pet_sanctuary"
+
+  - id: "pet_sanctuary"
+    name: "靈獸齋"
+    type: "nature_resonance"
+    desc: "齋內豢養著各式珍稀的靈狐、仙鶴與靈獸。空氣中迴盪著獸鳴與清脆的鳥囀。修行者可在此與自然萬物共鳴，尋求靈獸同行的契機。"
+    paths:
+      west: "wind_tavern"
+
+  - id: "destiny_pawnshop"
+    name: "紅塵當舖"
+    type: "karmic_broker"
+    desc: "光線有些昏暗，櫃檯高聳。年邁的掌櫃在櫃檯後撥打著算盤。此地不只典當世俗金銀，亦能交易修仙法寶與消除一身紅塵業力。"
+    paths:
+      northwest: "town_center"
+
+  - id: "spirit_auction"
+    name: "天珍拍賣行"
+    type: "spiritual_market"
+    desc: "金碧輝煌的拍賣大廳，來自各方的修士在此交頭接耳。拍賣台上正展示著封印的法寶，等待著能與其靈性共鳴的有緣人出價競奪。"
+    paths:
+      northeast: "town_center"
+
+  - id: "desire_pavilion"
+    name: "煙雨青樓"
+    type: "spiritual_trial"
+    desc: "絲竹之聲不絕於耳，紅粉飄香，煙雨朦朧。這裡是紅塵情欲與執念最深重之地，亦是修行者面臨色相考驗與心魔對峙的試煉場。"
+    paths:
+      up: "town_center"

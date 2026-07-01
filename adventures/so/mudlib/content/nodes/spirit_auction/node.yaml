@@ -1,0 +1,9 @@
+challenges:
+- id: spirit_auction_first_contact
+description: spirit_auction_desc
+exits:
+  northeast: /nodes/town_center/node
+name: spirit_auction
+node_id: spirit_auction
+type: spiritual_market
+version: '1.0'

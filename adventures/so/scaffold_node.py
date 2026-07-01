@@ -27,6 +27,17 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
 
     node_dir = CONTENT_ROOT / "nodes" / node_id
     challenges_dir = node_dir / "challenges"
+def create_single_node(node_id, node_name, node_desc, node_type="cultivation", paths=None, reveal_paths=None, node_dict=None):
+    """生成單一節點的 YAML、挑戰 YAML 與 語系註冊"""
+    if paths is None:
+        paths = {}
+    if reveal_paths is None:
+        reveal_paths = {}
+    if node_dict is None:
+        node_dict = {}
+
+    node_dir = CONTENT_ROOT / "nodes" / node_id
+    challenges_dir = node_dir / "challenges"
     discoveries_dir = node_dir / "discoveries"
 
     os.makedirs(node_dir, exist_ok=True)
@@ -47,7 +58,7 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
             "reveal_msg": data.get("reveal_msg", "【 🔍 發現 】一條隱秘的路徑在你的理解中顯現了。")
         }
 
-    # 2. 建立 node.yaml
+    # 2. 建立 node.yaml 并處理宣告式直通欄位
     node_yaml_path = node_dir / "node.yaml"
     node_data = {
         "version": "1.0",
@@ -59,6 +70,19 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
     }
     if reveal_config:
         node_data["reveal_exits"] = reveal_config
+
+    # 自動直通拷貝 (複製進階欄位直接注入 node.yaml)
+    passthrough_keys = [
+        "sensory_signals", 
+        "interactions", 
+        "presence", 
+        "environmental_multipliers", 
+        "difficulty_override",
+        "karma_loop_threshold"
+    ]
+    for key in passthrough_keys:
+        if key in node_dict:
+            node_data[key] = node_dict[key]
 
     node_data["challenges"] = [{"id": f"{node_id}_first_contact"}]
 
@@ -152,7 +176,7 @@ def main():
             n_reveal_paths = n.get("reveal_paths", {})
 
             print(f"\n⚡ 正在生成節點: {n_id} ({n_name})...")
-            create_single_node(n_id, n_name, n_desc, n_type, n_paths, n_reveal_paths)
+            create_single_node(n_id, n_name, n_desc, n_type, n_paths, n_reveal_paths, n)
 
         print("\n🏆 地圖批量生成並自動連結成功！")
         sys.exit(0)

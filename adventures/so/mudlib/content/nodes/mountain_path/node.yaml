@@ -1,0 +1,11 @@
+challenges:
+- id: mountain_path_first_contact
+description: mountain_path_desc
+exits:
+  down: /nodes/town_entrance/node
+  east: /nodes/sutra_pavilion/node
+  up: /nodes/meditation_cliff/node
+name: mountain_path
+node_id: mountain_path
+type: travel
+version: '1.0'

@@ -1,0 +1,9 @@
+challenges:
+- id: sutra_pavilion_first_contact
+description: sutra_pavilion_desc
+exits:
+  west: /nodes/mountain_path/node
+name: sutra_pavilion
+node_id: sutra_pavilion
+type: sect_heritage
+version: '1.0'

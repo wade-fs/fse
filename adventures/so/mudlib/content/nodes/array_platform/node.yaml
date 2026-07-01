@@ -1,0 +1,9 @@
+challenges:
+- id: array_platform_first_contact
+description: array_platform_desc
+exits:
+  east: /nodes/town_center/node
+name: array_platform
+node_id: array_platform
+type: logical_array
+version: '1.0'

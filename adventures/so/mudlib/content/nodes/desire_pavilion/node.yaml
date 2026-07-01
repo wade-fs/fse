@@ -1,0 +1,9 @@
+challenges:
+- id: desire_pavilion_first_contact
+description: desire_pavilion_desc
+exits:
+  up: /nodes/town_center/node
+name: desire_pavilion
+node_id: desire_pavilion
+type: spiritual_trial
+version: '1.0'
