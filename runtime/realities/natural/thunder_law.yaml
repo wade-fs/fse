@@ -1,0 +1,28 @@
+# /home/wade/fse/runtime/realities/natural/thunder_law.yaml
+# 尋仙問道 — 天劫雷法 (Law of Heavenly Thunder & Runes)
+
+law: thunder_law
+knowledges:
+  zhen_lei:
+    description: "金丹雷法符文。象徵驚醒執著、焚燒妄念與水鏡止念。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "observe_rune"
+      default_misconception: "power_by_force"
+
+  wu_wo:
+    description: "元嬰雷法符文。象徵破我執、結塵緣與重塑元神。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "observe_rune"
+      default_misconception: "power_by_force"
+
+  fei_sheng:
+    description: "大乘雷法符文。象徵乾天心、坤滅執與中飛升。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "observe_rune"
+      default_misconception: "power_by_force"

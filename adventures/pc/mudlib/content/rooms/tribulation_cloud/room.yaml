@@ -1,8 +1,12 @@
 short: "天劫雷雲"
 long: |
-  你置身於狂暴的天劫紫雷中央，厚重的黑雲在四周翻滾，電芒吞吐不定。
-  無形的天道威壓降臨，讓你幾乎無法喘息。
-  狂風烈烈，虛空雷暴隨時可能將強抗天威之人化為飛灰！
+  【 ⚡ 第一重天劫 - 醞釀 】
+  天色驟暗，厚重的黑雲在四周翻滾，電芒吞吐不定。你感到胸口一悶，往日強求打坐的畫面在眼前閃現。
+  虛空中浮現三枚巨大的劫雷符文：
+    - 震雷符 (zhen)  : 紫電炸裂，象徵驚醒執著。
+    - 淨心符 (li)    : 赤火雷光，象徵焚燒妄念。
+    - 定魂符 (kan)   : 水鏡雷紋，象徵水鏡止念。
+  劫雲已聚，業力如山。你可以選擇「觀照符文 (observe_rune <符文>)」、「坦然順受 (accept strike)」或「強行對抗 (resist strike)」。
 presence: []
 environmental_multipliers:
   thirst_decay: 0.0
@@ -16,20 +20,38 @@ sensory_signals:
   ground:
     default_msg: "腳下空無一物，只有無盡的烏雲與閃電在沉浮交織。"
 interactions:
+  - action: "observe_rune"
+    target: "zhen"
+    success_msg: "🧘 你閉目凝神觀照【震雷符】，紫電擊中心魂！你猛然驚醒，發現那道雷光其實映照出自己對力量的偏執強求。你成功領悟了震雷符！"
+    discover_factor: "rune_zhen"
+    karma: -25
+    hp_change: -5
+  - action: "observe_rune"
+    target: "li"
+    success_msg: "🔥 你凝視著【淨心符】，赤紅火雷穿透靈魂！大火燒盡了你經年累月積攢的塵世成見。你成功領悟了淨心符！"
+    discover_factor: "rune_li"
+    karma: -25
+    hp_change: -5
+  - action: "observe_rune"
+    target: "kan"
+    success_msg: "💧 你內觀【定魂符】，深藍水雷宛如明鏡，清澈照出你過往的因果抉擇，心中焦躁一掃而空。你成功領悟了定魂符！"
+    discover_factor: "rune_kan"
+    karma: -25
+    hp_change: -5
   - action: "accept"
     target: "strike"
-    success_msg: "⚡ 你散去全身護體靈力，坦然對天雙張雙手，承受了這第一道天劫神雷！"
+    success_msg: "⚡ 你散去全身護體靈力，坦然對天張開雙手，以無我心境順受雷劫洗禮！雷光雖猛，卻未傷及根本。"
     set_temp: "tribulation_resolved"
     karma: -50
     hp_change: -10
   - action: "resist"
     target: "strike"
-    success_msg: "🔥 你面露戾氣，強行聚攏法力打出一道金光試圖強抗天雷！天道大震，雷劫威力驟然翻倍！"
+    success_msg: "🔥 你面露戾氣，強行聚攏法力試圖以蠻力與天雷抗衡！天道震怒，九重雷劫威力驟然翻倍，元神遭受重創！"
     karma: 30
     hp_change: -60
     trigger_confusion: "ego_delusion"
   - action: "leave"
     prerequisites:
       temp_state: "tribulation_resolved"
-    success_msg: "✨ 雷雲退去，你身心俱輕，成功渡過此劫！"
+    success_msg: "✨ 雷雲退去，化作漫天金光靈雨。你身心俱輕，神體重塑，成功渡過天道雷劫！"
     set_temp: "tribulation_clean"

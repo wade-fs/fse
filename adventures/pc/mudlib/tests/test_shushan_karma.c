@@ -93,6 +93,17 @@ int run_test(object me) {
         return 0;
     }
     
+    // 測試觀照三枚基礎雷符
+    me->force_me("observe_rune zhen");
+    me->force_me("observe_rune li");
+    me->force_me("observe_rune kan");
+    
+    if (!me->has_factor("rune_zhen") || !me->has_factor("rune_li") || !me->has_factor("rune_kan")) {
+        write(RED + "❌ 錯誤：觀照雷符失敗，未成功獲得三枚金丹雷符因素！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 金丹天劫三枚基礎雷符（震、離、坎）觀照與因素領悟成功。\n" + NOR);
+
     // 測試坦然承受天雷 (accept strike)
     me->force_me("accept strike");
     if (!me->query_temp("tribulation_resolved")) {
