@@ -181,11 +181,11 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
     }
 
     // ─── 6. World Consequence & Evolve 世界演化 ───
-    mapping consequence_cfg = chal_data["consequence"];
-    if (consequence_cfg && node_obj) {
+    mapping evolve_cfg = chal_data["evolve"];
+    if (evolve_cfg && node_obj) {
         string state_key = (final_state == UNDERSTANDING) ? "understanding" : 
                            ((final_state == MISUNDERSTANDING) ? "misunderstanding" : "misconception");
-        mapping effect = consequence_cfg[state_key];
+        mapping effect = evolve_cfg[state_key];
         if (effect) {
             if (function_exists("apply_adventure_side_effects", node_obj)) {
                 node_obj->apply_adventure_side_effects(actor, effect, (final_state == UNDERSTANDING));

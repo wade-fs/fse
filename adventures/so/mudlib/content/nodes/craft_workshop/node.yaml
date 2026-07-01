@@ -1,9 +1,0 @@
-challenges:
-- id: craft_workshop_first_contact
-desc: craft_workshop_desc
-name: craft_workshop
-node_id: craft_workshop
-paths:
-  south: /nodes/town_center/node
-type: crafting
-version: '1.0'
