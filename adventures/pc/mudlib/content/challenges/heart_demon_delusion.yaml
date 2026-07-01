@@ -1,0 +1,24 @@
+challenge_id: "heart_demon_delusion"
+executor: "reality_resolver"
+realities:
+  spiritual:
+    knowledges:
+      - "spiritual.karma.ego_dissolution"
+discover_factor: "ego_transcended"
+success_msg: "✨ 你終於接納『無我』，痴妄魔的倒影逐漸與你重合，化為一道清光..."
+failure_warning: "【 🌀 痴妄纏身 】你越是否認，心魔越是清晰..."
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -40
+      spiritual_energy: 45
+    new_signals:
+      - "clarity_insight"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -12
+      spiritual_energy: -15
+  misconception:
+    adventure_effects:
+      karma_change: 30
+      spiritual_energy: -50

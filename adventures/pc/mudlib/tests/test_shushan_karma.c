@@ -184,6 +184,16 @@ int run_test(object me) {
     }
     write(GRN + "✅ 金丹、元嬰、大乘天劫挑戰配置文件驗證成功。\n" + NOR);
 
+    // 7-2. 驗證三種心魔形態挑戰配置文件
+    write(CYN "🧪 測試 7-2：驗證貪、嗔、痴三心魔挑戰配置文件...\n" NOR);
+    if (file_size("/content/challenges/heart_demon_greed.yaml") <= 0 ||
+        file_size("/content/challenges/heart_demon_hatred.yaml") <= 0 ||
+        file_size("/content/challenges/heart_demon_delusion.yaml") <= 0) {
+        write(RED + "❌ 錯誤：心魔形態挑戰配置文件不存在或大小異常！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 貪、嗔、痴三心魔挑戰配置文件驗證成功。\n" + NOR);
+
     // 8. 驗證心魔挑戰 Resolver 的認知抗衡 (fight 懲罰) 邏輯
     write(CYN "🧪 測試 8：測試心魔挑戰中執意對抗 (fight) 觸發 Misconception...\n" NOR);
     object resolver = load_object("/runtime/executors/reality_resolver.c");

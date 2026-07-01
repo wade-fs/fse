@@ -1,0 +1,24 @@
+challenge_id: "heart_demon_hatred"
+executor: "reality_resolver"
+realities:
+  spiritual:
+    knowledges:
+      - "spiritual.karma.hatred_forgiveness"
+discover_factor: "hatred_released"
+success_msg: "✨ 你選擇寬恕，曾經的仇恨如煙消散，心魔發出解脫的嘆息..."
+failure_warning: "【 🌀 嗔火焚身 】你越是憤怒，心魔越是強大..."
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -35
+      spiritual_energy: 30
+    new_signals:
+      - "forgiveness_insight"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -10
+      spiritual_energy: -10
+  misconception:
+    adventure_effects:
+      karma_change: 20
+      spiritual_energy: -40

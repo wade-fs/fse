@@ -68,3 +68,19 @@ knowledges:
         - "howling_wind"
       aligned_action: "let_go"
       default_misconception: "ego_clinging"
+
+  greedy_attachment:
+    description: "破除貪念，放下仙家法寶與外物執著。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "release"
+      default_misconception: "ego_clinging"
+
+  hatred_forgiveness:
+    description: "化解嗔恨，寬恕昔日恩怨仇怨。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "forgive"
+      default_misconception: "ego_clinging"

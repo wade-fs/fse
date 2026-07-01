@@ -1,0 +1,24 @@
+challenge_id: "heart_demon_greed"
+executor: "reality_resolver"
+realities:
+  spiritual:
+    knowledges:
+      - "spiritual.karma.greedy_attachment"
+discover_factor: "greed_released"
+success_msg: "✨ 你看破『得失皆空』，貪執魔發出不甘嘶吼，化作金光消散..."
+failure_warning: "【 🌀 貪念噬心 】你忍不住想抓住幻象中的法寶，業力反而更重！"
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -30
+      spiritual_energy: 35
+    new_signals:
+      - "greed_insight"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -8
+      spiritual_energy: -12
+  misconception:
+    adventure_effects:
+      karma_change: 25
+      spiritual_energy: -45
