@@ -121,9 +121,8 @@ string get_bb_uid() {
     return "Backbone";
 }
 
-// 🚀 新增：告知 Driver SimulEfun 的存放路徑
 string get_simul_efun() {
-    return "/secure/simul_efun.c";
+    return "/runtime/secure/simul_efun.c";
 }
 
 int is_creator(string id) {

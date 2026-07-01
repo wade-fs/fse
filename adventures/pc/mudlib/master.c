@@ -97,7 +97,7 @@ void run_test_mode() {
 
 string get_root_uid()   { return "Root"; }
 string get_bb_uid()     { return "Backbone"; }
-string get_simul_efun() { return "/secure/simul_efun.c"; }
+string get_simul_efun() { return "/runtime/secure/simul_efun.c"; }
 
 // 連線入口
 object connect(string token) {
