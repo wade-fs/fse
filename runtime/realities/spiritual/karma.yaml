@@ -52,3 +52,19 @@ knowledges:
         adventure_effects:
           spiritual_energy: -10
           karma_change: 5
+
+  demon_heart_observation:
+    description: "心魔觀照：靜觀心魔之源，不為外境所動。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "observe"
+      default_misconception: "ego_clinging"
+
+  ego_dissolution:
+    description: "破除执念，放下自我強求執著。"
+    evaluate:
+      required_observations:
+        - "howling_wind"
+      aligned_action: "let_go"
+      default_misconception: "ego_clinging"

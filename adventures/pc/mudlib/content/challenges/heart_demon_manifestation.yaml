@@ -1,0 +1,26 @@
+challenge_id: "heart_demon_manifestation"
+executor: "reality_resolver"
+realities:
+  spiritual:
+    knowledges:
+      - "spiritual.karma.demon_heart_observation"
+      - "spiritual.karma.ego_dissolution"
+discover_factor: "demon_heart_resistance"
+success_msg: "✨ 你看破心魔幻象，道心重歸澄明，心魔抵抗力大大提升！"
+failure_warning: "【 🌀 心魔噬心 】執念反噬，你幾乎迷失自我！"
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -35
+      spiritual_energy: 40
+    new_signals:
+      - "clarity_insight"
+      - "demon_subdued"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -10
+      spiritual_energy: -15
+  misconception:
+    adventure_effects:
+      karma_change: 25
+      spiritual_energy: -50

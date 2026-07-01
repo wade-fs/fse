@@ -12,7 +12,7 @@
 #define MISCONCEPTION    2
 
 // 前置宣告內部評估函式
-int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs, string *active_confusions_out);
+mixed evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs);
 
 // 執行判定入口
 int execute(object node_obj, object actor, mapping act, mapping chal_data, string cid) {
@@ -53,13 +53,16 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
         string *kns = r_cfg["knowledges"];
         if (!kns || sizeof(kns) == 0) continue;
 
-        string *branch_confusions = ({});
-        int branch_state = evaluate_knowledge_branch(node_obj, actor, act, kns, player_obs, ref branch_confusions);
-
-        if (branch_state == UNDERSTANDING) {
-            understood_branches++;
-        } else {
-            all_active_confusions += branch_confusions;
+        int branch_state = MISCONCEPTION;
+        mixed res = evaluate_knowledge_branch(node_obj, actor, act, kns, player_obs);
+        if (mapp(res)) {
+            branch_state = res["state"];
+            if (branch_state == UNDERSTANDING) {
+                understood_branches++;
+            } else {
+                string *b_confs = res["confusions"];
+                if (b_confs) all_active_confusions += b_confs;
+            }
         }
 
         // 獨立驅動此 Reality 分支專屬的世界演化 (Evolve)
@@ -150,7 +153,8 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
 }
 
 // 內部單一 Reality 分支之 Knowledge 評估邏輯
-int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs, string *active_confusions_out) {
+mixed evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs) {
+    string *active_confusions_out = ({});
     int total_kns = sizeof(knowledges);
     int understood_count = 0;
     int misunderstanding_count = 0;
@@ -198,6 +202,26 @@ int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string
         mapping kn_data = law_data["knowledges"][kn_id];
         mapping evaluate = kn_data["evaluate"];
         if (!evaluate) continue;
+
+        // 🚀 蜀山奧德賽：心魔與天劫挑戰的 Resolver 認知對抗邏輯
+        if (kn_id == "demon_heart_observation" || kn_id == "ego_dissolution") {
+            // 強硬對抗直接判定為 Misconception 失敗，並受自我成見糾纏
+            if (act["action"] == "fight" || act["action"] == "resist") {
+                if (getenv("MUD_TEST_MODE") || this_player()) {
+                    write(HIR "  [Reality Debug] 心魔對抗：執意強求對抗，觸發 Misconception！\n" NOR);
+                }
+                active_confusions_out += ({ "ego_clinging" });
+                misunderstanding_count++; // 歸入未理解
+                continue;
+            }
+            // 觀照與放下，更容易達成 Understanding
+            if (act["action"] == "observe" || act["action"] == "let_go") {
+                // 即使缺少部分 observations，亦可勉強渡過 (Misunderstanding)
+                if (getenv("MUD_TEST_MODE") || this_player()) {
+                    write(HIC "  [Reality Debug] 心魔觀照：玩家採取禪修放下行為。\n" NOR);
+                }
+            }
+        }
 
         if (getenv("MUD_TEST_MODE") || this_player()) {
             write(HIK "  [Reality Debug] 正在比對 Knowledge: " + kn_ref + "\n" NOR);
@@ -285,10 +309,13 @@ int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string
         }
     }
 
+    int state;
     if (understood_count == total_kns) {
-        return UNDERSTANDING;
+        state = UNDERSTANDING;
     } else if (understood_count > 0 || misunderstanding_count > 0) {
-        return MISUNDERSTANDING;
+        state = MISUNDERSTANDING;
+    } else {
+        state = MISCONCEPTION;
     }
-    return MISCONCEPTION;
+    return ([ "state": state, "confusions": active_confusions_out ]);
 }

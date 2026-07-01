@@ -155,6 +155,32 @@ int run_test(object me) {
     }
     write(GRN + "✅ 金丹、元嬰、大乘天劫挑戰配置文件驗證成功。\n" + NOR);
 
+    // 8. 驗證心魔挑戰 Resolver 的認知抗衡 (fight 懲罰) 邏輯
+    write(CYN "🧪 測試 8：測試心魔挑戰中執意對抗 (fight) 觸發 Misconception...\n" NOR);
+    object resolver = load_object("/runtime/executors/reality_resolver.c");
+    
+    // 清除可能干擾測試的暫存與 factor 狀態
+    me->delete_temp("failure_history/ego_clinging");
+    
+    // 模擬在心魔挑戰中輸入對抗指令 "fight"
+    mapping dummy_act = ([ "action": "fight", "target": "demon" ]);
+    mapping dummy_challenge = ([
+        "challenge_id": "heart_demon_manifestation",
+        "realities": ([
+            "spiritual": ([
+                "knowledges": ({ "spiritual.karma.demon_heart_observation" })
+            ])
+        ])
+    ]);
+    
+    resolver->execute(realm, me, dummy_act, dummy_challenge, "heart_demon_manifestation");
+    
+    if (!me->query_temp("failure_history/ego_clinging")) {
+        write(RED + "❌ 錯誤：在心魔挑戰中強行抗衡 (fight) 未能正確觸發 Misconception 懲罰！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 心魔挑戰強硬對抗 (fight) 判定為 Misconception 且受執念干擾測試成功。\n" + NOR);
+
     write(HIG + "🎉 蜀山奧德賽業力與因果誓願系統測試全部通過！\n" + NOR);
     return 1;
 }

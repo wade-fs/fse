@@ -103,9 +103,28 @@ void trigger_tribulation(object player) {
     if (player->query_temp("in_tribulation")) return;
     player->set_temp("in_tribulation", 1);
     
-    tell_object(player, HIR + "\n⚡ 【 ⚡ 天劫預兆 ⚡ 】\n" +
-                        "  你感到元神一陣劇烈刺痛，虛空中隱隱有滅世紫雷在轟鳴！\n" +
-                        "  因果糾纏，業力（" + player->query_karma() + "）如山，天劫鎖定了你的靈魂！\n\n" + NOR);
+    int karma = player->query_karma();
+    string warn_msg = "";
+    string strike_msg = "";
+    
+    if (karma >= 100) {
+        // 大乘渡劫期天劫
+        warn_msg = "\n⚡ 【 ⚡ 渡劫期天劫前兆 ⚡ 】\n" +
+                   "  整個世界都暗了下來。虛空撕裂，九十九道金色雷柱從天而降，天地間只剩雷光與你的心跳聲！\n";
+        strike_msg = "  ⚡ 【天劫降臨】 每一道劫雷都直擊你的道心，幻化出你此生所有未了的因果：未報恩怨、塵世執著……\n";
+    } else if (karma >= 80) {
+        // 元嬰期中階天劫
+        warn_msg = "\n⚡ 【 ⚡ 元嬰期天劫前兆 ⚡ 】\n" +
+                   "  九天之上風雲驟變，隱隱有九道雷龍盤旋咆哮。你體內元嬰劇烈顫抖，仿佛元神即將被撕裂！\n";
+        strike_msg = "  ⚡ 【天劫降臨】 九道不同顏色的天雷接連落下，每一道都化作你內心最深的執念幻象向你撲來！\n";
+    } else {
+        // 金丹期初階天劫
+        warn_msg = "\n⚡ 【 ⚡ 金丹期天劫前兆 ⚡ 】\n" +
+                   "  天色忽然暗沉，遠處傳來低沉雷鳴。你感到元神一陣刺痛，彷彿有無形鎖鏈正拉扯你的魂魄。\n";
+        strike_msg = "  ⚡ 【天劫降臨】 一道紫色雷光撕裂夜空直劈而下！雷光中隱隱映照出你過往強求執著的畫面！\n";
+    }
+    
+    tell_object(player, HIR + warn_msg + strike_msg + NOR + "\n");
                         
     object env = environment(player);
     player->set_temp("pre_tribulation_room", env ? base_name(env) : "/rooms/triassic_plains/room");
