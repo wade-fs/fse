@@ -1,12 +1,31 @@
-adventure_id: so
-name: "Shushan Odyssey"
-version: "0.1"
-requires_runtime: ">=1.0"
+# adventures/so/mudlib/manifest.yaml
+# FSE 尋仙問道 (Shushan Odyssey) 宣告式註冊清單 (平台大一統版)
+
+adventure_id: "so"
+name: "尋仙問道 - Shushan Odyssey"
+version: "0.8"
+
+# 注入核心服務的路徑
 content_paths:
-  factors: "/content/factors"
+  nodes: "/content/nodes"
+  realities: "/realities"
   progression: "/content/progression"
   locales: "/content/locales"
+  factors: 
+    - "/content/factors"
+    - "/content/nodes/*/discoveries"
+
+initial_stage: "stage_1_mortal"
+default_language: "zh_TW"
+
+# 虛擬物件規則
 virtual_rules:
-  presence: /std/presence.c
-  nodes: /std/node.c
-initial_stage: novice
+  nodes: "/std/node.c"
+  rooms: "/std/fse_room.c"
+
+# 預設使用的執行器
+default_executor: "reality_resolver"
+
+# 專屬服務（可選，引導時自動加載）
+extra_services:
+  - "/services/karma_service.c"

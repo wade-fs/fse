@@ -28,6 +28,7 @@ def create_adventure(name, title, author):
         adv_dir / "mudlib" / "content" / "nodes",
         adv_dir / "mudlib" / "std",
         adv_dir / "mudlib" / "tests",
+        adv_dir / "mudlib" / "web" / "static",
     ]
     for d in dirs:
         os.makedirs(d, exist_ok=True)
@@ -38,11 +39,10 @@ def create_adventure(name, title, author):
     manifest_content = f"""# adventures/{name}/mudlib/manifest.yaml
 # FSE 宣告式冒險模組註冊清單
 
-adventure:
-  name: "{name}"
-  title: "{title}"
-  author: "{author}"
-  version: "1.0"
+adventure_id: "{name}"
+name: "{title}"
+author: "{author}"
+version: "1.0"
 
 # 虛擬路徑物件映射規則
 virtual_rules:
@@ -56,7 +56,7 @@ content_paths:
   progression: "/content/progression"
 
 # 冒險初始啟動階段與虛擬節點
-initial_stage: "/nodes/start_cliff/node"
+initial_stage: "stage_1_start"
 
 # 認識論判定擴充 (若有)
 resolver_strategies:
@@ -292,7 +292,7 @@ void run_tests() {{
 
 test:
 \t@echo "🧪 運行 {title} 最小啟動測試..."
-\t@MUD_TEST_MODE=1 ../../bin/fsmud -mudlib mudlib -data ../../data/{name} -runtime ../../runtime -master master.c --hub none
+\t@MUD_TEST_MODE=1 ../../bin/fsmud -mudlib mudlib --hub none
 """
     with open(makefile, "w", encoding="utf-8") as f:
         f.write(makefile_content)

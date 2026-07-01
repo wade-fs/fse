@@ -59,10 +59,22 @@ void create() {
                 virtual_core->register_virtual_rule(prefix, std_file);
         }
     }
-    if (manifest["resolver_strategies"]) {
-        // 註：FSE 核心的 /runtime/services/node_executor.c 已支援動態載入
-        // 任何宣告在挑戰 YAML 中的 executor (例如 reality_resolver)，會被自動載入為 /runtime/executors/reality_resolver.c
+    
+    // ─── 載入冒險專屬服務 (extra_services) ───
+    string *services = manifest["extra_services"];
+    if (services && arrayp(services)) {
+        foreach (string svc_path in services) {
+            if (file_size(svc_path) > 0) {
+                object svc_obj = load_object(svc_path);
+                if (svc_obj) {
+                    write(HIK "  [master] 成功自動載入專屬服務: " + svc_path + "\n" NOR);
+                }
+            } else {
+                write(HIY "  [master] 警告：找不到專屬服務檔案: " + svc_path + "\n" NOR);
+            }
+        }
     }
+
     write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
 
     if (getenv("MUD_TEST_MODE")) call_out("run_test_mode", 1);

@@ -10,12 +10,12 @@ all:
 	@echo "ℹ️  SO 蜀山遊記 使用共用 FSE 引擎，無需本地編譯。"
 
 run-so:
-	@echo "🔮 啟動 FSE: SO — 蜀山遊記 (Shushan Odyssey) on port 9092..."
-	@$(OUT)/fsmud -mudlib mudlib -data ../../data/so -runtime ../../runtime -master master.c --hub none -port 9092
+	@echo "🔮 啟動 FSE: SO — 尋仙問道 on port 9092..."
+	@$(OUT)/fsmud -mudlib mudlib -port 9092 --hub none
 
 test-so:
 	@echo "🧪 運行 SO 最小啟動測試..."
-	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib -data ../../data/so -runtime ../../runtime -master master.c --hub none 2>&1
+	@MUD_TEST_MODE=1 $(OUT)/fsmud -mudlib mudlib --hub none 2>&1
 
 clean:
 	@rm -f ../../data/so/state/players/*.o
