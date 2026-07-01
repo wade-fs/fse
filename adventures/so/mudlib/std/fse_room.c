@@ -279,6 +279,31 @@ int resolve_interaction(object actor, string action, string target) {
         }
         if (!target_matched) continue;
 
+        // ── 檢查感知門檻 (Prerequisites/Gate) ──
+        mapping prereqs = act["prerequisites"];
+        int passed = 1;
+        if (prereqs) {
+            string req_temp = prereqs["temp_state"];
+            if (req_temp && !actor->query_temp(req_temp)) passed = 0;
+            string req_factor = prereqs["factor"];
+            if (req_factor && !actor->has_factor(req_factor)) passed = 0;
+            string req_item = prereqs["item"];
+            if (req_item) {
+                object *inv = all_inventory(actor);
+                int has_it = 0;
+                foreach (object ob in inv) {
+                    if (ob->query_item_id() == req_item) { has_it = 1; break; }
+                }
+                if (!has_it) passed = 0;
+            }
+        }
+
+        if (!passed) {
+            string gate_msg = act["gate_msg"] || "【 🌀 心緒未定 】你正想打坐吐納，但四周的環境與風勢讓你心神不定，無法進入狀態。似乎需要先仔細觀察周遭環境。";
+            tell_object(actor, YEL + gate_msg + "\n" + NOR);
+            return 1; // 攔截響應，不是沉默
+        }
+
         // 如果互動指定了專屬的 Reality Resolver，我們直接將判定委託給 Reality 引擎，不由互動層寫死成敗
         string res_challenge = act["resolver"];
         if (res_challenge) {
@@ -315,24 +340,6 @@ int resolve_interaction(object actor, string action, string target) {
             string repeat_msg = act["repeat_msg"] || "你已掌握這個動作的要領，無需重試。";
             tell_object(actor, YEL + repeat_msg + "\n" + NOR);
             return 1;
-        }
-
-        mapping prereqs = act["prerequisites"];
-        int passed = 1;
-        if (prereqs) {
-            string req_temp = prereqs["temp_state"];
-            if (req_temp && !actor->query_temp(req_temp)) passed = 0;
-            string req_factor = prereqs["factor"];
-            if (req_factor && !actor->has_factor(req_factor)) passed = 0;
-            string req_item = prereqs["item"];
-            if (req_item) {
-                object *inv = all_inventory(actor);
-                int has_it = 0;
-                foreach (object ob in inv) {
-                    if (ob->query_item_id() == req_item) { has_it = 1; break; }
-                }
-                if (!has_it) passed = 0;
-            }
         }
 
         if (passed) {

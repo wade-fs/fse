@@ -125,6 +125,29 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
         yaml.safe_dump(challenge_data, f, allow_unicode=True, default_flow_style=False)
     print(f"  ✓ 成功創建 挑戰檔: {challenge_yaml_path}")
 
+    # 3.5 建立第一個探索發現 (Discovery) 模板檔
+    discovery_yaml_path = discoveries_dir / f"{node_id}_secret_niche.yaml"
+    discovery_data = {
+        "discovery_id": f"{node_id}_secret_niche",
+        "name": "石縫隱秘",
+        "description": "角落的石縫裡，似乎有些前人遺留的痕跡。",
+        "requires_observation": "stillness_resonance", # 需要悟得特定因果才能看見此發現
+        "on_reveal": {
+            "msg": "【 🔍 發現 】你在角落的石縫中找到了一卷古老的手札殘頁！",
+            "adventure_effects": {
+                "spiritual_energy": 5
+            },
+            "give_item": {
+                "id": "old_page",
+                "name": "古老手札殘頁",
+                "desc": "一頁泛黃發霉的殘破紙張，上面依稀寫著些無關緊要的修行筆記。"
+            }
+        }
+    }
+    with open(discovery_yaml_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump(discovery_data, f, allow_unicode=True, default_flow_style=False)
+    print(f"  ✓ 成功創建 發現物模板: {discovery_yaml_path}")
+
     # 4. 註冊多語系 locales
     locales_path = CONTENT_ROOT / "locales" / "zh_TW.yaml"
     locales_data = {}
