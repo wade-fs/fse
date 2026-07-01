@@ -2,7 +2,7 @@
 # scaffold_node.py — 蜀山問道 FSE Node 快速搭建與地圖批量生成工具
 #
 # 用法 1：批量讀取地圖檔生成（推薦）
-#   python3 scaffold_node.py --import world_map.yaml
+#   python3 scaffold_node.py --import_map world_map.yaml
 #
 # 用法 2：單一節點生成
 #   python3 scaffold_node.py green_bamboo_forest --name "清淨竹林" --desc "竹影婆娑..."
@@ -18,15 +18,6 @@ SO_ROOT      = Path(__file__).parent
 MUDLIB_ROOT  = SO_ROOT / "mudlib"
 CONTENT_ROOT = MUDLIB_ROOT / "content"
 
-def create_single_node(node_id, node_name, node_desc, node_type="cultivation", paths=None, reveal_paths=None):
-    """生成單一節點的 YAML、挑戰 YAML 與 語系註冊"""
-    if paths is None:
-        paths = {}
-    if reveal_paths is None:
-        reveal_paths = {}
-
-    node_dir = CONTENT_ROOT / "nodes" / node_id
-    challenges_dir = node_dir / "challenges"
 def create_single_node(node_id, node_name, node_desc, node_type="cultivation", paths=None, reveal_paths=None, node_dict=None):
     """生成單一節點的 YAML、挑戰 YAML 與 語系註冊"""
     if paths is None:
@@ -45,11 +36,11 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
     os.makedirs(discoveries_dir, exist_ok=True)
 
     # 1. 轉譯 paths 格式符合 MUD 虛擬路徑規則 (e.g. /nodes/mountain_path/node)
-    exits_config = {}
+    paths_config = {}
     for direction, dest_id in paths.items():
-        exits_config[direction] = f"/nodes/{dest_id}/node"
+        paths_config[direction] = f"/nodes/{dest_id}/node"
 
-    # 轉譯 reveal_paths 格式
+    # 轉譯 reveal_paths 格式 (使用 FSE 術語 reveal_paths)
     reveal_config = {}
     for direction, data in reveal_paths.items():
         reveal_config[direction] = {
@@ -58,18 +49,18 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
             "reveal_msg": data.get("reveal_msg", "【 🔍 發現 】一條隱秘的路徑在你的理解中顯現了。")
         }
 
-    # 2. 建立 node.yaml 并處理宣告式直通欄位
+    # 2. 建立 node.yaml 并處理宣告式直通欄位 (使用 paths 取代 exits，使用 desc 取代 description)
     node_yaml_path = node_dir / "node.yaml"
     node_data = {
         "version": "1.0",
         "node_id": node_id,
         "name": node_id,
         "type": node_type,
-        "description": f"{node_id}_desc",
-        "exits": exits_config
+        "desc": f"{node_id}_desc",
+        "paths": paths_config
     }
     if reveal_config:
-        node_data["reveal_exits"] = reveal_config
+        node_data["reveal_paths"] = reveal_config
 
     # 自動直通拷貝 (複製進階欄位直接注入 node.yaml)
     passthrough_keys = [
@@ -90,7 +81,7 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
         yaml.safe_dump(node_data, f, allow_unicode=True, default_flow_style=False)
     print(f"  ✓ 成功創建 Node 設定檔: {node_yaml_path}")
 
-    # 3. 建立第一個挑戰 YAML 模板
+    # 3. 建立第一個挑戰 YAML 模板 (對齊 evolve 和 adventure_effects 結構)
     challenge_yaml_path = challenges_dir / f"{node_id}_first_contact.yaml"
     challenge_data = {
         "challenge_id": f"{node_id}_first_contact",
@@ -102,21 +93,30 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
         "success_msg": "🎉 你的心神與天地靈氣交融，進入定境。\n",
         "success_progress": 10,
         "failure_warning": "【 🌀 產生困惑 】你感到氣血逆流，無法安神，周圍的法則產生了斷裂。\n",
-        "consequence": {
+        "evolve": {
             "understanding": {
-                "spiritual_energy": 20,
-                "karma_change": 0,
-                "new_signals": [f"{node_id}_aligned"]
+                "world_change": "actor_aligned_with_stillness",
+                "new_signals": [f"{node_id}_aligned"],
+                "adventure_effects": {
+                    "spiritual_energy": 20,
+                    "karma_change": 0
+                }
             },
             "misunderstanding": {
-                "spiritual_energy": -5,
-                "karma_change": 1,
-                "new_signals": ["chest_tightness"]
+                "world_change": "actor_tension_persists",
+                "new_signals": ["chest_tightness"],
+                "adventure_effects": {
+                    "spiritual_energy": -5,
+                    "karma_change": 1
+                }
             },
             "misconception": {
-                "spiritual_energy": -10,
-                "karma_change": 5,
-                "new_signals": ["mind_chaos"]
+                "world_change": "actor_qi_backlash",
+                "new_signals": ["mind_chaos"],
+                "adventure_effects": {
+                    "spiritual_energy": -10,
+                    "karma_change": 5
+                }
             }
         }
     }

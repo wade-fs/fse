@@ -50,13 +50,8 @@ void create() {
                 }
             }
             if (manifest["resolver_strategies"]) {
-                object node_exec = load_object("/runtime/services/node_executor.c");
-                if (node_exec) {
-                    foreach (string strategy_type, string strategy_path in manifest["resolver_strategies"]) {
-                        // 雖然這需要 node_executor.c 支援，但我們先預留此映射，或者直接透過虛擬系統映射為 strategy 檔案
-                        // 本地 Reality Resolver 本身作為擴充，已被 node_executor 自動支援！
-                    }
-                }
+                // 註：FSE 核心的 /runtime/services/node_executor.c 已支援動態載入
+                // 任何宣告在挑戰 YAML 中的 executor (例如 reality_resolver)，會被自動載入為 /runtime/executors/reality_resolver.c
             }
             write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
         }

@@ -1,21 +1,27 @@
 challenge_id: town_entrance_first_contact
-consequence:
+discover_factor: stillness_resonance
+evolve:
   misconception:
-    karma_change: 5
+    adventure_effects:
+      karma_change: 5
+      spiritual_energy: -10
     new_signals:
     - mind_chaos
-    spiritual_energy: -10
+    world_change: actor_qi_backlash
   misunderstanding:
-    karma_change: 1
+    adventure_effects:
+      karma_change: 1
+      spiritual_energy: -5
     new_signals:
     - chest_tightness
-    spiritual_energy: -5
+    world_change: actor_tension_persists
   understanding:
-    karma_change: 0
+    adventure_effects:
+      karma_change: 0
+      spiritual_energy: 20
     new_signals:
     - town_entrance_aligned
-    spiritual_energy: 20
-discover_factor: stillness_resonance
+    world_change: actor_aligned_with_stillness
 executor: reality_resolver
 failure_warning: '【 🌀 產生困惑 】你感到氣血逆流，無法安神，周圍的法則產生了斷裂。
 

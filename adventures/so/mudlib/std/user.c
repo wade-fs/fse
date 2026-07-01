@@ -104,7 +104,6 @@ mapping query_observations() {
 void add_observation(string sig) {
     if (!observations) observations = ([]);
     observations[sig] = time();
-    save_state();
 }
 
 int has_observation(string sig) {
@@ -115,12 +114,10 @@ int has_observation(string sig) {
 void clear_observation(string sig) {
     if (!observations) observations = ([]);
     map_delete(observations, sig);
-    save_state();
 }
 
 void clear_observations() {
     observations = ([]);
-    save_state();
 }
 
 // ── Vow（自心發願）介面 ──

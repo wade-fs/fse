@@ -1,38 +1,28 @@
 challenges:
 - id: meditation_cliff_first_contact
-description: meditation_cliff_desc
+desc: meditation_cliff_desc
 environmental_multipliers:
   entropy_decay: 1.0
   spiritual_recovery: 1.5
-exits:
-  down: /nodes/mountain_path/node
 interactions:
 - action: meditate
-  fail_hp: -10
-  fail_karma: 5
-  failure_msg: '【 🌀 產生困惑 】你緊閉雙眼試圖強行吐納，但寒風順著喉嚨灌入，體內靈氣瞬間暴走，胸口一陣劇痛！
-
-    💡 提示：寒風與身體的緊繃（focus wind）是否正在警告你什麼？強求無功，或需平息心神？'
   prerequisites:
     temp_state: wind_cold_noticed
-  success_msg: 你強行引導狂風中的混亂靈力注入丹田。
+  resolver: meditation_cliff_first_contact
   target: spiritual_current
-  trigger_confusion: power_by_force
 - action: observe_breath
-  complete_quest: first_meditation
-  discover_factor: stillness_resonance
   give_item:
     desc: 一顆散發著溫潤微光的寶珠，是由你在靜慮崖天人共鳴時精氣凝聚而成，能微幅安神。
     id: stillness_bead
     name: 定心珠
-  karma_change: 0
   prerequisites:
     temp_state: wind_cold_noticed
-  spiritual_energy: 20
-  success_msg: 你放鬆身體，屏除雜念，隨著呼吸的節奏，身體的緊繃感漸漸消退。你感到體內氣息與崖上狂風達成了奇妙的共鳴！
+  resolver: meditation_cliff_first_contact
 karma_loop_threshold: 50
 name: meditation_cliff
 node_id: meditation_cliff
+paths:
+  down: /nodes/mountain_path/node
 sensory_signals:
   aura:
     default_msg: 空氣中靈力紊亂奔湧，若隱若現。

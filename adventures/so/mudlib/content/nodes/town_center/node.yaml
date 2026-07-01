@@ -1,7 +1,9 @@
 challenges:
 - id: town_center_first_contact
-description: town_center_desc
-exits:
+desc: town_center_desc
+name: town_center
+node_id: town_center
+paths:
   down: /nodes/desire_pavilion/node
   east: /nodes/herb_garden/node
   leave: /nodes/town_entrance/node
@@ -10,7 +12,5 @@ exits:
   southeast: /nodes/destiny_pawnshop/node
   southwest: /nodes/spirit_auction/node
   west: /nodes/array_platform/node
-name: town_center
-node_id: town_center
 type: market
 version: '1.0'
