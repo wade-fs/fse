@@ -11,8 +11,11 @@ void create() {
 void apply_adventure_side_effects(object actor, mapping act, int passed) {
     if (!actor || !act) return;
     
+    // 優先讀取嵌套的 adventure_effects，若不存在或不是 mapping 則直接 Fallback 讀取 act 本身
     mapping effects = act["adventure_effects"];
-    if (!effects) return;
+    if (!effects || !mapp(effects)) {
+        effects = act;
+    }
 
     int se = effects["spiritual_energy"];
     if (se) actor->add_physical_state("spiritual_energy", se);
