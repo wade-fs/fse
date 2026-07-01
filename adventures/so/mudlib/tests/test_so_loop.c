@@ -6,7 +6,7 @@ int test_meditation_flow();
 
 int run_all_tests() {
     write(HIW "\n============================================\n" NOR);
-    write(HIW "   開始執行 蜀山問道 (SO) 核心 Reality 測試  \n" NOR);
+    write(HIW "   開始執行 尋仙問道 (SO) 核心 Reality 測試  \n" NOR);
     write(HIW "============================================\n" NOR);
 
     int failures = 0;
@@ -14,10 +14,10 @@ int run_all_tests() {
     if (test_meditation_flow()   != 0) failures++;
 
     if (failures == 0) {
-        write(HIG "\n🎉 [SUCCESS] 蜀山問道 (SO) 測試全部通過！\n" NOR);
+        write(HIG "\n🎉 [SUCCESS] 尋仙問道 (SO) 測試全部通過！\n" NOR);
         return 0;
     } else {
-        write(HIR "\n❌ [FAILURE] 蜀山問道 (SO) 測試有 " + failures + " 個失敗項目。\n" NOR);
+        write(HIR "\n❌ [FAILURE] 尋仙問道 (SO) 測試有 " + failures + " 個失敗項目。\n" NOR);
         return 1;
     }
 }

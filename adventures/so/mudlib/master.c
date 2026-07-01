@@ -6,7 +6,7 @@ inherit "/secure/valid.c";
 void create() {
     ::create();
     write("===========================================\n");
-    write("    FSE SO — 蜀山問道 (Shushan Odyssey)    \n");
+    write("    FSE SO — 尋仙問道 (Shushan Odyssey)    \n");
     write("         Spiritual Reality 啟動成功         \n");
     write("===========================================\n");
 
@@ -68,7 +68,7 @@ void create() {
 }
 
 void run_test_mode() {
-    write("[TEST] 開始執行蜀山問道 (SO) 整合測試...\n");
+    write("[TEST] 開始執行尋仙問道 (SO) 整合測試...\n");
     object test_suite = load_object("/tests/test_so_loop.c");
     if (!test_suite) {
         write(HIR "❌ 無法載入測試套件 /tests/test_so_loop.c\n" NOR);

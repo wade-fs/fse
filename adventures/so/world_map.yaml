@@ -1,0 +1,37 @@
+# adventures/so/world_map.yaml
+# 尋仙問道 — 起始區域 (蜀山山門) 地圖定義
+
+nodes:
+  - id: "meditation_cliff"
+    name: "靜慮崖"
+    type: "cultivation"
+    desc: "此處是蜀山深處一處孤懸的峭壁。四周松濤如海，雲霧繚繞。峭壁邊緣有一塊平整的青石，似乎是前人打坐之處。此地風勢強勁，靈氣暗流奔湧。"
+    paths:
+      down: "mountain_path"
+
+  - id: "mountain_path"
+    name: "蜀山山道"
+    type: "travel"
+    desc: "一條蜿蜒曲折的石階山道，兩旁古木參天，濃霧在腳下漂浮。向山頂看去，隱約能看見蜀山派宏偉的殿宇輪廓。"
+    paths:
+      up: "meditation_cliff"
+      climb: "green_bamboo_forest"
+
+  - id: "green_bamboo_forest"
+    name: "清淨竹林"
+    type: "cultivation"
+    desc: "此地翠竹掩映，清泉石上流。空氣中瀰漫著淡淡的竹香，令人神清氣爽。這裡是修行者參悟木德與風相的絕佳去處。"
+    paths:
+      back: "mountain_path"
+    reveal_paths:
+      secret_cave:
+        dest: "hidden_shrine"
+        requires_factor: "stillness_resonance"
+        reveal_msg: "【 🔍 發現 】竹林深處原本被陣法遮蔽的霧氣漸漸散開，露出一口幽暗的古洞 (secret_cave)！"
+
+  - id: "hidden_shrine"
+    name: "古仙密室"
+    type: "domain"
+    desc: "一個隱蔽在瀑布後方的天然石室。四周石壁上刻滿了古老的劍意刻痕，中央有一座石台，上面散落著凡鐵殘渣。"
+    paths:
+      out: "green_bamboo_forest"
