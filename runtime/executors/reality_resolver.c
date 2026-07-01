@@ -1,31 +1,24 @@
 // /runtime/executors/reality_resolver.c
 // FSE 第二代認識論執行判定器 (Reality Resolver)
 // 職責：
-//   - 讀取挑戰引用的 Realities 與 Knowledges
-//   - 比對玩家的 Evidence (observations)
+//   - 支援「並行 Reality 評估」（Natural + Social + Spiritual 等分支並行評估）
+//   - 讀取挑戰引用的 Realities 與 Knowledges，並比對玩家 Evidence (observations)
 //   - 判定認知狀態常數：UNDERSTANDING / MISUNDERSTANDING / MISCONCEPTION
-//   - 驅動世界因果演化 (Evolve)，更新感知 (Reveal) 與新訊號
+//   - 獨立且並行驅動各 Reality 的世界因果演化 (Evolve)，更新感知 (Reveal) 與新訊號
 #include "/runtime/include/ansi.h"
 
 #define UNDERSTANDING    0
 #define MISUNDERSTANDING 1
 #define MISCONCEPTION    2
 
+// 前置宣告內部評估函式
+int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs, string *active_confusions_out);
+
 // 執行判定入口
-// 參數：
-//   - node_obj: 當前節點物件
-//   - actor: 行動者玩家物件
-//   - act: 前端/行動傳來的預測資料 (例如：([ "action": "meditate", "target": "spiritual_current" ]))
-//   - chal_data: 挑戰 YAML 的詳細資料
-//   - cid: 挑戰 ID
 int execute(object node_obj, object actor, mapping act, mapping chal_data, string cid) {
     if (!node_obj || !actor || !chal_data) return 0;
 
     object i18n = load_object("/runtime/services/i18n_service.c");
-    string *knowledges = chal_data["knowledges"];
-    if (!knowledges || sizeof(knowledges) == 0) {
-        return 0;
-    }
 
     // 取得玩家當前的所有觀察 Evidence (observations)
     mapping player_obs;
@@ -34,13 +27,130 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
     }
     if (!player_obs) player_obs = ([]);
 
-    int total_knowledges = sizeof(knowledges);
+    // 檢測是否為並行 Reality 配置 (YAML 宣告 realities 映射)
+    mapping realities = chal_data["realities"];
+    
+    // 如果是舊的扁平格式，我們構造一個單一的 realities 分支來進行 Fallback 相容
+    if (!realities || !mapp(realities)) {
+        string *flat_kns = chal_data["knowledges"];
+        if (!flat_kns || sizeof(flat_kns) == 0) return 0;
+        
+        realities = ([
+            "spiritual": ([
+                "knowledges": flat_kns
+            ])
+        ]);
+    }
+
+    int total_branches = sizeof(realities);
+    int understood_branches = 0;
+    string *all_active_confusions = ({});
+
+    // 遍歷並行評估每一個 Reality 分支 (e.g. natural, social, spiritual)
+    foreach (string r_type, mixed r_cfg in realities) {
+        if (!mapp(r_cfg)) continue;
+        
+        string *kns = r_cfg["knowledges"];
+        if (!kns || sizeof(kns) == 0) continue;
+
+        string *branch_confusions = ({});
+        int branch_state = evaluate_knowledge_branch(node_obj, actor, act, kns, player_obs, ref branch_confusions);
+
+        if (branch_state == UNDERSTANDING) {
+            understood_branches++;
+        } else {
+            all_active_confusions += branch_confusions;
+        }
+
+        // 獨立驅動此 Reality 分支專屬的世界演化 (Evolve)
+        mapping evolve_cfg = chal_data["evolve"];
+        if (evolve_cfg && node_obj) {
+            string state_key = (branch_state == UNDERSTANDING) ? "understanding" : 
+                               ((branch_state == MISUNDERSTANDING) ? "misunderstanding" : "misconception");
+            
+            // 優先讀取分支底下的獨立 Evolve 設定，例如 evolve["spiritual"]["understanding"]
+            mapping branch_evolve = evolve_cfg[r_type];
+            if (branch_evolve && mapp(branch_evolve)) {
+                mapping effect = branch_evolve[state_key];
+                if (effect) {
+                    // 執行 side effects (如 HP/靈力/業力增減)
+                    if (function_exists("apply_adventure_side_effects", node_obj)) {
+                        node_obj->apply_adventure_side_effects(actor, effect, (branch_state == UNDERSTANDING));
+                    }
+
+                    // 世界演化產生新訊號，餵入當前 session
+                    string *new_signals = effect["new_signals"];
+                    if (new_signals && function_exists("add_observation", actor)) {
+                        foreach (string sig in new_signals) {
+                            actor->add_observation(sig);
+                        }
+                    }
+                }
+            } else {
+                // 若無分支 Evolve，Fallback 讀取頂層 Evolve (相容舊挑戰格式)
+                mapping effect = evolve_cfg[state_key];
+                if (effect) {
+                    if (function_exists("apply_adventure_side_effects", node_obj)) {
+                        node_obj->apply_adventure_side_effects(actor, effect, (branch_state == UNDERSTANDING));
+                    }
+                    string *new_signals = effect["new_signals"];
+                    if (new_signals && function_exists("add_observation", actor)) {
+                        foreach (string sig in new_signals) {
+                            actor->add_observation(sig);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ─── 5. 整合評估結論 ───
+    int final_success = (understood_branches == total_branches);
+
+    if (final_success) {
+        string success_msg = chal_data["success_msg"] || "🎉 成功領悟了天地因果法則！\n";
+        tell_object(actor, HIG + success_msg + NOR);
+
+        string disc_factor = chal_data["discover_factor"];
+        if (disc_factor) {
+            load_object("/runtime/services/factor_service.c")->discover_factor(actor, disc_factor);
+        }
+
+        int success_prog = chal_data["success_progress"] || 10;
+        load_object("/runtime/services/progress_manager.c")->complete_player_quest(actor, cid, "main", success_prog);
+    } else {
+        object event_bus = load_object("/runtime/services/event_bus.c");
+        if (event_bus) {
+            event_bus->publish("PlayerConfused", ([
+                "player": actor,
+                "challenge_id": cid,
+                "node_id": node_obj->query_entity_id()
+            ]));
+        }
+        actor->set_temp("is_confused", 1);
+
+        foreach (string conf in all_active_confusions) {
+            actor->set_temp("failure_history/" + conf, 1);
+            if (i18n) {
+                string t_msg = i18n->translate("so.confusion." + conf);
+                if (t_msg && t_msg != "so.confusion." + conf) {
+                    tell_object(actor, HIR + t_msg + "\n" NOR);
+                }
+            }
+        }
+
+        string fail_warning = chal_data["failure_warning"] || "【 🌀 產生困惑 】你當前的理解與天地法則產生了斷裂。\n";
+        tell_object(actor, RED + fail_warning + NOR);
+    }
+
+    return final_success;
+}
+
+// 內部單一 Reality 分支之 Knowledge 評估邏輯
+int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string *knowledges, mapping player_obs, string *active_confusions_out) {
+    int total_kns = sizeof(knowledges);
     int understood_count = 0;
     int misunderstanding_count = 0;
-    string *active_confusions = ({});
-
-    // 暫存評估結果
-    mapping eval_results = ([]);
 
     foreach (string kn_ref in knowledges) {
         string *parts = explode(kn_ref, ".");
@@ -50,17 +160,37 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
         string law_id       = parts[1];
         string kn_id        = parts[2];
 
-        // 規則存放路徑：/runtime/realities/<reality_type>/<law_id>.yaml 或本地 fallback
         string law_path = sprintf("/runtime/realities/%s/%s.yaml", reality_type, law_id);
         if (file_size(law_path) <= 0) {
             law_path = sprintf("/realities/%s/%s.yaml", reality_type, law_id);
-            if (file_size(law_path) <= 0) continue;
+            if (file_size(law_path) <= 0) {
+                if (getenv("MUD_TEST_MODE") || this_player()) {
+                    write(HIR "⚠️ [Reality Debug] 找不到 Law 檔案: /runtime/realities/" + reality_type + "/" + law_id + ".yaml\n" NOR);
+                }
+                continue;
+            }
         }
 
         string raw = read_file(law_path);
-        if (!raw) continue;
+        if (!raw) {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIR "⚠️ [Reality Debug] 無法讀取 Law 檔案: " + law_path + "\n" NOR);
+            }
+            continue;
+        }
         mapping law_data = yaml_decode(raw);
-        if (!law_data || !law_data["knowledges"] || !law_data["knowledges"][kn_id]) continue;
+        if (!law_data) {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIR "⚠️ [Reality Debug] Law YAML 解析失敗: " + law_path + "\n" NOR);
+            }
+            continue;
+        }
+        if (!law_data["knowledges"] || !law_data["knowledges"][kn_id]) {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIR "⚠️ [Reality Debug] Law 檔案中找不到 Knowledge ID: " + kn_id + " (於 " + law_path + ")\n" NOR);
+            }
+            continue;
+        }
 
         mapping kn_data = law_data["knowledges"][kn_id];
         mapping evaluate = kn_data["evaluate"];
@@ -69,28 +199,25 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
         // 比對行動是否對齊 (Aligned Action)
         string aligned_act = evaluate["aligned_action"];
         if (aligned_act && act["action"] != aligned_act) {
-            eval_results[kn_ref] = MISCONCEPTION;
             string precon = evaluate["default_misconception"] || "concept_misunderstood";
-            active_confusions += ({ precon });
+            active_confusions_out += ({ precon });
             continue;
         }
 
         // 比對 required_observations (Evidence)
         string *req_obs = evaluate["required_observations"];
         int has_all_reqs = 1;
-        string *missing_reqs = ({});
 
         if (req_obs) {
             foreach (string req in req_obs) {
                 if (undefinedp(player_obs[req])) {
                     has_all_reqs = 0;
-                    missing_reqs += ({ req });
+                    break;
                 }
             }
         }
 
         if (has_all_reqs) {
-            eval_results[kn_ref] = UNDERSTANDING;
             understood_count++;
         } else {
             // 比對 misunderstanding_patterns
@@ -124,81 +251,19 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
             }
 
             if (pattern_matched && yield_status != "") {
-                eval_results[kn_ref] = MISUNDERSTANDING;
                 misunderstanding_count++;
-                active_confusions += ({ yield_status });
+                active_confusions_out += ({ yield_status });
             } else {
-                eval_results[kn_ref] = MISCONCEPTION;
                 string default_misc = evaluate["default_misconception"] || "concept_misunderstood";
-                active_confusions += ({ default_misc });
+                active_confusions_out += ({ default_misc });
             }
         }
     }
 
-    // ─── 4. Understanding Evaluation 評估結論 ───
-    int final_state = MISCONCEPTION;
-    if (understood_count == total_knowledges) {
-        final_state = UNDERSTANDING;
+    if (understood_count == total_kns) {
+        return UNDERSTANDING;
     } else if (understood_count > 0 || misunderstanding_count > 0) {
-        final_state = MISUNDERSTANDING;
+        return MISUNDERSTANDING;
     }
-
-    // ─── 5. Reveal / Memory / Discovery 認知更新 ───
-    if (final_state == UNDERSTANDING) {
-        string success_msg = chal_data["success_msg"] || "🎉 成功領悟了天地因果法則！\n";
-        tell_object(actor, HIG + success_msg + NOR);
-
-        string disc_factor = chal_data["discover_factor"];
-        if (disc_factor) {
-            load_object("/runtime/services/factor_service.c")->discover_factor(actor, disc_factor);
-        }
-
-        int success_prog = chal_data["success_progress"] || 10;
-        load_object("/runtime/services/progress_manager.c")->complete_player_quest(actor, cid, "main", success_prog);
-    } else {
-        object event_bus = load_object("/runtime/services/event_bus.c");
-        if (event_bus) {
-            event_bus->publish("PlayerConfused", ([
-                "player": actor,
-                "challenge_id": cid,
-                "node_id": node_obj->query_entity_id()
-            ]));
-        }
-        actor->set_temp("is_confused", 1);
-
-        foreach (string conf in active_confusions) {
-            actor->set_temp("failure_history/" + conf, 1);
-            if (i18n) {
-                string t_msg = i18n->translate("so.confusion." + conf);
-                if (t_msg && t_msg != "so.confusion." + conf) {
-                    tell_object(actor, HIR + t_msg + "\n" NOR);
-                }
-            }
-        }
-
-        string fail_warning = chal_data["failure_warning"] || "【 🌀 產生困惑 】你當前的理解與天地法則產生了斷裂。\n";
-        tell_object(actor, RED + fail_warning + NOR);
-    }
-
-    // ─── 6. World Consequence & Evolve 世界演化 ───
-    mapping evolve_cfg = chal_data["evolve"];
-    if (evolve_cfg && node_obj) {
-        string state_key = (final_state == UNDERSTANDING) ? "understanding" : 
-                           ((final_state == MISUNDERSTANDING) ? "misunderstanding" : "misconception");
-        mapping effect = evolve_cfg[state_key];
-        if (effect) {
-            if (function_exists("apply_adventure_side_effects", node_obj)) {
-                node_obj->apply_adventure_side_effects(actor, effect, (final_state == UNDERSTANDING));
-            }
-
-            string *new_signals = effect["new_signals"];
-            if (new_signals && function_exists("add_observation", actor)) {
-                foreach (string sig in new_signals) {
-                    actor->add_observation(sig);
-                }
-            }
-        }
-    }
-
-    return (final_state == UNDERSTANDING);
+    return MISCONCEPTION;
 }
