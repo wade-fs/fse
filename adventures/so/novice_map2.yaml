@@ -1,0 +1,204 @@
+# adventures/so/novice_map.yaml
+# 尋仙問道 — 完整新手地圖 v2 (Enhanced with Journey Feel)
+# 起點：山腳凡人小村 → 逐步進入蜀山外門與修行世界
+
+nodes:
+  # ─── 凡人起點區（增加遊歷感） ──────────────────────────
+  - id: "mountain_foot_village"
+    name: "山腳小村"
+    type: "travel"
+    desc: "一座寧靜的山腳小村，竹林環繞，幾戶人家炊煙裊裊。你從這裡開始你的尋仙之旅。"
+    paths:
+      north: "mountain_path_lower"
+      east: "village_teahouse"
+
+  - id: "village_teahouse"
+    name: "村口茶肆"
+    type: "social_info"
+    desc: "簡陋的竹棚茶肆，村民們在此聊天喝茶，是收集凡間風聲的好地方。"
+    paths:
+      west: "mountain_foot_village"
+    interactions:
+      - action: "listen"
+        success_msg: "茶客們低聲議論：『蜀山之上，仙蹤難尋，需心誠方能得見。』你心中微微一動。"
+        discover_factor: "red_dust_whispers"
+        new_signals: ["sect_rumor"]
+
+  - id: "mountain_path_lower"
+    name: "山腳官道"
+    type: "travel"
+    desc: "通往山中的石板官道，兩旁竹林茂密，空氣清新。"
+    paths:
+      south: "mountain_foot_village"
+      north: "mountain_path_mid"
+
+  - id: "mountain_path_mid"
+    name: "半山腰古道"
+    type: "travel"
+    desc: "古道蜿蜒，霧氣漸濃，古樹參天，已能感受到山中靈氣。"
+    paths:
+      south: "mountain_path_lower"
+      north: "mountain_path_upper"
+      east: "hidden_spring"
+
+  - id: "hidden_spring"
+    name: "隱秘山泉"
+    type: "cultivation"
+    desc: "被藤蔓遮蔽的清澈山泉，帶有淡淡靈氣，適合初學者打坐。"
+    paths:
+      west: "mountain_path_mid"
+
+  - id: "mountain_path_upper"
+    name: "蜀山山道"
+    type: "travel"
+    desc: "陡峭石階，松濤陣陣。向上可見蜀山外門牌樓。"
+    paths:
+      south: "mountain_path_mid"
+      north: "outer_sect_gate"
+
+  # ─── 蜀山外門（新手村核心） ──────────────────────────
+  - id: "outer_sect_gate"
+    name: "蜀山外門牌樓"
+    type: "sect_heritage"
+    desc: "雄偉石牌樓，上書「蜀山」二字。外門弟子巡邏，是新進修行者報到之地。"
+    paths:
+      south: "mountain_path_upper"
+      north: "meditation_cliff"
+      east: "sutra_pavilion"
+      west: "town_entrance"
+
+  # ─── 原有核心修行與紅塵節點（完整保留） ──────────────────────────
+  - id: "meditation_cliff"
+    name: "靜慮崖"
+    type: "cultivation"
+    desc: "蜀山深處孤懸峭壁，松濤如海，冷風刺骨。青石打坐處靈氣暗流奔湧。"
+    karma_loop_threshold: 50
+    paths:
+      south: "outer_sect_gate"
+    sensory_signals:
+      wind:
+        default_msg: "峭壁上冷風刺骨，松濤如怒吼般在耳邊迴盪。"
+        discovery:
+          requires_no_factor: "stillness_resonance"
+          set_temp: "wind_cold_noticed"
+          msg: "【 🔍 發現 】狂風（howling_wind）與身體緊繃感（physical_tension）。"
+      ground:
+        default_msg: "青石平整，覆蓋薄薄冰霜。"
+    interactions:
+      - action: "meditate"
+        target: "spiritual_current"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+        give_item:                                                                                
+          id: "stillness_bead"                                                                    
+          name: "定心珠"                                                                          
+          desc: "打坐時凝聚的寶珠，可安神。"
+        success_msg: "強求之中，你忽然領悟『強求無功，順勢而為』的道理..."
+        failure_msg: "你強行納氣，氣血逆流，胸口一悶，幾乎走火。"
+      - action: "observe_breath"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+        success_msg: "你屏息凝神，與狂風中的靈氣同頻共振，心湖漸歸平靜。一股暖流自丹田升起..."
+        failure_msg: "你試圖數息，卻被寒風打斷，心神無法安住。"
+
+  - id: "sutra_pavilion"
+    name: "藏經閣"
+    type: "sect_heritage"
+    desc: "外門藏經重地，玉簡生輝，長老閉目盤坐。"
+    paths:
+      west: "outer_sect_gate"
+
+  - id: "craft_workshop"
+    name: "百工坊"
+    type: "crafting"
+    desc: "爐火熊熊，鐵錘聲不絕，是修煉挖礦與鍛造之地。"
+    paths:
+      south: "town_center"
+
+  - id: "herb_garden"
+    name: "神草園"
+    type: "alchemy"
+    desc: "百草芬芳，青銅大鼎散發藥香，參悟陰陽藥理之處。"
+    paths:
+      west: "town_center"
+
+  - id: "array_platform"
+    name: "八卦壇"
+    type: "logical_array"
+    desc: "巨大八卦圖陣，靈石閃爍，參悟陣法與畫符之地。"
+    paths:
+      east: "town_center"
+
+  - id: "town_entrance"
+    name: "紅塵鎮牌坊"
+    type: "travel"
+    desc: "紅塵鎮入口，高大牌坊，凡俗喧囂撲面而來。"
+    paths:
+      east: "outer_sect_gate"
+      enter: "town_center"
+
+  - id: "town_center"
+    name: "紅塵集市"
+    type: "market"
+    desc: "繁華集市，人聲鼎沸，路邊攤香氣四溢。"
+    paths:
+      leave: "town_entrance"
+      north: "craft_workshop"
+      east: "herb_garden"
+      west: "array_platform"
+      south: "wind_tavern"
+      southeast: "destiny_pawnshop"
+      southwest: "spirit_auction"
+      down: "desire_pavilion"
+    nteractions:
+      - action: "buy"
+        target: "food"
+        success_msg: "熱氣騰騰的包子入口，你暫解凡俗飢餓，卻也感受到紅塵的牽絆..."
+        resolver: "mundane_transaction"
+
+  - id: "wind_tavern"
+    name: "臨風酒館"
+    type: "social_info"
+    desc: "酒香四溢，南來北往旅客聚集，收集紅塵情報的好地方。"
+    paths:
+      north: "town_center"
+      east: "pet_sanctuary"
+
+  - id: "pet_sanctuary"
+    name: "靈獸齋"
+    type: "nature_resonance"
+    desc: "豢養靈狐仙鶴，與自然萬物共鳴之處。"
+    paths:
+      west: "wind_tavern"
+
+  - id: "destiny_pawnshop"
+    name: "紅塵當舖"
+    type: "karmic_broker"
+    desc: "昏暗當舖，可典當法寶與消除業力。"
+    paths:
+      northwest: "town_center"
+    interactions:
+      - action: "pawn"
+        target: "karma"
+        success_msg: "你將一縷業力典當，換得短暫清淨，卻也付出些許道心代價..."
+        resolver: "karmic_trade"
+
+  - id: "spirit_auction"
+    name: "天珍拍賣行"
+    type: "spiritual_market"
+    desc: "金碧輝煌，修士競逐有緣法寶。"
+    paths:
+      northeast: "town_center"
+
+  - id: "desire_pavilion"
+    name: "煙雨青樓"
+    type: "spiritual_trial"
+    desc: "紅粉飄香，心魔試煉之所。"
+    paths:
+      up: "town_center"
+    interactions:
+      - action: "enter"
+        success_msg: "絲竹聲中，紅粉香氣撲面。你心湖微動，色空之理隱隱浮現..."
+        resolver: "desire_trial"

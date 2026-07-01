@@ -1,0 +1,165 @@
+# adventures/so/novice_map.yaml
+# 完整新手地圖 + 詳細互動腳本
+
+nodes:
+  # ─── 凡人起點區 ──────────────────────────
+  - id: "mountain_foot_village"
+    name: "山腳小村"
+    type: "travel"
+    desc: "一座寧靜的山腳小村，竹林環繞，炊煙裊裊。"
+    paths:
+      north: "mountain_path_lower"
+      east: "village_teahouse"
+    interactions:
+      - action: "talk"
+        target: "villager"
+        success_msg: "村民：『聽說蜀山上仙人很多，你若有心，可沿官道北上。』"
+        discover_factor: "village_rumor"
+        resolver: "village_inquiry"
+
+  - id: "village_teahouse"
+    name: "村口茶肆"
+    type: "social_info"
+    desc: "竹棚茶肆，村民聊天喝茶。"
+    paths:
+      west: "mountain_foot_village"
+    interactions:
+      - action: "listen"
+        success_msg: "你聽到村民議論山中靈異與蜀山仙蹤。"
+        discover_factor: "red_dust_whispers"
+        new_signals: ["sect_rumor"]
+
+  # ─── 山道區 ──────────────────────────
+  - id: "hidden_spring"
+    name: "隱秘山泉"
+    type: "cultivation"
+    desc: "清澈山泉，帶淡淡靈氣。"
+    paths:
+      west: "mountain_path_mid"
+    interactions:
+      - action: "drink"
+        success_msg: "清冽泉水入喉，精神一振。"
+        discover_factor: "spring_purity"
+        resolver: "natural_resonance"
+
+  # ─── 核心修行區 ──────────────────────────
+  - id: "meditation_cliff"
+    name: "靜慮崖"
+    type: "cultivation"
+    desc: "孤懸峭壁，冷風刺骨，靈氣暗流。"
+    karma_loop_threshold: 50
+    paths:
+      south: "outer_sect_gate"
+    sensory_signals:
+      wind:
+        default_msg: "冷風刺骨，松濤怒吼。"
+        discovery:
+          requires_no_factor: "stillness_resonance"
+          set_temp: "wind_cold_noticed"
+          msg: "發現 howling_wind 與 physical_tension。"
+    interactions:
+      - action: "meditate"
+        target: "spiritual_current"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+      - action: "observe_breath"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+        give_item:
+          id: "stillness_bead"
+          name: "定心珠"
+          desc: "打坐時凝聚的寶珠，可安神。"
+
+  - id: "sutra_pavilion"
+    name: "藏經閣"
+    type: "sect_heritage"
+    desc: "玉簡生輝，長老盤坐。"
+    paths:
+      west: "outer_sect_gate"
+    interactions:
+      - action: "ask"
+        target: "elder"
+        success_msg: "長老指點你心法入門。"
+        discover_factor: "sutra_introduction"
+        resolver: "sect_initiation"
+
+  # ─── 紅塵商業區（保留並補充） ──────────────────────────
+  - id: "town_center"
+    name: "紅塵集市"
+    type: "market"
+    desc: "繁華集市，人聲鼎沸。"
+    paths:
+      leave: "town_entrance"
+      north: "craft_workshop"
+      east: "herb_garden"
+      west: "array_platform"
+      south: "wind_tavern"
+      southeast: "destiny_pawnshop"
+      southwest: "spirit_auction"
+      down: "desire_pavilion"
+    interactions:
+      - action: "buy"
+        target: "food"
+        success_msg: "你買了熱騰騰的包子，暫解飢餓。"
+        resolver: "mundane_transaction"
+
+  - id: "destiny_pawnshop"
+    name: "紅塵當舖"
+    type: "karmic_broker"
+    desc: "昏暗當舖，可典當法寶與消業。"
+    paths:
+      northwest: "town_center"
+    interactions:
+      - action: "pawn"
+        target: "karma"
+        resolver: "karmic_trade"
+
+  - id: "desire_pavilion"
+    name: "煙雨青樓"
+    type: "spiritual_trial"
+    desc: "紅粉飄香，心魔試煉之地。"
+    paths:
+      up: "town_center"
+    interactions:
+      - action: "enter"
+        resolver: "desire_trial"
+
+  # 其他節點（craft_workshop, herb_garden 等）可依同樣模式補充
+  - id: "craft_workshop"
+    name: "百工坊"
+    type: "crafting"
+    paths:
+      south: "town_center"
+    interactions:
+      - action: "mine"
+        resolver: "geology_stress"
+
+  - id: "herb_garden"
+    name: "神草園"
+    type: "alchemy"
+    paths:
+      west: "town_center"
+    interactions:
+      - action: "refine"
+        resolver: "alchemy_balance"
+
+  - id: "array_platform"
+    name: "八卦壇"
+    type: "logical_array"
+    paths:
+      east: "town_center"
+    interactions:
+      - action: "draw"
+        target: "symbol"
+        resolver: "array_logic"
+
+  - id: "wind_tavern"
+    name: "臨風酒館"
+    type: "social_info"
+    paths:
+      north: "town_center"
+    interactions:
+      - action: "listen"
+        resolver: "rumor_collection"

@@ -1,0 +1,49 @@
+short: "蜀山金頂"
+long: |
+  這是蜀山的最頂峰，白雲在腳下如滄海般翻滾。
+  一尊殘破的石碑立在崖邊，上面隱約刻有「因果自負」四個古字。
+  狂風呼嘯，四周充盈著精純的靈氣，是修道之人絕佳的閉關清修之地。
+presence: []
+environmental_multipliers:
+  thirst_decay: 1.0
+  hunger_decay: 1.0
+exits:
+  down: "/rooms/triassic_plains/room"
+reveal_exits:
+  secret_shrine:
+    dest: "/rooms/shushan_shrine/room"
+    requires_factor: "zen_mind"
+    reveal_msg: "【 👁️ 領悟 】你的心靈變得無比澄澈，看穿了雲霧的虛妄，一條通往「秘境 (secret_shrine)」的小徑顯現了出來！"
+sensory_signals:
+  smell: "冰涼的高空微風，夾雜著淡淡的古老檀香氣息。"
+  sound: "呼嘯的風聲與隱約傳來的道家晨鐘，洗滌著心靈的塵埃。"
+  wind: "猛烈的山風從四面八方吹來，似乎在考驗修道者的定力。"
+  ground:
+    default_msg: "堅硬冰冷的青石地面，被歷代修士打坐磨得極為光滑。"
+    discovery:
+      requires_no_factor: "zen_mind"
+      set_temp: "observed_stele"
+      msg: "【 🔍 發現 】石碑下有一處凹陷，形狀完美契合雙盤打坐的姿勢。(set_temp: observed_stele)"
+karma_loop: true
+interactions:
+  - action: "sit"
+    target: "stele"
+    prerequisites:
+      temp_state: "observed_stele"
+    discover_factor: "zen_mind"
+    success_msg: "你於石碑前雙盤打坐，耳畔風聲漸遠，心中一片空明。你領悟了「禪定道心 (zen_mind)」！"
+    karma: -10
+    fatigue: -15
+  - action: "make"
+    target: "vow"
+    prerequisites:
+      factor: "zen_mind"
+    success_msg: "你對天道起誓發願，誓要清淨自心！"
+    set_temp: "vow_cleanse_active"
+  - action: "meditate"
+    target: "self"
+    prerequisites:
+      temp_state: "vow_cleanse_active"
+    success_msg: "你閉目內觀，反省自身執念與偏見。心中塵埃稍落。"
+    karma: -15
+    fatigue: 10

@@ -4,6 +4,7 @@ presence: []
 
 exits:
   canyon: "/rooms/wind_canyon/room"
+  peak: "/rooms/shushan_peak/room"
 
 reveal_exits:
   forest:

@@ -10,6 +10,8 @@ private int hunger;           // 飢餓度 (0 - 100, 0 = 飽, 100 = 瀕死)
 private int thirst;           // 口渴度 (0 - 100, 0 = 飽, 100 = 瀕死)
 private mapping progression;  // 進度 (同步給 progress_manager)
 private mapping factors;      // 已解鎖因素 (供 factor_service 讀寫)
+private int karma;            // 🚀 蜀山奧德賽：業力值 (Karma)
+private mapping vows;         // 🚀 蜀山奧德賽：宏願與誓約 (Vows)
 
 void create() {
     ::create();
@@ -24,6 +26,8 @@ void create() {
     thirst       = 0;
     progression  = ([]);
     factors      = ([]);
+    karma        = 0;
+    vows         = ([]);
     set_heart_beat(1); // 啟動心跳機制
 }
 
@@ -181,6 +185,33 @@ void heart_beat() {
     } else {
         // 在新手保護區內，飢餓度與口渴度不增加
         set_temp("hb_count", 0);
+    }
+
+    // 🚀 蜀山奧德賽：業力與心魔干擾
+    if (karma > 0) {
+        int karma_hb = query_temp("karma_hb_count") + 1;
+        set_temp("karma_hb_count", karma_hb);
+        
+        if (karma_hb >= 10) { // 每 20 秒檢測一次
+            set_temp("karma_hb_count", 0);
+            
+            if (karma > 50 && karma <= 80) {
+                // 心魔擾動，靈力恢復減緩，並增加疲勞
+                tell_object(this_object(), YEL + "🌀 心魔擾動：你感到思緒雜亂，體內靈氣有些滯澀不順。\n" + NOR);
+                add_fatigue(5);
+            } else if (karma > 80) {
+                // 天劫雷擊或心魔噬體
+                if (random(100) < 40) { // 40% 機率爆發
+                    tell_object(this_object(), HIR + "⚡ 【天劫心雷】 虛空中無形心雷在你的靈魂深處炸響！\n" +
+                                        "  💀 你的業力已然深重，道心震盪，氣血受損！\n" + NOR);
+                    add_hp(-25); // 扣除生命
+                    player_confused("ego_delusion"); // 產生自我執著心魔成見
+                } else {
+                    tell_object(this_object(), YEL + "🌀 【心魔噬體】 業力化為黑霧在經脈中撕咬，精神在消散...\n" + NOR);
+                    add_fatigue(10);
+                }
+            }
+        }
     }
 }
 
@@ -368,3 +399,11 @@ mixed process_input(string cmd) {
 }
 
 int force_me(string cmd) { return process_input(cmd); }
+
+// --- 🚀 蜀山奧德賽：業力與誓願系統 API ---
+int query_karma() { return karma; }
+void set_karma(int v) { karma = v; if (karma < 0) karma = 0; }
+void add_karma(int v) { karma += v; if (karma < 0) karma = 0; }
+
+mapping query_vows() { return vows; }
+void set_vows(mapping v) { vows = v; }

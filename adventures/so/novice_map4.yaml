@@ -1,0 +1,170 @@
+# adventures/so/novice_map.yaml
+# 尋仙問道 — 完整新手地圖 v2.2（全互動腳本版）
+
+nodes:
+  # ─── 凡人起點區 ──────────────────────────
+  - id: "mountain_foot_village"
+    name: "山腳小村"
+    type: "travel"
+    desc: "寧靜山腳小村，竹林環繞，炊煙裊裊。你從這裡踏上尋仙之路。"
+    paths:
+      north: "mountain_path_lower"
+      east: "village_teahouse"
+    interactions:
+      - action: "talk"
+        target: "villager"
+        success_msg: "村民嘆道：『山上仙人難遇，需心誠方能得見。小心山中妖霧。』"
+        discover_factor: "village_rumor"
+        new_signals: ["mountain_mystery"]
+
+  - id: "village_teahouse"
+    name: "村口茶肆"
+    type: "social_info"
+    desc: "簡陋竹棚茶肆，村民閒聊，茶香混雜泥土氣息。"
+    paths:
+      west: "mountain_foot_village"
+    interactions:
+      - action: "listen"
+        success_msg: "你聽聞蜀山外門招收弟子，以及山中靈異傳聞。"
+        discover_factor: "red_dust_whispers"
+        new_signals: ["sect_rumor"]
+
+  # ─── 山道區 ──────────────────────────
+  - id: "hidden_spring"
+    name: "隱秘山泉"
+    type: "cultivation"
+    desc: "藤蔓遮蔽的清澈山泉，隱隱帶有靈氣。"
+    paths:
+      west: "mountain_path_mid"
+    interactions:
+      - action: "drink"
+        success_msg: "泉水入喉，清涼透體，你感到一絲靈力在經脈中流轉。"
+        discover_factor: "spring_purity"
+        resolver: "natural_resonance"
+
+  # ─── 核心修行區 ──────────────────────────
+  - id: "meditation_cliff"
+    name: "靜慮崖"
+    type: "cultivation"
+    desc: "孤懸峭壁，冷風刺骨，靈氣暗流奔湧。"
+    karma_loop_threshold: 50
+    paths:
+      south: "outer_sect_gate"
+    sensory_signals:
+      wind:
+        default_msg: "冷風刺骨，松濤怒吼。"
+        discovery:
+          requires_no_factor: "stillness_resonance"
+          set_temp: "wind_cold_noticed"
+          msg: "你感受到 howling_wind 與 physical_tension。"
+    interactions:
+      - action: "observe_breath"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+        success_msg: "你屏息凝神，與天地靈氣同頻共振，心湖漸歸平靜..."
+      - action: "meditate"
+        target: "spiritual_current"
+        prerequisites:
+          temp_state: "wind_cold_noticed"
+        resolver: "meditation_cliff_first_contact"
+        success_msg: "強求之中，你忽然領悟『順勢而為』之理..."
+
+  - id: "sutra_pavilion"
+    name: "藏經閣"
+    type: "sect_heritage"
+    desc: "玉簡生輝，長老閉目盤坐。"
+    paths:
+      west: "outer_sect_gate"
+    interactions:
+      - action: "ask"
+        target: "elder"
+        success_msg: "長老微微點頭，為你講述入門心法。"
+        discover_factor: "sutra_introduction"
+        resolver: "sect_initiation"
+
+  # ─── 紅塵區 ──────────────────────────
+  - id: "town_center"
+    name: "紅塵集市"
+    type: "market"
+    desc: "繁華集市，人聲鼎沸，路邊攤香氣四溢。"
+    paths:
+      leave: "town_entrance"
+      north: "craft_workshop"
+      east: "herb_garden"
+      west: "array_platform"
+      south: "wind_tavern"
+      southeast: "destiny_pawnshop"
+      southwest: "spirit_auction"
+      down: "desire_pavilion"
+    interactions:
+      - action: "buy"
+        target: "food"
+        success_msg: "熱騰騰的包子入口，你暫解飢餓，卻也感受到紅塵牽絆。"
+        resolver: "mundane_transaction"
+
+  - id: "destiny_pawnshop"
+    name: "紅塵當舖"
+    type: "karmic_broker"
+    desc: "昏暗當舖，可典當法寶與消除業力。"
+    paths:
+      northwest: "town_center"
+    interactions:
+      - action: "pawn"
+        target: "karma"
+        success_msg: "你將一縷業力典當，換得短暫心安，卻也付出些許道心代價..."
+        resolver: "karmic_trade"
+
+  - id: "desire_pavilion"
+    name: "煙雨青樓"
+    type: "spiritual_trial"
+    desc: "絲竹聲中，紅粉香氣撲面，心魔試煉之地。"
+    paths:
+      up: "town_center"
+    interactions:
+      - action: "enter"
+        resolver: "desire_trial"
+        success_msg: "你在欲望幻境中保持一絲清明，色即是空的道理隱隱浮現..."
+
+  - id: "craft_workshop"
+    name: "百工坊"
+    type: "crafting"
+    paths:
+      south: "town_center"
+    interactions:
+      - action: "mine"
+        resolver: "geology_stress"
+        success_msg: "你找到岩石應力點，一錘下去，礦石完美剝落..."
+
+  - id: "herb_garden"
+    name: "神草園"
+    type: "alchemy"
+    paths:
+      west: "town_center"
+    interactions:
+      - action: "refine"
+        resolver: "alchemy_balance"
+        success_msg: "藥草陰陽調和，一爐丹藥緩緩成形..."
+
+  - id: "array_platform"
+    name: "八卦壇"
+    type: "logical_array"
+    paths:
+      east: "town_center"
+    interactions:
+      - action: "draw"
+        target: "symbol"
+        resolver: "array_logic"
+        success_msg: "你一筆畫下，靈力在陣圖中流轉，形成完整循環..."
+
+  - id: "wind_tavern"
+    name: "臨風酒館"
+    type: "social_info"
+    paths:
+      north: "town_center"
+    interactions:
+      - action: "listen"
+        resolver: "rumor_collection"
+        success_msg: "酒客們議論各門派恩怨與修仙秘聞..."
+
+  # 其他節點可依此模式繼續擴充

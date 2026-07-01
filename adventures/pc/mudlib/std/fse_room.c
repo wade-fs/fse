@@ -76,9 +76,29 @@ private mapping _query_reveal_exits() {
 
 mapping query_exits(object player) {
     mapping actual_exits = copy(exits);
+    
+    // 🚀 蜀山奧德賽：高業力鬼打牆 (Karma Loop)
+    if (player && player->query_karma() > 80) {
+        mapping config = query_virtual_config();
+        if (config && config["karma_loop"]) {
+            // 所有方向的出口，都有 70% 機率直接將目的地扭曲回自己（形成鬼打牆）
+            foreach (string dir, string dest in actual_exits) {
+                if (random(100) < 70) {
+                    actual_exits[dir] = base_name(this_object());
+                }
+            }
+            tell_object(player, YEL + "🌀 【業障迷局】 你四下張望，只覺得周圍景色萬般熟悉，似乎落入了無休止的因果循環中...\n" + NOR);
+        }
+    }
+    
     mapping reveal_exits = _query_reveal_exits();
     if (reveal_exits && player) {
+        int karma = player->query_karma();
         foreach (string dir, mapping data in reveal_exits) {
+            // 🚀 蜀山奧德賽：高業力有 50% 機率遮蔽需要 Reveal 的隱密路徑
+            if (karma > 60 && random(100) < 50) {
+                continue;
+            }
             string req_factor = data["requires_factor"];
             if (req_factor && player->has_factor(req_factor)) {
                 actual_exits[dir] = data["dest"];
@@ -113,6 +133,17 @@ object *query_occupants() {
 
 string describe(object looker) {
     string result = HIG + short_desc + NOR + "\n";
+    
+    // 🚀 蜀山奧德賽：業力感知扭曲
+    if (looker) {
+        int karma = looker->query_karma();
+        if (karma > 70) {
+            result += RED + "【業障障目】 你眼前一片朦朧，四周的景物似乎在扭曲、顫抖，隱約有哀嚎聲在耳畔迴盪...\n" + NOR;
+        } else if (karma > 40) {
+            result += YEL + "【心念浮躁】 你的道心隱隱不穩，這裡的氣息讓你感到一絲煩悶與不安。\n" + NOR;
+        }
+    }
+    
     result += long_desc + "\n";
 
     mapping actual_exits = query_exits(looker);
@@ -230,8 +261,22 @@ string *check_new_reveals(object player, string newly_discovered_factor) {
     return msgs;
 }
 
-// 供冒險子類覆寫的虛擬回調介面
-void apply_adventure_side_effects(object player, mapping act, int passed) {}
+void apply_adventure_side_effects(object player, mapping act, int passed) {
+    if (!player || !act) return;
+    
+    if (passed) {
+        // 🚀 蜀山奧德賽：讀取 YAML 中的 karma 屬性並套用業力增減
+        int act_karma = act["karma"];
+        if (act_karma != 0) {
+            player->add_karma(act_karma);
+            if (act_karma > 0) {
+                tell_object(player, YEL + "⚠️ 此舉引發了因果餘響，業力增加 " + act_karma + " 點。\n" + NOR);
+            } else {
+                tell_object(player, HIC + "✨ 此舉化解了心中執著，業力消減 " + (-act_karma) + " 點。\n" + NOR);
+            }
+        }
+    }
+}
 void on_item_spawned(object ob, mapping give_item) {}
 
 int resolve_interaction(object player, string action, string target) {

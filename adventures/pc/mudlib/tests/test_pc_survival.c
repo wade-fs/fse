@@ -612,6 +612,17 @@ int run_all_tests() {
     
     write(HIG "  ✓ 通過: 中文別名『寫下傳承』成功正規化並觸發對應英文指令解鎖。\n" NOR);
 
+    // ----------------------------------------------------
+    // 🧪 測試 21：驗證蜀山奧德賽業力與因果誓願系統
+    // ----------------------------------------------------
+    write(CYN "🧪 [測試 21] 蜀山奧德賽業力與誓願系統測試...\n" NOR);
+    object karma_test = load_object("/tests/test_shushan_karma.c");
+    if (!karma_test || !karma_test->run_test(player)) {
+        write(HIR "❌ 測試 21 失敗：蜀山業力與因果誓願測試未通過！\n" NOR);
+        return 1;
+    }
+    write(HIG "  ✓ 通過: 蜀山業力、發願及鬼打牆系統全數通過驗證。\n" NOR);
+
     destruct(player);
     write(HIW "\n============================================\n" +
               "  ✓ FSE PC — 史前文明所有整合測試全部通過！\n" +
