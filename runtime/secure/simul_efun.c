@@ -169,3 +169,35 @@ varargs void message(string category, string msg, mixed target, mixed exclude) {
         if (env) tell_room(env, msg, exclude);
     }
 }
+
+// === 互動輔助 EFUN：對玩家進行選單引導與防呆輸入 ===
+void process_prompt_choice(string input, object player, string msg, string *choices, function callback) {
+    int idx = to_int(input);
+    int max = sizeof(choices);
+    
+    if (idx < 1 || idx > max) {
+        tell_object(player, HIR "⚠️ 輸入錯誤！請輸入 1 至 " + max + " 之間的數字。\n" NOR);
+        // 重新引導輸入
+        input_to("process_prompt_choice", 0, player, msg, choices, callback);
+        return;
+    }
+    
+    // 正確選擇，執行回調
+    evaluate(callback, idx - 1, choices[idx - 1]);
+}
+
+varargs void prompt_player(object player, string msg, string *choices, function callback) {
+    if (!player || !choices || sizeof(choices) == 0) return;
+    
+    string display = "\n" + msg + "\n";
+    for (int i = 0; i < sizeof(choices); i++) {
+        display += sprintf("  " HIY "[%d]" NOR " %s\n", i + 1, choices[i]);
+    }
+    display += "請輸入您的選擇 [1-" + sizeof(choices) + "]: ";
+    
+    tell_object(player, display);
+    
+    // 透過 Driver 的 input_to 獲取玩家下一次鍵盤輸入
+    input_to("process_prompt_choice", 0, player, msg, choices, callback);
+}
+

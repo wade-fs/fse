@@ -199,9 +199,17 @@ int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string
         mapping evaluate = kn_data["evaluate"];
         if (!evaluate) continue;
 
+        if (getenv("MUD_TEST_MODE") || this_player()) {
+            write(HIK "  [Reality Debug] 正在比對 Knowledge: " + kn_ref + "\n" NOR);
+            write(HIK "  [Reality Debug] 玩家當前 Observations: " + sprintf("%O", keys(player_obs)) + "\n" NOR);
+        }
+
         // 比對行動是否對齊 (Aligned Action)
         string aligned_act = evaluate["aligned_action"];
         if (aligned_act && act["action"] != aligned_act) {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIR "  [Reality Debug] Aligned Action 不對符！預期 " + aligned_act + "，玩家輸入了 " + act["action"] + " (判定為 Misconception)。\n" NOR);
+            }
             string precon = evaluate["default_misconception"] || "concept_misunderstood";
             active_confusions_out += ({ precon });
             continue;
@@ -210,19 +218,27 @@ int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string
         // 比對 required_observations (Evidence)
         string *req_obs = evaluate["required_observations"];
         int has_all_reqs = 1;
+        string *missing_obs = ({});
 
         if (req_obs) {
             foreach (string req in req_obs) {
                 if (undefinedp(player_obs[req])) {
                     has_all_reqs = 0;
-                    break;
+                    missing_obs += ({ req });
                 }
             }
         }
 
         if (has_all_reqs) {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIG "  [Reality Debug] 完美比對！收集齊了所有 Evidence (Observations)。\n" NOR);
+            }
             understood_count++;
         } else {
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(YEL "  [Reality Debug] 缺失證據 (Missing Evidence): " + sprintf("%O", missing_obs) + "\n" NOR);
+            }
+
             // 比對 misunderstanding_patterns
             mixed *patterns = evaluate["misunderstanding_patterns"];
             int pattern_matched = 0;
@@ -254,9 +270,15 @@ int evaluate_knowledge_branch(object node_obj, object actor, mapping act, string
             }
 
             if (pattern_matched && yield_status != "") {
+                if (getenv("MUD_TEST_MODE") || this_player()) {
+                    write(YEL "  [Reality Debug] 匹配到局部偏誤模式 (Misunderstanding Pattern) -> " + yield_status + "\n" NOR);
+                }
                 misunderstanding_count++;
                 active_confusions_out += ({ yield_status });
             } else {
+                if (getenv("MUD_TEST_MODE") || this_player()) {
+                    write(RED "  [Reality Debug] 無法匹配任何偏誤，進入預設成見 (Default Misconception) -> " + (evaluate["default_misconception"] || "concept_misunderstood") + "\n" NOR);
+                }
                 string default_misc = evaluate["default_misconception"] || "concept_misunderstood";
                 active_confusions_out += ({ default_misc });
             }
