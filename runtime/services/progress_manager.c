@@ -231,6 +231,11 @@ void next_player_stage(object player, string track) {
     ]));
 }
 
+// 統一 API 命名對齊：支援 complete_quest 與 complete_player_quest 兩種呼叫
+varargs void complete_quest(object player, string qid, string track, int progress_val) {
+    complete_player_quest(player, qid, track, progress_val);
+}
+
 // 完成 Challenge/Quest (通用)
 varargs void complete_player_quest(object player, string qid, string track, int progress_val) {
     if (!player) return;

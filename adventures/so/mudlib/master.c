@@ -18,46 +18,52 @@ void create() {
 
     // ─── 從 manifest.yaml 讀取宣告式配置 ───
     string raw = read_file("/manifest.yaml");
-    if (raw) {
-        mapping manifest = yaml_decode(raw);
-        if (manifest) {
-            mapping content_paths = manifest["content_paths"];
-            string  init_stage    = manifest["initial_stage"];
-
-            if (content_paths && content_paths["locales"]) {
-                i18n_svc->register_locale_path(content_paths["locales"]);
-                i18n_svc->set_language("zh_TW");
-                i18n_svc->reload_language();
-            }
-            if (content_paths && content_paths["factors"]) {
-                mixed factors = content_paths["factors"];
-                if (stringp(factors)) {
-                    factor_svc->register_discovery_path(factors);
-                } else if (arrayp(factors)) {
-                    foreach (string path in factors)
-                        factor_svc->register_discovery_path(path);
-                }
-            }
-            if (content_paths && content_paths["progression"] && init_stage) {
-                progress_svc->register_progression_path(content_paths["progression"]);
-                progress_svc->set_default_initial_stage(0, init_stage, "main");
-            }
-            if (manifest["virtual_rules"]) {
-                object virtual_core = load_object("/runtime/core/virtual.c");
-                if (virtual_core) {
-                    foreach (string prefix, string std_file in manifest["virtual_rules"])
-                        virtual_core->register_virtual_rule(prefix, std_file);
-                }
-            }
-            if (manifest["resolver_strategies"]) {
-                // 註：FSE 核心的 /runtime/services/node_executor.c 已支援動態載入
-                // 任何宣告在挑戰 YAML 中的 executor (例如 reality_resolver)，會被自動載入為 /runtime/executors/reality_resolver.c
-            }
-            write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
-        }
-    } else {
-        write("  [master] 警告：找不到 /manifest.yaml，請檢查配置。\n");
+    if (!raw) {
+        write(HIR "❌ [Master Error] 致命錯誤：找不到 /manifest.yaml 檔案！請確保冒險專案已正確配置。\n" NOR);
+        if (getenv("MUD_TEST_MODE")) shutdown(1);
+        return;
     }
+
+    mapping manifest = yaml_decode(raw);
+    if (!manifest || !mapp(manifest)) {
+        write(HIR "❌ [Master Error] 致命錯誤：/manifest.yaml 語法解析失敗或格式不正確！\n" NOR);
+        if (getenv("MUD_TEST_MODE")) shutdown(1);
+        return;
+    }
+
+    mapping content_paths = manifest["content_paths"];
+    string  init_stage    = manifest["initial_stage"];
+
+    if (content_paths && content_paths["locales"]) {
+        i18n_svc->register_locale_path(content_paths["locales"]);
+        i18n_svc->set_language("zh_TW");
+        i18n_svc->reload_language();
+    }
+    if (content_paths && content_paths["factors"]) {
+        mixed factors = content_paths["factors"];
+        if (stringp(factors)) {
+            factor_svc->register_discovery_path(factors);
+        } else if (arrayp(factors)) {
+            foreach (string path in factors)
+                factor_svc->register_discovery_path(path);
+        }
+    }
+    if (content_paths && content_paths["progression"] && init_stage) {
+        progress_svc->register_progression_path(content_paths["progression"]);
+        progress_svc->set_default_initial_stage(0, init_stage, "main");
+    }
+    if (manifest["virtual_rules"]) {
+        object virtual_core = load_object("/runtime/core/virtual.c");
+        if (virtual_core) {
+            foreach (string prefix, string std_file in manifest["virtual_rules"])
+                virtual_core->register_virtual_rule(prefix, std_file);
+        }
+    }
+    if (manifest["resolver_strategies"]) {
+        // 註：FSE 核心的 /runtime/services/node_executor.c 已支援動態載入
+        // 任何宣告在挑戰 YAML 中的 executor (例如 reality_resolver)，會被自動載入為 /runtime/executors/reality_resolver.c
+    }
+    write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
 
     if (getenv("MUD_TEST_MODE")) call_out("run_test_mode", 1);
 }

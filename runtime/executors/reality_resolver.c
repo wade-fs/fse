@@ -135,6 +135,9 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
                 string t_msg = i18n->translate("so.confusion." + conf);
                 if (t_msg && t_msg != "so.confusion." + conf) {
                     tell_object(actor, HIR + t_msg + "\n" NOR);
+                } else {
+                    // 體面 Fallback 預設提示
+                    tell_object(actor, HIR + "【 🌀 心魔糾纏 】你心中產生了一股無形阻礙 (" + conf + ")，干擾著你的理解。\n" NOR);
                 }
             }
         }
