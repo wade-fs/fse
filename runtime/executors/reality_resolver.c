@@ -147,6 +147,24 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
 
         string fail_warning = chal_data["failure_warning"] || "【 🌀 產生困惑 】你當前的理解與天地法則產生了斷裂。\n";
         tell_object(actor, RED + fail_warning + NOR);
+
+        // 🚀 蜀山奧德賽天劫失敗：境界受損與修為倒退懲罰
+        if (strsrch(cid, "tribulation") != -1) {
+            string realm = function_exists("query_realm", actor) ? actor->query_realm() : "golden_core";
+            if (realm == "great_ascension") {
+                tell_object(actor, HIR + "\n💀 【 💥 飛昇失敗 】 狂暴雷光轟散了你的道基！你從大乘境界跌落回元嬰期！\n\n" + NOR);
+                if (function_exists("set_realm", actor)) actor->set_realm("nascent_soul");
+                actor->add_hp(-80);
+            } else if (realm == "nascent_soul") {
+                tell_object(actor, HIR + "\n💀 【 💥 元嬰崩碎 】 天雷將你強求的元嬰撕裂！你跌落回金丹期！\n\n" + NOR);
+                if (function_exists("set_realm", actor)) actor->set_realm("golden_core");
+                actor->add_hp(-50);
+            } else {
+                tell_object(actor, HIR + "\n💀 【 💥 金丹受損 】 蠻力抗劫導致金丹出現蛛網般的裂紋，境界倒退！\n\n" + NOR);
+                if (function_exists("set_realm", actor)) actor->set_realm("initiation");
+                actor->add_hp(-30);
+            }
+        }
     }
 
     return final_success;

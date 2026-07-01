@@ -12,6 +12,7 @@ private mapping progression;  // 進度 (同步給 progress_manager)
 private mapping factors;      // 已解鎖因素 (供 factor_service 讀寫)
 private int karma;            // 🚀 蜀山奧德賽：業力值 (Karma)
 private mapping vows;         // 🚀 蜀山奧德賽：宏願與誓約 (Vows)
+private string realm;         // 🚀 蜀山奧德賽：修仙境界 ("golden_core", "nascent_soul", "great_ascension")
 
 void create() {
     ::create();
@@ -28,6 +29,7 @@ void create() {
     factors      = ([]);
     karma        = 0;
     vows         = ([]);
+    realm        = "golden_core";
     set_heart_beat(1); // 啟動心跳機制
 }
 
@@ -109,6 +111,10 @@ void add_thirst(int val) {
     if (thirst < 0) thirst = 0;
     if (thirst > 100) thirst = 100;
 }
+
+// --- 🚀 蜀山奧德賽：修仙境界 API ---
+string query_realm() { if (!realm) realm = "golden_core"; return realm; }
+void set_realm(string r) { realm = r; save_state(); }
 
 // 覆寫生命值變更以實作「新手村不致死保護區」
 void add_hp(int val) {

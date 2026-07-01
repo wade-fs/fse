@@ -137,7 +137,7 @@ int run_test(object me) {
     write(GRN + "✅ 心魔幻境挑戰與放下執念 (let_go) 降魔閉環成功。\n" + NOR);
 
     // 6. 驗證心魔幻境 Node 房間的加載與交互
-    write(CYN "🧪 測試 6：心魔幻境通用模板加載與交互測試...\n" NOR);
+    write(CYN "🧪 測試 6：心魔幻境三毒降伏與統合了結測試...\n" NOR);
     object realm = load_object("/rooms/heart_demon_realm/room");
     if (!realm) {
         write(RED + "❌ 錯誤：無法載入通用心魔幻境房間\n" + NOR);
@@ -146,15 +146,33 @@ int run_test(object me) {
     
     move_object(me, realm);
     realm->enter(me);
-    me->force_me("observe self");
-    me->force_me("confront past_regret");
+    
+    // 觀照與降服貪執魔
+    me->force_me("observe greed_shadow");
+    me->force_me("release greed_shadow");
+    
+    // 觀照與降服嗔恨魔
+    me->force_me("observe wrath_shadow");
+    me->force_me("forgive wrath_shadow");
+    
+    // 觀照與降服痴妄魔
+    me->force_me("observe delusion_shadow");
+    me->force_me("accept self");
+    
+    // 驗證三毒因子是否全部解鎖
+    if (!me->has_factor("greed_shadow") || !me->has_factor("wrath_shadow") || !me->has_factor("delusion_shadow")) {
+        write(RED + "❌ 錯誤：三毒心魔未能完全降服與解鎖對應因素！\n" + NOR);
+        return 0;
+    }
+    
+    // 最終統合了結
     me->force_me("let_go obsession");
     
     if (!me->has_factor("demon_heart_resistance")) {
-        write(RED + "❌ 錯誤：在心魔幻境中放下執念未能成功領悟 demon_heart_resistance！\n" + NOR);
+        write(RED + "❌ 錯誤：在心魔幻境中最終統合未能成功領悟 demon_heart_resistance！\n" + NOR);
         return 0;
     }
-    write(GRN + "✅ 通用心魔幻境模板加載與三項心靈交互驗證成功。\n" + NOR);
+    write(GRN + "✅ 心魔幻境三毒（貪、嗔、痴）分步降伏與統合了結驗證成功。\n" + NOR);
 
     // 7. 驗證三種高階天劫挑戰配置的存在性
     write(CYN "🧪 測試 7：驗證金丹、元嬰、大乘天劫挑戰配置文件...\n" NOR);
@@ -191,6 +209,36 @@ int run_test(object me) {
         return 0;
     }
     write(GRN + "✅ 心魔挑戰強硬對抗 (fight) 判定為 Misconception 且受執念干擾測試成功。\n" + NOR);
+
+    // 9. 驗證修仙境界與天劫失敗修為倒退懲罰邏輯
+    write(CYN "🧪 測試 9：測試天劫挑戰失敗修為倒退與重創...\n" NOR);
+    
+    // 設定境界為元嬰
+    me->set_realm("nascent_soul");
+    mapping tri_challenge = ([
+        "challenge_id": "tribulation_nascent_soul",
+        "realities": ([
+            "spiritual": ([
+                "knowledges": ({ "spiritual.karma.sutra_focus" })
+            ])
+        ])
+    ]);
+    
+    // 模擬強行抗天劫導致失敗 (act 用 fight 來觸發失敗)
+    mapping act_fight = ([ "action": "fight", "target": "strike" ]);
+    me->set_hp(100);
+    resolver->execute(realm, me, act_fight, tri_challenge, "tribulation_nascent_soul");
+    
+    if (me->query_realm() != "golden_core") {
+        write(RED + "❌ 錯誤：元嬰天劫失敗，玩家境界未正確跌落回金丹期！當前境界：" + me->query_realm() + "\n" + NOR);
+        return 0;
+    }
+    
+    if (me->query_hp() >= 100) {
+        write(RED + "❌ 錯誤：天劫失敗未能扣減 HP 重創玩家！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 元嬰天劫失敗境界倒退回金丹、扣減 HP 的大懲罰機制驗證成功。\n" + NOR);
 
     write(HIG + "🎉 蜀山奧德賽業力與因果誓願系統測試全部通過！\n" + NOR);
     return 1;

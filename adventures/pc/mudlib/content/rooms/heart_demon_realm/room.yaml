@@ -1,41 +1,88 @@
 short: "心魔幻境"
 long: |
-  這是一片灰暗扭曲的空間，你內心的執念在此具現為各種虛無的幻象。
-  四周的空間彷彿沒有方向，如果你選擇逃避，只會在這無休止的虛幻中不停重疊打轉。
+  【 🌀 心魔幻境 - 三毒具現 】
+  灰暗扭曲的精神空間中，你靈魂最深處的三毒執念凝聚為三尊龐大幻影：
+    1. 貪執魔 (greed_shadow) : 由金光燦然的仙家法寶與金銀堆砌而成的巨人，散發著無限誘惑。
+    2. 嗔恨魔 (wrath_shadow) : 由滾滾黑氣凝聚而成的昔日仇敵，面目猙獰，手持利刃。
+    3. 痴妄魔 (delusion_shadow) : 一面懸浮的靈魂古鏡，鏡中映照出你自身極度扭曲、痛苦的倒影。
+  
+  你可以選擇：
+    - 觀照心魔：observe <心魔>
+    - 面對貪執魔：release greed_shadow (放下) 或 grab greed_shadow (抓取)
+    - 面對嗔恨魔：forgive wrath_shadow (寬恕) 或 fight wrath_shadow (交戰)
+    - 面對痴妄魔：accept self (接納) 或 deny self (拒絕)
 presence: []
 environmental_multipliers:
   thirst_decay: 0.0
   hunger_decay: 0.0
 exits:
   confront: "/rooms/demon_confrontation/room"
-  avoid: "/rooms/heart_demon_realm/room" # 鬼打牆迴圈
+  avoid: "/rooms/heart_demon_realm/room"
 reveal_exits:
   clarity:
     dest: "/rooms/clarity_path/room"
     requires_factor: "demon_heart_resistance"
-    reveal_msg: "【 👁️ 觀照 】你忽然看清這一切皆是自心投影，雲霧散去，一條通往澄明境界的「清淨小徑 (clarity)」顯現了出來！"
+    reveal_msg: "【 👁️ 禪心明鏡 】你降服了三毒心魔！幻境如鏡面般碎裂，一條澄明的清淨小徑 (clarity) 顯現了出來！"
 sensory_signals:
-  smell: "毫無氣味，只有死水般的沈寂與腐朽的虛無感。"
-  sound: "無數細微的低語，似乎是你在過去犯下的成見與遺憾在呢喃。"
-  wind: "陰冷的精神之風拂過，吹動著你內心深處的恐懼。"
+  smell: "焦躁、憤怒與貪念的混合氣味，直擊你靈魂的弱點。"
+  sound: "無數仇恨與誘惑的聲音在你耳畔不斷呢喃低語。"
+  wind: "凜冽的因果之風，不斷拷問著你的道心。"
   ground:
-    default_msg: "如鏡面般的地面，浮現你最執著的往昔畫面..."
-    discovery:
-      requires_factor: "stillness_resonance"
-      msg: "【 👁️ 靈鏡觀照 】在極靜的心靈共鳴下，你意識到這些執著畫面均是自己內心成見的虛幻具現！"
+    default_msg: "鏡面般的地面，混亂交織著你此生所有的成見與遺憾。"
 interactions:
+  # ── 1. 貪執魔 ──
   - action: "observe"
+    target: "greed_shadow"
+    success_msg: "🧘 你靜觀法寶巨人，看清其表面金光不過是精神成見的空幻堆砌。"
+    karma: -10
+  - action: "release"
+    target: "greed_shadow"
+    success_msg: "✨ 你主動放開虛空中的貪念，法寶巨人發出一聲嘆息，隨即化作無數淡金色的星光消散！"
+    discover_factor: "greed_shadow"
+    karma: -30
+  - action: "grab"
+    target: "greed_shadow"
+    success_msg: "💀 你按捺不住貪念，伸手去抓取法寶！貪念之火暴起，你渾身道法逆流，業力狂飆！"
+    karma: 40
+    hp_change: -30
+
+  # ── 2. 嗔恨魔 ──
+  - action: "observe"
+    target: "wrath_shadow"
+    success_msg: "🧘 你靜觀仇敵黑影，明白仇恨只會將靈魂鎖死在無休止的業力迴圈中。"
+    karma: -10
+  - action: "forgive"
+    target: "wrath_shadow"
+    success_msg: "✨ 你宣佈放下過去的恩怨，寬恕那昔日的宿敵。仇敵幻影微微一愣，刀刃化為落花，隨風而去！"
+    discover_factor: "wrath_shadow"
+    karma: -30
+  - action: "fight"
+    target: "wrath_shadow"
+    success_msg: "💀 你狂怒暴起，與仇敵幻影激烈交戰！但心魔越戰越強，你被魔氣反噬，大口吐血！"
+    karma: 20
+    hp_change: -40
+
+  # ── 3. 痴妄魔 ──
+  - action: "observe"
+    target: "delusion_shadow"
+    success_msg: "🧘 你靜觀古鏡中的扭曲倒影，發覺自己一直以來都在逃避自身的殘缺與脆弱。"
+    karma: -10
+  - action: "accept"
     target: "self"
-    success_msg: "🧘 你靜觀其變，閉目不再看那些誘惑與恐懼，心魔幻象受你定力影響漸漸開始淡化..."
-    karma: -15
-    fatigue: 5
-  - action: "confront"
-    target: "past_regret"
-    success_msg: "⚔️ 你直面過去的遺憾，大聲宣告自己不再受其束縛！幻影發出碎裂的聲響。"
-    karma: -20
-    fatigue: 15
+    success_msg: "✨ 你直面古鏡中的醜陋與殘缺，微笑道：『這也是我的一部分。』鏡面泛起溫暖漣漪，古鏡化作清泉灑落！"
+    discover_factor: "delusion_shadow"
+    karma: -30
+  - action: "deny"
+    target: "self"
+    success_msg: "💀 你痛苦地捂住雙眼，拒絕承認鏡中的是自己！古鏡轟然炸裂，無數精神碎片扎入你元神，你痛入骨髓！"
+    karma: 25
+    hp_change: -50
+
+  # ── 4. 統合了結 ──
   - action: "let_go"
     target: "obsession"
-    success_msg: "✨ 你選擇徹底放下心中的勝負與貪念，那漆黑的執念虛影化作一道清亮純淨的道家清光消散！"
-    karma: -50
+    prerequisites:
+      factor: "greed_shadow"
+    success_msg: "🌈 你同時降伏了貪、嗔、痴三魔！心魔幻境瞬間支離破碎，道心重歸澄明！"
     discover_factor: "demon_heart_resistance"
+    karma: -60
