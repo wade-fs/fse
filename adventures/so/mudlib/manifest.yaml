@@ -1,0 +1,12 @@
+adventure_id: so
+name: "Shushan Odyssey"
+version: "0.1"
+requires_runtime: ">=1.0"
+content_paths:
+  factors: "/content/factors"
+  progression: "/content/progression"
+  locales: "/content/locales"
+virtual_rules:
+  presence: /std/presence.c
+  nodes: /std/node.c
+initial_stage: novice

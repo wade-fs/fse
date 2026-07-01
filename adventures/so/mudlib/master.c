@@ -1,0 +1,97 @@
+// /master.c (蜀山遊記 — Shushan Odyssey Master)
+#include "/runtime/include/ansi.h"
+
+inherit "/secure/valid.c";
+
+void create() {
+    ::create();
+    write("===========================================\n");
+    write("    FSE SO — 蜀山問道 (Shushan Odyssey)    \n");
+    write("         Spiritual Reality 啟動成功         \n");
+    write("===========================================\n");
+
+    // ─── 載入 FSE 共用核心服務 ───
+    object progress_svc = load_object("/runtime/services/progress_manager.c");
+    object event_bus    = load_object("/runtime/services/event_bus.c");
+    object factor_svc   = load_object("/runtime/services/factor_service.c");
+    object i18n_svc     = load_object("/runtime/services/i18n_service.c");
+
+    // ─── 從 manifest.yaml 讀取宣告式配置 ───
+    string raw = read_file("/manifest.yaml");
+    if (raw) {
+        mapping manifest = yaml_decode(raw);
+        if (manifest) {
+            mapping content_paths = manifest["content_paths"];
+            string  init_stage    = manifest["initial_stage"];
+
+            if (content_paths && content_paths["locales"]) {
+                i18n_svc->register_locale_path(content_paths["locales"]);
+                i18n_svc->set_language("zh_TW");
+                i18n_svc->reload_language();
+            }
+            if (content_paths && content_paths["factors"]) {
+                mixed factors = content_paths["factors"];
+                if (stringp(factors)) {
+                    factor_svc->register_discovery_path(factors);
+                } else if (arrayp(factors)) {
+                    foreach (string path in factors)
+                        factor_svc->register_discovery_path(path);
+                }
+            }
+            if (content_paths && content_paths["progression"] && init_stage) {
+                progress_svc->register_progression_path(content_paths["progression"]);
+                progress_svc->set_default_initial_stage(0, init_stage, "main");
+            }
+            if (manifest["virtual_rules"]) {
+                object virtual_core = load_object("/runtime/core/virtual.c");
+                if (virtual_core) {
+                    foreach (string prefix, string std_file in manifest["virtual_rules"])
+                        virtual_core->register_virtual_rule(prefix, std_file);
+                }
+            }
+            if (manifest["resolver_strategies"]) {
+                object node_exec = load_object("/runtime/services/node_executor.c");
+                if (node_exec) {
+                    foreach (string strategy_type, string strategy_path in manifest["resolver_strategies"]) {
+                        // 雖然這需要 node_executor.c 支援，但我們先預留此映射，或者直接透過虛擬系統映射為 strategy 檔案
+                        // 本地 Reality Resolver 本身作為擴充，已被 node_executor 自動支援！
+                    }
+                }
+            }
+            write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
+        }
+    } else {
+        write("  [master] 警告：找不到 /manifest.yaml，請檢查配置。\n");
+    }
+
+    if (getenv("MUD_TEST_MODE")) call_out("run_test_mode", 1);
+}
+
+void run_test_mode() {
+    write("[TEST] 開始執行蜀山問道 (SO) 整合測試...\n");
+    object test_suite = load_object("/tests/test_so_loop.c");
+    if (!test_suite) {
+        write(HIR "❌ 無法載入測試套件 /tests/test_so_loop.c\n" NOR);
+        shutdown(1);
+        return;
+    }
+    int result = test_suite->run_all_tests();
+    if (result != 0) { write(HIR "❌ 測試失敗！\n" NOR); shutdown(1); }
+    else             { write(HIG "🏆 所有測試成功通過！\n" NOR); shutdown(0); }
+}
+
+string get_root_uid()   { return "Root"; }
+string get_bb_uid()     { return "SO"; }        // 由 Backbone 改為 SO，便於 log 識別
+string get_simul_efun() { return "/runtime/secure/simul_efun.c"; }
+
+// 連線入口：clone 玩家後由 driver 呼叫 enable_heart_beat，不在 user.c 的 create() 裡做
+object connect(string token) {
+    object actor = clone_object("/std/user.c");
+    enable_heart_beat(actor);    // 統一在此啟用心跳
+    return actor;
+}
+
+// Virtual Object 機制
+object compile_object(string file) {
+    return load_object("/runtime/core/virtual.c")->compile_virtual_object(file);
+}

@@ -1,0 +1,7 @@
+factor_id: "stillness_resonance"
+type: "discovery"          # discovery | sutra | vow_seed
+name: "心氣共鳴"
+description: "放下執求，觀照呼吸。於萬籟俱寂中，初次感知到天地間運行的精微靈力。"
+prerequisites: []
+difficulty_weight: 1.0
+entropy_rate: 0.02         # 每次 tick 衰退率，0 = 永不衰退

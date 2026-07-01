@@ -1,0 +1,9 @@
+version: "1.0"
+stage_id: novice
+name: "初入山門"
+description: "修行者之第一步，旨在感知天地萬物之細微變化，屏除執念，與環境靈氣達成初次共鳴。"
+spawn_node: "/nodes/meditation_cliff/node"
+requires:
+  factors:
+    - "stillness_resonance"
+next: "dao_foundation"
