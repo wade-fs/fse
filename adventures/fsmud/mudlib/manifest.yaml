@@ -1,0 +1,12 @@
+adventure_id: fsmud
+name: "Formosa MUD"
+version: "0.1"
+requires_runtime: ">=1.0"
+content_paths:
+  factors: "/content/factors"
+  progression: "/content/progression"
+  locales: "/content/locales"
+virtual_rules:
+  sites: /std/site.c
+  npcs: /std/npc.c
+  items: /std/item.c
