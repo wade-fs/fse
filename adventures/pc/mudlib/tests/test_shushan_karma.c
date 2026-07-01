@@ -125,6 +125,36 @@ int run_test(object me) {
     me->force_me("leave");
     write(GRN + "✅ 心魔幻境挑戰與放下執念 (let_go) 降魔閉環成功。\n" + NOR);
 
+    // 6. 驗證心魔幻境 Node 房間的加載與交互
+    write(CYN "🧪 測試 6：心魔幻境通用模板加載與交互測試...\n" NOR);
+    object realm = load_object("/rooms/heart_demon_realm/room");
+    if (!realm) {
+        write(RED + "❌ 錯誤：無法載入通用心魔幻境房間\n" + NOR);
+        return 0;
+    }
+    
+    move_object(me, realm);
+    realm->enter(me);
+    me->force_me("observe self");
+    me->force_me("confront past_regret");
+    me->force_me("let_go obsession");
+    
+    if (!me->has_factor("demon_heart_resistance")) {
+        write(RED + "❌ 錯誤：在心魔幻境中放下執念未能成功領悟 demon_heart_resistance！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 通用心魔幻境模板加載與三項心靈交互驗證成功。\n" + NOR);
+
+    // 7. 驗證三種高階天劫挑戰配置的存在性
+    write(CYN "🧪 測試 7：驗證金丹、元嬰、大乘天劫挑戰配置文件...\n" NOR);
+    if (file_size("/content/challenges/tribulation_golden_core.yaml") <= 0 ||
+        file_size("/content/challenges/tribulation_nascent_soul.yaml") <= 0 ||
+        file_size("/content/challenges/tribulation_great_ascension.yaml") <= 0) {
+        write(RED + "❌ 錯誤：天劫挑戰配置文件不存在或大小異常！\n" + NOR);
+        return 0;
+    }
+    write(GRN + "✅ 金丹、元嬰、大乘天劫挑戰配置文件驗證成功。\n" + NOR);
+
     write(HIG + "🎉 蜀山奧德賽業力與因果誓願系統測試全部通過！\n" + NOR);
     return 1;
 }

@@ -1,0 +1,28 @@
+challenge_id: "tribulation_golden_core"
+description: "金丹期初階天劫。考驗玩家金丹境界的道心凝聚與雷律韻律的初步掌握。"
+realities:
+  spiritual:
+    required_factors:
+      - "zen_mind" # spiritual.karma.tribulation_acceptance
+  natural:
+    required_factors:
+      - "heat_regulation" # natural.thunder_law.rhythm
+discover_factor: "golden_core_foundation"
+success_msg: "✨ 【金丹結成】 雷光洗滌，你金丹更為凝實，道心稍有精進！"
+failure_warning: "⚡ 【天雷反噬】 你妄圖以蠻力抵抗，雖然勉強渡過，但元神受創，金丹不穩！"
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -40
+      spiritual_energy: 50
+    new_signals:
+      - "tribulation_survived"
+      - "thunder_insight"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -10
+      spiritual_energy: -20
+  misconception:
+    adventure_effects:
+      karma_change: 30
+      spiritual_energy: -60

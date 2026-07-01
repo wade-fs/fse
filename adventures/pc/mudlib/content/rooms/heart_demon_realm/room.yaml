@@ -1,0 +1,41 @@
+short: "心魔幻境"
+long: |
+  這是一片灰暗扭曲的空間，你內心的執念在此具現為各種虛無的幻象。
+  四周的空間彷彿沒有方向，如果你選擇逃避，只會在這無休止的虛幻中不停重疊打轉。
+presence: []
+environmental_multipliers:
+  thirst_decay: 0.0
+  hunger_decay: 0.0
+exits:
+  confront: "/rooms/demon_confrontation/room"
+  avoid: "/rooms/heart_demon_realm/room" # 鬼打牆迴圈
+reveal_exits:
+  clarity:
+    dest: "/rooms/clarity_path/room"
+    requires_factor: "demon_heart_resistance"
+    reveal_msg: "【 👁️ 觀照 】你忽然看清這一切皆是自心投影，雲霧散去，一條通往澄明境界的「清淨小徑 (clarity)」顯現了出來！"
+sensory_signals:
+  smell: "毫無氣味，只有死水般的沈寂與腐朽的虛無感。"
+  sound: "無數細微的低語，似乎是你在過去犯下的成見與遺憾在呢喃。"
+  wind: "陰冷的精神之風拂過，吹動著你內心深處的恐懼。"
+  ground:
+    default_msg: "如鏡面般的地面，浮現你最執著的往昔畫面..."
+    discovery:
+      requires_factor: "stillness_resonance"
+      msg: "【 👁️ 靈鏡觀照 】在極靜的心靈共鳴下，你意識到這些執著畫面均是自己內心成見的虛幻具現！"
+interactions:
+  - action: "observe"
+    target: "self"
+    success_msg: "🧘 你靜觀其變，閉目不再看那些誘惑與恐懼，心魔幻象受你定力影響漸漸開始淡化..."
+    karma: -15
+    fatigue: 5
+  - action: "confront"
+    target: "past_regret"
+    success_msg: "⚔️ 你直面過去的遺憾，大聲宣告自己不再受其束縛！幻影發出碎裂的聲響。"
+    karma: -20
+    fatigue: 15
+  - action: "let_go"
+    target: "obsession"
+    success_msg: "✨ 你選擇徹底放下心中的勝負與貪念，那漆黑的執念虛影化作一道清亮純淨的道家清光消散！"
+    karma: -50
+    discover_factor: "demon_heart_resistance"

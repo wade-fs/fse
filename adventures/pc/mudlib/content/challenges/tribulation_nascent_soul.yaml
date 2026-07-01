@@ -1,0 +1,28 @@
+challenge_id: "tribulation_nascent_soul"
+description: "元嬰期中階天劫。要求玩家破除自我执着，掌握雷法虛空節奏。"
+realities:
+  spiritual:
+    required_factors:
+      - "zen_mind" # spiritual.karma.ego_dissolution
+  natural:
+    required_factors:
+      - "heat_regulation" # natural.thunder_law.void_rhythm
+discover_factor: "nascent_soul_purity"
+success_msg: "✨ 【元嬰重塑】 元嬰在雷光中重塑，你感受到無我之境，靈魄純淨無暇！"
+failure_warning: "⚡ 【元嬰受創】 你對自我的執著太深，雷劫直擊靈魂深處，元嬰崩裂受損！"
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -60
+      spiritual_energy: 80
+    new_signals:
+      - "nascent_soul_survived"
+      - "void_insight"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -20
+      spiritual_energy: -40
+  misconception:
+    adventure_effects:
+      karma_change: 40
+      spiritual_energy: -100

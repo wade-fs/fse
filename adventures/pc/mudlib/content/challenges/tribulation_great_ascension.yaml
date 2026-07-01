@@ -1,0 +1,28 @@
+challenge_id: "tribulation_great_ascension"
+description: "大乘飛升期高階天劫。考驗最終因果的徹底了結與九天雷罰的考驗。"
+realities:
+  spiritual:
+    required_factors:
+      - "zen_mind" # spiritual.karma.final_karmic_clearance
+  natural:
+    required_factors:
+      - "heat_regulation" # natural.thunder_law.heavenly_wrath
+discover_factor: "ascension_eligibility"
+success_msg: "✨ 【九天飛升】 九天神雷洗盡鉛華，肉身化為純陽法體，你即將踏破虛空，羽化登仙！"
+failure_warning: "💀 【身死道消】 你背負了太深重的天地因果，狂暴的天雷將你的道基徹底擊碎，元神俱滅！"
+evolve:
+  understanding:
+    adventure_effects:
+      karma_change: -100
+      spiritual_energy: 200
+    new_signals:
+      - "ascension_completed"
+      - "immortal_body"
+  misunderstanding:
+    adventure_effects:
+      karma_change: -40
+      spiritual_energy: -100
+  misconception:
+    adventure_effects:
+      karma_change: 80
+      spiritual_energy: -250
