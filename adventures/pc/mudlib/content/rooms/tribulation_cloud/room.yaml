@@ -1,0 +1,35 @@
+short: "天劫雷雲"
+long: |
+  你置身於狂暴的天劫紫雷中央，厚重的黑雲在四周翻滾，電芒吞吐不定。
+  無形的天道威壓降臨，讓你幾乎無法喘息。
+  狂風烈烈，虛空雷暴隨時可能將強抗天威之人化為飛灰！
+presence: []
+environmental_multipliers:
+  thirst_decay: 0.0
+  hunger_decay: 0.0
+exits:
+  escape: "/rooms/triassic_plains/room"
+sensory_signals:
+  smell: "極度濃烈的臭氧氣味，與雷擊高熱引發的焦糊味。"
+  sound: "千百道天雷震耳欲聾的爆烈轟鳴，震撼著你的心靈。"
+  wind: "帶有極高電壓的電解暴風，不斷撕扯著你的元神。"
+  ground:
+    default_msg: "腳下空無一物，只有無盡的烏雲與閃電在沉浮交織。"
+interactions:
+  - action: "accept"
+    target: "strike"
+    success_msg: "⚡ 你散去全身護體靈力，坦然對天雙張雙手，承受了這第一道天劫神雷！"
+    set_temp: "tribulation_resolved"
+    karma: -50
+    hp_change: -10
+  - action: "resist"
+    target: "strike"
+    success_msg: "🔥 你面露戾氣，強行聚攏法力打出一道金光試圖強抗天雷！天道大震，雷劫威力驟然翻倍！"
+    karma: 30
+    hp_change: -60
+    trigger_confusion: "ego_delusion"
+  - action: "leave"
+    prerequisites:
+      temp_state: "tribulation_resolved"
+    success_msg: "✨ 雷雲退去，你身心俱輕，成功渡過此劫！"
+    set_temp: "tribulation_clean"

@@ -94,3 +94,50 @@ int evaluate_misconception_karma(object player, string action, string target, st
     tell_object(player, YEL + "⚠️ " + msg + " (+" + added_karma + " 業力)\n" + NOR);
     return added_karma;
 }
+
+// 🚀 觸發天劫挑戰
+void trigger_tribulation(object player) {
+    if (!player) return;
+    
+    // 預防重複觸發
+    if (player->query_temp("in_tribulation")) return;
+    player->set_temp("in_tribulation", 1);
+    
+    tell_object(player, HIR + "\n⚡ 【 ⚡ 天劫預兆 ⚡ 】\n" +
+                        "  你感到元神一陣劇烈刺痛，虛空中隱隱有滅世紫雷在轟鳴！\n" +
+                        "  因果糾纏，業力（" + player->query_karma() + "）如山，天劫鎖定了你的靈魂！\n\n" + NOR);
+                        
+    object env = environment(player);
+    player->set_temp("pre_tribulation_room", env ? base_name(env) : "/rooms/triassic_plains/room");
+    
+    // 搬移到天劫雷雲地標
+    object cloud = load_object("/rooms/tribulation_cloud/room");
+    if (cloud) {
+        move_object(player, cloud);
+        cloud->enter(player);
+        player->force_me("look");
+    }
+}
+
+// 🚀 觸發心魔試煉
+void trigger_heart_demon(object player) {
+    if (!player) return;
+    
+    if (player->query_temp("in_heart_demon")) return;
+    player->set_temp("in_heart_demon", 1);
+    
+    tell_object(player, HIM + "\n🌀 【 🌀 心魔低語 🌀 】\n" +
+                        "  你四周的虛空開始扭曲變黑，心底深處浮現無數往昔執念的畫面：\n" +
+                        "  強求修行、貪戀金銀、同門仇怨……執念具現為一尊漆黑的虛影阻擋在身前！\n\n" + NOR);
+                        
+    object env = environment(player);
+    player->set_temp("pre_demon_room", env ? base_name(env) : "/rooms/triassic_plains/room");
+    
+    // 搬移到心魔幻境
+    object rift = load_object("/rooms/heart_demon_rift/room");
+    if (rift) {
+        move_object(player, rift);
+        rift->enter(player);
+        player->force_me("look");
+    }
+}

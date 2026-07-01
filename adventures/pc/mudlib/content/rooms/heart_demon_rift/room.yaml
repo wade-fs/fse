@@ -1,0 +1,34 @@
+short: "心魔裂縫"
+long: |
+  四周是一片死寂的黑暗，只有無數閃爍的記憶光斑在空中漂浮。
+  一尊由你自身雜念化成的巨大黑影佇立在中央，發出沉悶且嘲弄的笑聲。
+  執念如鎖，唯有觀照內心、看破執著本質，方能重返清明。
+presence: []
+environmental_multipliers:
+  thirst_decay: 0.0
+  hunger_decay: 0.0
+exits:
+  escape: "/rooms/triassic_plains/room"
+sensory_signals:
+  smell: "毫無氣味，只有死水般的沈寂與腐朽的虛無感。"
+  sound: "無數細微的低語，似乎是你在過去犯下的成見與遺憾在呢喃。"
+  wind: "陰冷的精神之風拂過，吹動著你內心深處的恐懼。"
+  ground:
+    default_msg: "如鏡面般的漆黑地面，倒映著你充滿雜念與掙扎的倒影。"
+interactions:
+  - action: "let_go"
+    target: "obsession"
+    success_msg: "🧘 你盤坐於地，深深呼出一口氣，看著心魔淡淡一笑，輕聲道：『執念皆妄，今日放下。』\n心魔發出不甘的怒吼，化為無數金色靈光碎裂消散！"
+    set_temp: "demon_resolved"
+    karma: -40
+  - action: "fight"
+    target: "demon"
+    success_msg: "⚔️ 你怒吼著揮舞兵刃撲上前去！心魔卻化作無數幻影穿透你的身軀，你的劍招只落在一片虛無中，反而氣息大亂，吐血不止！"
+    karma: 20
+    hp_change: -45
+    trigger_confusion: "ego_delusion"
+  - action: "leave"
+    prerequisites:
+      temp_state: "demon_resolved"
+    success_msg: "✨ 心魔幻境崩碎，你的道心澄澈無比，重返世間！"
+    set_temp: "demon_clean"

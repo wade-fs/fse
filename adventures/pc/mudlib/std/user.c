@@ -200,12 +200,14 @@ void heart_beat() {
                 tell_object(this_object(), YEL + "🌀 心魔擾動：你感到思緒雜亂，體內靈氣有些滯澀不順。\n" + NOR);
                 add_fatigue(5);
             } else if (karma > 80) {
-                // 天劫雷擊或心魔噬體
-                if (random(100) < 40) { // 40% 機率爆發
-                    tell_object(this_object(), HIR + "⚡ 【天劫心雷】 虛空中無形心雷在你的靈魂深處炸響！\n" +
-                                        "  💀 你的業力已然深重，道心震盪，氣血受損！\n" + NOR);
-                    add_hp(-25); // 扣除生命
-                    player_confused("ego_delusion"); // 產生自我執著心魔成見
+                // 🚀 蜀山奧德賽：天劫與心魔挑戰觸發
+                int r = random(100);
+                if (r < 20) { // 20% 機率天劫降臨
+                    object ks = load_object("/runtime/services/karma_service.c");
+                    if (ks) ks->trigger_tribulation(this_object());
+                } else if (r < 40) { // 20% 機率心魔爆發
+                    object ks = load_object("/runtime/services/karma_service.c");
+                    if (ks) ks->trigger_heart_demon(this_object());
                 } else {
                     tell_object(this_object(), YEL + "🌀 【心魔噬體】 業力化為黑霧在經脈中撕咬，精神在消散...\n" + NOR);
                     add_fatigue(10);

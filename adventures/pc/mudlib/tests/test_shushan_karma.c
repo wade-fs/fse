@@ -80,6 +80,51 @@ int run_test(object me) {
     // 蜀山金頂本來有 exit down。但在高業力下有機率被扭曲為 shushan_peak 自己
     write(GRN + "✅ 出口鬼打牆邏輯（down -> " + exits["down"] + "）驗證成功。\n" + NOR);
 
+    // 5. 測試天劫與心魔的搬移、抉擇與化解
+    write(CYN "🧪 測試 5：天劫與心魔降臨互動流...\n" NOR);
+    
+    // 手動觸發天劫
+    me->set_temp("in_tribulation", 0);
+    karma_svc->trigger_tribulation(me);
+    
+    object cloud = environment(me);
+    if (!cloud || strsrch(base_name(cloud), "/rooms/tribulation_cloud/room") == -1) {
+        write(RED + "❌ 錯誤：玩家未正確轉移至天劫雷雲，當前環境：" + (cloud ? base_name(cloud) : "null") + "\n" + NOR);
+        return 0;
+    }
+    
+    // 測試坦然承受天雷 (accept strike)
+    me->force_me("accept strike");
+    if (!me->query_temp("tribulation_resolved")) {
+        write(RED + "❌ 錯誤：坦然承受雷劫失敗，未設置 resolved temp\n" + NOR);
+        return 0;
+    }
+    
+    // 成功渡劫離開
+    me->force_me("leave");
+    write(GRN + "✅ 天劫雷罰挑戰與坦然承受 (accept) 渡劫閉環成功。\n" + NOR);
+
+    // 手動觸發心魔
+    me->set_temp("in_heart_demon", 0);
+    karma_svc->trigger_heart_demon(me);
+    
+    object rift = environment(me);
+    if (!rift || strsrch(base_name(rift), "/rooms/heart_demon_rift/room") == -1) {
+        write(RED + "❌ 錯誤：玩家未正確轉移至心魔裂縫，當前環境：" + (rift ? base_name(rift) : "null") + "\n" + NOR);
+        return 0;
+    }
+    
+    // 測試放下執念 (let_go obsession)
+    me->force_me("let_go obsession");
+    if (!me->query_temp("demon_resolved")) {
+        write(RED + "❌ 錯誤：放下執念降魔失敗\n" + NOR);
+        return 0;
+    }
+    
+    // 成功離開心魔幻境
+    me->force_me("leave");
+    write(GRN + "✅ 心魔幻境挑戰與放下執念 (let_go) 降魔閉環成功。\n" + NOR);
+
     write(HIG + "🎉 蜀山奧德賽業力與因果誓願系統測試全部通過！\n" + NOR);
     return 1;
 }

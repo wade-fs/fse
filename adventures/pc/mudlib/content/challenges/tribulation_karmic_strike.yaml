@@ -1,0 +1,25 @@
+challenge_id: "tribulation_karmic_strike"
+description: "天劫雷罰挑戰。當玩家業力深重時降臨，考驗玩家是否願意坦然承受、消除因果執著。"
+realities:
+  spiritual:
+    required_factors:
+      - "zen_mind" # 渡劫必備因子：禪定道心
+  natural:
+    required_factors:
+      - "heat_regulation" # 抵禦雷擊物理高熱
+evolve:
+  understanding:
+    success_msg: "✨ 【渡劫成功】 你坦然閉目承受雷劫，任由雷光洗禮全身，體內的凡塵雜念與因果印記被悉數煉化！\n🌟 你的神魂經歷雷劫重塑，變得更加堅韌澄澈！"
+    karma_change: -50
+    hp_change: 0
+    discover_factor: "tribulation_survived"
+  misunderstanding:
+    success_msg: "⚠️ 【勉強渡劫】 你運用法寶護身勉強抵擋了雷劫，雖然免於肉身崩潰，但心中執著未消，雷威震盪依然讓經脈有些受損。"
+    karma_change: -10
+    hp_change: -30
+    discover_factor: "zen_mind"
+  misconception:
+    failure_msg: "⚡ 【強求失敗】 你妄圖以法力對天雷進行強行抗衡！天地之威豈容強求？紫電狂雷瞬間將你的肉身焦化，元神重創！"
+    karma_change: 20
+    hp_change: -70
+    trigger_confusion: "ego_delusion"
