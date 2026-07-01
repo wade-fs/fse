@@ -10,17 +10,58 @@ void create() {
     write("  MudScript Master Object 啟動成功 \n");
     write("===================================\n");
 
-    // 啟動全域守護進程
-    load_object("/secure/event_d.c");
-    load_object("/services/timeline_d.c");
-    load_object("/services/settlement_d.c");
-    load_object("/services/footprint_d.c");
-    load_object("/services/faction_d.c");
-    load_object("/services/historical_event_d.c");
-    load_object("/services/era_d.c");
-    load_object("/services/site_d.c");
-    load_object("/services/route_d.c");
-    load_object("/services/chronicle_d.c");
+    // ─── 載入並配置 FSE 共用核心服務 ───
+    object progress_svc = load_object("/runtime/services/progress_manager.c");
+    object event_bus    = load_object("/runtime/services/event_bus.c");
+    object factor_svc   = load_object("/runtime/services/factor_service.c");
+    object i18n_svc     = load_object("/runtime/services/i18n_service.c");
+
+    // === 自動讀取 manifest.yaml 宣告式配置 ===
+    string raw = read_file("/manifest.yaml");
+    if (raw) {
+        mapping manifest = yaml_decode(raw);
+        if (manifest) {
+            mapping content_paths = manifest["content_paths"];
+            string init_stage = manifest["initial_stage"];
+
+            // 1. 註冊多語系目錄並載入語系
+            if (content_paths && content_paths["locales"]) {
+                i18n_svc->register_locale_path(content_paths["locales"]);
+                i18n_svc->set_language("zh_TW"); // 預設中文
+                i18n_svc->reload_language();
+            }
+
+            // 2. 註冊因素探索目錄
+            if (content_paths && content_paths["factors"]) {
+                mixed factors = content_paths["factors"];
+                if (stringp(factors)) {
+                    factor_svc->register_discovery_path(factors);
+                } else if (arrayp(factors)) {
+                    foreach (string path in factors) {
+                        factor_svc->register_discovery_path(path);
+                    }
+                }
+            }
+
+            // 3. 註冊進度階段與設定初始階段
+            if (content_paths && content_paths["progression"] && init_stage) {
+                progress_svc->register_progression_path(content_paths["progression"]);
+                progress_svc->set_default_initial_stage(0, init_stage, "main");
+            }
+            // 4. 註冊宣告式虛擬物件規則
+            if (manifest["virtual_rules"]) {
+                object virtual_core = load_object("/runtime/core/virtual.c");
+                if (virtual_core) {
+                    foreach (string prefix, string std_file in manifest["virtual_rules"]) {
+                        virtual_core->register_virtual_rule(prefix, std_file);
+                    }
+                }
+            }
+            write("  [master] 成功讀取 /manifest.yaml 並完成宣告式註冊。\n");
+        }
+    } else {
+        write("  [master] 警告：找不到 /manifest.yaml 檔案，請檢查配置。\n");
+    }
 
     if (getenv("MUD_TEST_MODE")) {
         call_out("run_test_mode", 1);
@@ -103,4 +144,9 @@ void runtime_error(string err_msg, string file) {
     write("【系統嚴重警告】執行期錯誤！\n");
     write("檔案：" + file + "\n");
     write("訊息：" + err_msg + "\n");
+}
+
+// 支援完全資料驅動 (Virtual Object) 機制
+object compile_object(string file) {
+    return load_object("/runtime/core/virtual.c")->compile_virtual_object(file);
 }
