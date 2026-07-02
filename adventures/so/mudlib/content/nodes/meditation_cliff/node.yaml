@@ -1,0 +1,39 @@
+challenges:
+- id: meditation_cliff_first_contact
+desc: meditation_cliff_desc
+environmental_multipliers:
+  entropy_decay: 1.0
+  spiritual_recovery: 1.5
+interactions:
+- action: meditate
+  prerequisites:
+    temp_state: wind_cold_noticed
+  resolver: meditation_cliff_first_contact
+  target: spiritual_current
+- action: observe_breath
+  give_item:
+    desc: 一顆散發著溫潤微光的寶珠，是由你在靜慮崖天人共鳴時精氣凝聚而成，能微幅安神。
+    id: stillness_bead
+    name: 定心珠
+  prerequisites:
+    temp_state: wind_cold_noticed
+  resolver: meditation_cliff_first_contact
+karma_loop_threshold: 50
+name: meditation_cliff
+node_id: meditation_cliff
+paths:
+  down: /nodes/mountain_path/node
+sensory_signals:
+  aura:
+    default_msg: 空氣中靈力紊亂奔湧，若隱若現。
+    requires_sutra: sutra:taiji_yinyang
+  ground:
+    default_msg: 青石平整，上面覆蓋著薄薄的冰霜。
+  wind:
+    default_msg: 峭壁上冷風刺骨，松濤如怒吼般在耳邊迴盪。
+    discovery:
+      msg: 【 🔍 發現 】狂風（howling_wind）攜帶著某種冰冷的波動，吹打著你的身體，你的肌肉在寒冷中產生了緊繃感（physical_tension）。
+      requires_no_factor: stillness_resonance
+      set_temp: wind_cold_noticed
+type: cultivation
+version: '1.0'

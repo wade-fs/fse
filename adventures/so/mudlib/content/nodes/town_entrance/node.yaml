@@ -1,0 +1,10 @@
+challenges:
+- id: town_entrance_first_contact
+desc: town_entrance_desc
+name: town_entrance
+node_id: town_entrance
+paths:
+  enter: /nodes/town_center/node
+  up: /nodes/mountain_path/node
+type: travel
+version: '1.0'

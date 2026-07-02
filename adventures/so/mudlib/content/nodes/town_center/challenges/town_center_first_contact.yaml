@@ -1,0 +1,36 @@
+# /home/wade/src/github/fse/adventures/so/mudlib/content/nodes/town_center/challenges/town_center_first_contact.yaml
+# 尋仙問道 — 紅塵集市交易 Reality 評估挑戰
+
+challenge_id: "town_center_first_contact"
+executor: "reality_resolver"
+
+realities:
+  social:
+    knowledges:
+      - "social.commerce.fair_exchange"
+
+discover_factor: "commerce_master"
+success_msg: "🎉 你看穿了商賈眼中的貪欲，並對齊了市井的真實行情。你給出了一個公道無欺的出價，商賈大喜，順利完成了交易！\n"
+success_progress: 15
+failure_warning: "【 🌀 交易衝突 】你對紅塵俗事一無所知，強行砍價或被商賈欺瞞，引起了集市商販的極大反感！\n"
+
+evolve:
+  social:
+    understanding:
+      world_change: "transaction_completed_with_trust"
+      new_signals: ["market_trust_established"]
+      adventure_effects:
+        spiritual_energy: 10
+        karma_change: -10 # 了結一樁塵緣，業力消退 10 點！
+    misunderstanding:
+      world_change: "trader_discontent"
+      new_signals: ["trader_hostility"]
+      adventure_effects:
+        spiritual_energy: 0
+        karma_change: 2
+    misconception:
+      world_change: "trade_rejected"
+      new_signals: ["humiliated"]
+      adventure_effects:
+        spiritual_energy: -5
+        karma_change: 10 # 執迷紅塵，業力暴漲 10 點！

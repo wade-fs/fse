@@ -1,0 +1,9 @@
+challenges:
+- id: destiny_pawnshop_first_contact
+desc: destiny_pawnshop_desc
+name: destiny_pawnshop
+node_id: destiny_pawnshop
+paths:
+  northwest: /nodes/town_center/node
+type: karmic_broker
+version: '1.0'

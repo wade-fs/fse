@@ -17,6 +17,10 @@ void apply_adventure_side_effects(object actor, mapping act, int passed) {
         effects = act;
     }
 
+    if (getenv("MUD_TEST_MODE") || this_player()) {
+        write(HIK "  [Node side effects trace] passed=" + passed + ", effects=" + sprintf("%O", effects) + "\n" NOR);
+    }
+
     int se = effects["spiritual_energy"];
     if (se) actor->add_physical_state("spiritual_energy", se);
 

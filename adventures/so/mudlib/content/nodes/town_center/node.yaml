@@ -1,0 +1,30 @@
+# /home/wade/src/github/fse/adventures/so/mudlib/content/nodes/town_center/node.yaml
+# 尋仙問道 — 紅塵集市 node 配置
+
+version: "1.0"
+node_id: "town_center"
+name: "town_center"
+type: "market"
+desc: "town_center_desc"
+
+paths:
+  down: "/nodes/desire_pavilion/node"
+  east: "/nodes/herb_garden/node"
+  leave: "/nodes/town_entrance/node"
+  north: "/nodes/craft_workshop/node"
+  south: "/nodes/wind_tavern/node"
+  southeast: "/nodes/destiny_pawnshop/node"
+  southwest: "/nodes/spirit_auction/node"
+  west: "/nodes/array_platform/node"
+
+challenges:
+  - id: "town_center_first_contact"
+
+interactions:
+  - action: "trade_fair"
+    target: "trader"
+    prerequisites:
+      # 必須先收集到 market_price 與 trader_greed 兩個證據
+      factor: "stillness_resonance" # 需要先定心入靜
+    resolver: "town_center_first_contact"
+    gate_msg: "【 🌀 心思浮躁 】你正想找商賈進行交易，但你心中雜念紛呈，且不知道行情，根本不知道如何開口交易。似乎需要先定心靜思，並向酒館說書人打聽一下市場行情。"

@@ -110,6 +110,16 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
     // ─── 5. 整合評估結論 ───
     int final_success = (understood_branches == total_branches);
 
+    // 🚀 前端即時 Reality 雷達圖數據推播
+    if (actor && function_exists("send_json_event", actor)) {
+        actor->send_json_event("reality_evaluation", ([
+            "challenge_id": cid,
+            "final_success": final_success,
+            "branches": realities, // 包含了 natural, spiritual 等對應的分支
+            "all_confusions": all_active_confusions
+        ]));
+    }
+
     if (final_success) {
         string success_msg = chal_data["success_msg"] || "🎉 成功領悟了天地因果法則！\n";
         tell_object(actor, HIG + success_msg + NOR);
@@ -165,9 +175,8 @@ int execute(object node_obj, object actor, mapping act, mapping chal_data, strin
                 actor->add_hp(-30);
             }
         }
-    }
-
-    return final_success;
+    return 1; // 成功評估並演化，接管該行動
+}
 }
 
 // 內部單一 Reality 分支之 Knowledge 評估邏輯

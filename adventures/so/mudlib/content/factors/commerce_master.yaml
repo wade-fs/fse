@@ -1,0 +1,8 @@
+# /home/wade/src/github/fse/adventures/so/mudlib/content/factors/commerce_master.yaml
+# 尋仙問道 — 紅塵商貿大師變革因子 (Commerce Master Factor)
+
+factor_id: "commerce_master"
+name: "等價物換大師"
+desc: "已解鎖紅塵「等價物換之理」，能洞悉世間物價行情與商賈凡欲，心境無漏交易。"
+prerequisites:
+  - "stillness_resonance" # 需要先定心入靜作為前置學識

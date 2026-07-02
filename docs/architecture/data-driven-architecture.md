@@ -1,188 +1,129 @@
-# FSE 資料驅動架構演進規劃 (FSE Data-Driven Architecture Plan)
+# FSE 2.0 資料驅動架構與虛擬物件編譯規範 (FSE Data-Driven & Virtualization Specification)
 
-為了讓 FSE (Flow Space Engine) 真正成為一個通用、中立且高度擴展的 MUD/Web 遊戲引擎，我們規劃將所有冒險 (Adventures) 徹底轉向 **「YAML 定義 + Runtime 核心服務」** 的資料驅動架構。
-
-本規劃書旨在定義後續的核心服務 API 規範以及 LPC 虛擬物件 (Virtual Object) 的編譯映射機制。
+Flow State Engine (FSE) 2.0 採用完全的「資料驅動 (Data-Driven)」架構，所有場景節點、存在體、挑戰與物品均以 YAML 定義，並透過 LPC 虛擬物件 (Virtual Object) 機制動態實體化。
 
 ---
 
-## 🗺️ 系統架構全景 (Architecture Overview)
+## 一、 虛擬編譯與對稱注入機制 (Virtual Object Compilation)
 
-```mermaid
-graph TD
-    %% Base Layer
-    subgraph Data Layer (YAML Files)
-        M_YAML[content/monsters/*.yaml]
-        R_YAML[content/rooms/*.yaml]
-        Q_YAML[content/quests/*.yaml]
-        D_YAML[content/dialogues/*.yaml]
-    end
+為了在 LPC 中將一個虛擬路徑（例如 `/nodes/town_center/node`）動態轉換為一個實體物件，FSE 使用了對稱注入機制：
 
-    %% Virtualization Layer
-    subgraph LPC Virtual Compilation
-        VO[master.c :: compile_object]
-        V_MONSTER[std/virtual/monster.c]
-        V_ROOM[std/virtual/room.c]
-    end
+```
+1. load_object("/nodes/town_center/node") 觸發
+   │
+   ▼
+2. compile_object() 攔截，呼叫 virtual.c
+   │
+   ▼
+3. clone_object("/std/node.c") 實體化
+   │
+   ▼
+4. ob->setup_virtual_by_path("/nodes/town_center/node") 注入
+   │
+   ▼
+5. 讀取 /content/nodes/town_center/node.yaml 載入配置
+```
 
-    %% Core Services
-    subgraph FSE Runtime Services
-        CS[runtime/services/combat_service.c]
-        QS[runtime/services/quest_service.c]
-        IS[runtime/services/inventory_service.c]
-        DS[runtime/services/dialogue_service.c]
-    end
+### 1. 虛擬路徑對齊與 YAML 解析
+由 `setup_virtual_by_path(string file_path, string prefix, string config_file)` 實現：
+* 將虛擬路徑（如 `/nodes/town_center/node.c`）拆解，定位出上一層目錄 ID（即 `"town_center"`）。
+* 計算出實體 YAML 存放路徑（即 `/content/nodes/town_center/node.yaml`）。
+* 解析 YAML 並賦予實體 `virtual_config`。
 
-    %% Mapping
-    M_YAML -->|yaml_decode| VO
-    R_YAML -->|yaml_decode| VO
-    VO -->|Generate Instance| V_MONSTER
-    VO -->|Generate Instance| V_ROOM
+### 2. 終極防禦性屬性對齊 (Metadata Overriding)
+為了避免菱形繼承造成的 `private` 變數隔離，所有繼承 `virtual_object` 的實體均透過動態覆寫方法獲取屬性，保證 100% 資料驅動：
+```c
+// 覆寫 query_short()
+string query_short() {
+    mapping config = query_virtual_config();
+    if (config && config["name"]) return config["name"];
+    return short_desc; // 預設 Fallback
+}
 
-    V_MONSTER -->|Resolve Actions| CS
-    V_ROOM -->|Resolve Items| IS
-    V_ROOM -->|Trigger Talk| DS
-    QS -->|Complete Triggers| QS
+// 覆寫 query_entity_id()
+string query_entity_id() {
+    mapping config = query_virtual_config();
+    if (config && config["node_id"]) return config["node_id"];
+    return ::query_entity_id();
+}
 ```
 
 ---
 
-## 🛠️ 核心服務規格定義 (Core Services Specification)
+## 二、 認識論挑戰與雙重證據鏈 (Challenge & Evidence Chain)
 
-### 1. 戰鬥服務 (`combat_service.c`)
-負責處理非同步、基於回合的戰鬥計算。不再將戰鬥公式硬編碼在 `living.c` 或怪物物件中。
+一個 Challenge YAML 宣告了多個 realities 分支，並通過 `evaluate` 執行「證據鏈（Required Observations）」的嚴格校驗。
 
-* **核心 API**：
-  * `void start_combat(object attacker, object defender)`
-  * `void stop_combat(object actor)`
-  * `int calculate_damage(object attacker, object defender, mapping combat_data)`
-  * `void process_combat_round(object actor)`
-* **資料驅動定義示例 (`/content/monsters/proto_chicken.yaml`)**：
-  ```yaml
-  id: "proto_chicken"
-  name: "始祖小雞"
-  hp: 15
-  stats:
-    attack: 4
-    defense: 1
-    speed: 10              # 用於決定行動順序
-  combat:
-    type: "melee"
-    interval: 2           # 每2秒一回合
-    skills:
-      - id: "peck"
-        chance: 30
-        damage_multiplier: 1.2
-  ```
+### 1. 雙重證據鏈定義示例 (`/content/nodes/town_center/challenges/town_center_first_contact.yaml`)
+```yaml
+challenge_id: "town_center_first_contact"
+executor: "reality_resolver"
 
----
+# 宣告並行分支
+realities:
+  social:
+    knowledges:
+      - "social.commerce.fair_exchange"
 
-### 2. 任務服務 (`quest_service.c`)
-管理複雜的非線性任務線、前置條件、玩家任務狀態（未接取、進行中、已完成、已過期）與獎勵發放。
+discover_factor: "commerce_master"
+success_msg: "🎉 你看穿了商賈眼中的貪欲，並對齊了市井的真實行情！\n"
+failure_warning: "【 🌀 交易衝突 】你對紅塵俗事一無所知，強行砍價引起了集市商販的反感！\n"
 
-* **核心 API**：
-  * `int accept_quest(object player, string quest_id)`
-  * `int check_quest_eligibility(object player, string quest_id)`
-  * `int update_quest_progress(object player, string quest_id, string objective_id, int value)`
-  * `void claim_rewards(object player, string quest_id)`
-* **資料驅動定義示例 (`/content/quests/first_kill.yaml`)**：
-  ```yaml
-  id: "first_kill"
-  name: "第一滴血"
-  prerequisites:
-    level: 0
-  objectives:
-    - id: "kill_chicken"
-      type: "kill_monster"
-      target_id: "proto_chicken"
-      required_count: 1
-  rewards:
-    exp: 20
-    factors:
-      - "combat_survival"
-  ```
+# Evolve 因果副作用
+evolve:
+  social:
+    understanding:
+      world_change: "transaction_completed_with_trust"
+      new_signals: ["market_trust_established"]
+      adventure_effects:
+        spiritual_energy: 10
+        karma_change: -10 # 了結塵緣，消除 10 點業力
+    misconception:
+      world_change: "trade_rejected"
+      new_signals: ["humiliated"]
+      adventure_effects:
+        spiritual_energy: -5
+        karma_change: 10 # 執迷紅塵，增加 10 點業力
+```
 
----
-
-### 3. 背包與道具服務 (`inventory_service.c`)
-提供通用的道具承載、負重、容器嵌套以及屬性隨機化（例如裝備副屬性）的管理。
-
-* **核心 API**：
-  * `int move_item(object item, object from, object to)`
-  * `int check_weight_limit(object container, object item)`
-  * `mapping query_inventory(object container)`
-  * `object create_item_from_yaml(string item_yaml_path)`
+### 2. 客觀規律 Law 定義 (`/runtime/realities/social/commerce.yaml`)
+定義了 Knowledge `fair_exchange` 的三態判定與 Aligned Action：
+```yaml
+law: commerce
+knowledges:
+  fair_exchange:
+    description: "等價物換之理：參透市井行情與凡人貪欲，方能完成無漏交易。"
+    evaluate:
+      required_observations:
+        - "market_price"    # 證據 A：市井行情
+        - "trader_greed"    # 證據 B：商賈貪念
+      aligned_action: "trade_fair"
+      misunderstanding_patterns:
+        - has: ["market_price"]
+          missing: ["trader_greed"]
+          yields: "blind_bargaining"
+      default_misconception: "haggle_by_force"
+```
 
 ---
 
-### 4. 對話與 NPC 互動服務 (`dialogue_service.c`)
-驅動分支對話樹 (Branching Dialogue Trees)，支援根據玩家的 Progression 階段、已解鎖的 Factors 或是任務狀態動態改變對話內容與分支選項。
+## 三、 行動分發服務 (ActionExecutor Specification)
 
-* **核心 API**：
-  * `void start_dialogue(object player, object npc, string dialogue_id)`
-  * `void choose_option(object player, int option_index)`
-  * `mapping get_current_node(object player)`
-* **資料驅動定義示例 (`/content/dialogues/village_elder.yaml`)**：
-  ```yaml
-  npc_id: "village_elder"
-  nodes:
-    start:
-      text: "歡迎來到這個蠻荒的世界...你準備好開始求生了嗎？"
-      conditions:
-        stage: "novice"
-      options:
-        - text: "我準備好了！(開始挑戰)"
-          next_node: "tutorial_start"
-          action: "accept_quest:first_kill"
-        - text: "我還需要再想想。"
-          next_node: "exit"
-    exit:
-      text: "活下去是唯一的目標，注意安全。"
-      options: []
-  ```
+當玩家執行一個交互時，`fse_room.c` 會調用全域 `ActionExecutor` 服務進行分發。這徹底避免了在互動層硬寫死成敗。
 
----
-
-## 🔄 虛擬物件 (Virtual Object) 編譯器映射
-
-為了避免為每隻怪物、每個房間建立一個 `.c` 檔案，我們將利用 LPC `master.c` 的 `compile_object` 攔截器，將 YAML 檔案動態渲染為虛擬 LPC 物件：
-
-1. **檔案結構**：
-   * 所有設定檔放於 `/content/rooms/`、`/content/monsters/`。
-   * 沒有實體 `/rooms/triassic_plains.c` 或 `/monsters/proto_chicken.c`。
-
-2. **`compile_object(string file)` 攔截邏輯**：
-   ```c
-   object compile_object(string file) {
-       string *parts = explode(file, "/");
-       
-       // 攔截怪物載入
-       if (parts[0] == "monsters") {
-           string id = parts[1]; // 例如 "proto_chicken"
-           string yaml_path = sprintf("/content/monsters/%s.yaml", id);
-           if (file_size(yaml_path) > 0) {
-               // 載入通用虛擬怪物基底，並注入 YAML 資料
-               object vo = clone_object("/std/virtual/monster.c");
-               vo->initialize_from_yaml(yaml_path);
-               return vo;
-           }
-       }
-       
-       // 攔截房間載入
-       if (parts[0] == "rooms") {
-           string id = parts[1];
-           string yaml_path = sprintf("/content/rooms/%s.yaml", id);
-           if (file_size(yaml_path) > 0) {
-               object vo = clone_object("/std/virtual/room.c");
-               vo->initialize_from_yaml(yaml_path);
-               return vo;
-           }
-       }
-       return 0;
-   }
-   ```
-
----
-
-> [!NOTE]
-> 透過上述設計，FSE 的 LPC 程式碼將縮減 80% 以上，開發一個新的 Adventure 將完全轉變為「編寫 YAML 設定檔 + 設計前端 UI」，大幅降低開發門檻。
+```
+1. 玩家輸入 `trade_fair trader`
+   │
+   ▼
+2. fse_room.c 攔截，調用 ActionExecutor->dispatch_action()
+   │
+   ▼
+3. 根據 action ("trade_fair") 找到對應的專屬 Resolver (reality_resolver.c)
+   │
+   ▼
+4. 解析該節點的挑戰 YAML 路徑:
+   "/content/nodes/" + query_entity_id() + "/challenges/" + res_challenge + ".yaml"
+   │
+   ▼
+5. 載入評估，執行 side effects，回傳 1 攔截傳統物理交互
+```

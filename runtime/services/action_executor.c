@@ -66,9 +66,13 @@ int dispatch_action(object node_obj, object actor, string action, string target,
     ]);
 
     string res_challenge = act_cfg["resolver"] || sprintf("%s_challenge", action);
-    string node_dir = node_obj->query_node_dir();
-    string chal_path = sprintf("%schallenges/%s.yaml", node_dir, res_challenge);
+    string ent_id = node_obj->query_entity_id() || "meditation_cliff";
+    string chal_path = sprintf("/content/nodes/%s/challenges/%s.yaml", ent_id, res_challenge);
     
+    if (getenv("MUD_TEST_MODE") || this_player()) {
+        write(HIK "  [ActionExecutor Debug] ent_id=" + ent_id + ", chal_path=" + chal_path + "\n" NOR);
+    }
+
     mapping chal_data = ([]);
     if (file_size(chal_path) > 0) {
         string raw = read_file(chal_path);
@@ -76,6 +80,9 @@ int dispatch_action(object node_obj, object actor, string action, string target,
             chal_data = yaml_decode(raw);
         }
     } else {
+        if (getenv("MUD_TEST_MODE") || this_player()) {
+            write(HIR "  [ActionExecutor Debug] 找不到挑戰 YAML: " + chal_path + " (使用 Fallback 配置)\n" NOR);
+        }
         // 為了相容性，若無挑戰 YAML 則由 resolver 執行基礎比對
         chal_data = ([
             "challenge_id": res_challenge,

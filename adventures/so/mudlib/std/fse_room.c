@@ -49,15 +49,31 @@ void create() {
 }
 
 void set_short(string s) { short_desc = s; }
-string query_short()     { return short_desc; }
+string query_short() {
+    mapping config = query_virtual_config();
+    if (config && config["name"]) return config["name"];
+    return short_desc;
+}
+
 void set_long(string l)  { long_desc = l; }
-string query_long()      { return long_desc; }
+varargs string query_long(object actor) {
+    mapping config = query_virtual_config();
+    if (config && config["desc"]) return config["desc"];
+    return long_desc;
+}
 
 string query_node_dir() {
     string bn = base_name(this_object());
-    int idx = rindex(bn, "/");
+    int idx = strsrch(bn, "/", -1);
     if (idx == -1) return "/";
     return bn[0..idx];
+}
+
+// 實體 ID 動態對齊
+string query_entity_id() {
+    mapping config = query_virtual_config();
+    if (config && config["node_id"]) return config["node_id"];
+    return ::query_entity_id();
 }
 
 void spawn_presence_from_config() {
@@ -118,15 +134,25 @@ void on_enter(object actor) {
     if (member_array(actor, actors) == -1) {
         actors += ({ actor });
     }
+    
+    // 🚀 當玩家進入房間時，推送即時 node_state 到 WebSocket 前端
+    if (actor && function_exists("send_json_event", actor)) {
+        mapping v_cfg = this_object()->query_virtual_config() || ([]);
+        actor->send_json_event("node_state", ([
+            "node_id": this_object()->query_entity_id() || base_name(this_object()),
+            "name": this_object()->query_short() || "未名地域",
+            "desc": this_object()->query_long(actor) || "四周一片空無...",
+            "paths": keys(query_paths(actor)),
+            "sensory_signals": v_cfg["sensory_signals"] || ([])
+        ]));
+    }
+
     if (actor && function_exists("query_role", actor) && actor->query_role() == "player") {
         foreach (object presence in query_actors()) {
             if (presence && presence != actor && function_exists("check_detection", presence)) {
                 presence->check_detection(actor);
             }
         }
-        
-        // 預留：同門共鳴勾子（實作時由 social_service 計算）
-        // this_object()->check_sect_resonance(actor, query_actors());
     }
 }
 
@@ -306,8 +332,15 @@ int resolve_interaction(object actor, string action, string target) {
 
         // ── 互動系統升級：委託給 ActionExecutor 服務派發專屬行動 ──
         object act_exec = load_object("/runtime/services/action_executor.c");
+        if (getenv("MUD_TEST_MODE") || this_player()) {
+            write(HIK "  [fse_room ActionExecutor trace] loaded=" + (act_exec ? "YES" : "NO") + "\n" NOR);
+        }
         if (act_exec) {
-            if (act_exec->dispatch_action(this_object(), actor, action, target, act)) {
+            int dispatched = act_exec->dispatch_action(this_object(), actor, action, target, act);
+            if (getenv("MUD_TEST_MODE") || this_player()) {
+                write(HIK "  [fse_room ActionExecutor trace] dispatched=" + dispatched + "\n" NOR);
+            }
+            if (dispatched) {
                 return 1; // 行動已被專屬 Resolver 完全接管與處理
             }
         }

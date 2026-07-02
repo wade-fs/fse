@@ -1,4 +1,4 @@
-challenge_id: meditation_cliff_first_contact
+challenge_id: wind_tavern_first_contact
 discover_factor: stillness_resonance
 evolve:
   natural:
@@ -40,7 +40,7 @@ evolve:
         karma_change: 0
         spiritual_energy: 20
       new_signals:
-      - meditation_cliff_aligned
+      - wind_tavern_aligned
       world_change: actor_aligned_with_stillness
 executor: reality_resolver
 failure_warning: '【 🌀 產生困惑 】你感到氣血逆流，無法安神，周圍的法則產生了斷裂。

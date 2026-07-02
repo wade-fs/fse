@@ -72,17 +72,25 @@ mapping query_factors() {
 protected int is_meditating = 0;
 
 int query_meditating() { return is_meditating; }
-void set_meditating(int val) { is_meditating = val; }
+void set_meditating(int val) { 
+    is_meditating = val; 
+    push_status_update(); // 狀態變更立即推播
+}
 
 // ── SO 專屬修仙屬性 ──────────────────────────────────
 int query_karma()          { return karma; }
-void add_karma(int amount) { karma += amount; save_state(); }
+void add_karma(int amount) { 
+    karma += amount; 
+    save_state(); 
+    push_status_update(); // 業力變更立即推播
+}
 
 int query_spiritual_energy() { return spiritual_energy; }
 void add_spiritual_energy(int amount) {
     spiritual_energy += amount;
     if (spiritual_energy < 0) spiritual_energy = 0;
     save_state();
+    push_status_update(); // 靈力變更立即推播
 }
 
 // ── 心跳（由 master.c connect() 呼叫 enable_heart_beat 後觸發）──

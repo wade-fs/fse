@@ -1,0 +1,9 @@
+challenges:
+- id: pet_sanctuary_first_contact
+desc: pet_sanctuary_desc
+name: pet_sanctuary
+node_id: pet_sanctuary
+paths:
+  west: /nodes/wind_tavern/node
+type: nature_resonance
+version: '1.0'

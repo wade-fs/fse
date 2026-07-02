@@ -1,0 +1,7 @@
+# /home/wade/src/github/fse/adventures/so/mudlib/content/factors/stillness_resonance.yaml
+# 尋仙問道 — 靜慮共鳴變革因子 (Stillness Resonance Factor)
+
+factor_id: "stillness_resonance"
+name: "心靜如水"
+desc: "已解鎖精神「心境共鳴之理」，能於風勢紊亂的峭壁中進入甚深禪定。"
+prerequisites: []

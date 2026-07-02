@@ -1,0 +1,52 @@
+# /home/wade/src/github/fse/runtime/realities/social/commerce.yaml
+# FSE 尋仙問道 — 紅塵社交商賈因果律 (Law of Social Commerce & Human Desire)
+
+law: commerce
+knowledges:
+  fair_exchange:
+    description: "等價物換之理：參透市井行情與凡人貪欲，以心相交，方能在紅塵中完成無漏交易。"
+    
+    observe:
+      - signal: "market_price"
+        always_visible: true
+      - signal: "trader_greed"
+        always_visible: true
+      - signal: "bargain_insight"
+        always_visible: false
+
+    predict:
+      - "honest_dealing_wins_trust"
+      - "greedy_barter_severes_karma"
+
+    evaluate:
+      required_observations:
+        - "market_price"
+        - "trader_greed"
+      aligned_action: "trade_fair"
+      
+      misunderstanding_patterns:
+        - has: ["market_price"]
+          missing: ["trader_greed"]
+          yields: "blind_bargaining"
+          
+      default_misconception: "haggle_by_force"
+
+    evolve:
+      understanding:
+        world_change: "transaction_completed_with_trust"
+        new_signals: ["market_trust_established"]
+        adventure_effects:
+          spiritual_energy: 10
+          karma_change: -10 # 紅塵了結，業力退去
+      misunderstanding:
+        world_change: "trader_discontent"
+        new_signals: ["trader_hostility"]
+        adventure_effects:
+          spiritual_energy: 0
+          karma_change: 2
+      misconception:
+        world_change: "trade_rejected"
+        new_signals: ["humiliated"]
+        adventure_effects:
+          spiritual_energy: -5
+          karma_change: 10 # 執迷紅塵，業力暴漲
