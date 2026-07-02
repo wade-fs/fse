@@ -81,41 +81,75 @@ def create_single_node(node_id, node_name, node_desc, node_type="cultivation", p
         yaml.safe_dump(node_data, f, allow_unicode=True, default_flow_style=False)
     print(f"  ✓ 成功創建 Node 設定檔: {node_yaml_path}")
 
-    # 3. 建立第一個挑戰 YAML 模板 (對齊 evolve 和 adventure_effects 結構)
+    # 3. 建立第一個挑戰 YAML 模板 (對齊並行 Reality 評估與演化結構)
     challenge_yaml_path = challenges_dir / f"{node_id}_first_contact.yaml"
     challenge_data = {
         "challenge_id": f"{node_id}_first_contact",
         "executor": "reality_resolver",
-        "knowledges": [
-            f"spiritual.karma.sutra_focus"
-        ],
+        "realities": {
+            "spiritual": {
+                "knowledges": [
+                    "spiritual.karma.sutra_focus"
+                ]
+            },
+            "natural": {
+                "knowledges": [
+                    "natural.geology.stress_points"
+                ]
+            }
+        },
         "discover_factor": "stillness_resonance",
         "success_msg": "🎉 你的心神與天地靈氣交融，進入定境。\n",
         "success_progress": 10,
         "failure_warning": "【 🌀 產生困惑 】你感到氣血逆流，無法安神，周圍的法則產生了斷裂。\n",
         "evolve": {
-            "understanding": {
-                "world_change": "actor_aligned_with_stillness",
-                "new_signals": [f"{node_id}_aligned"],
-                "adventure_effects": {
-                    "spiritual_energy": 20,
-                    "karma_change": 0
+            "spiritual": {
+                "understanding": {
+                    "world_change": "actor_aligned_with_stillness",
+                    "new_signals": [f"{node_id}_aligned"],
+                    "adventure_effects": {
+                        "spiritual_energy": 20,
+                        "karma_change": 0
+                    }
+                },
+                "misunderstanding": {
+                    "world_change": "actor_tension_persists",
+                    "new_signals": ["chest_tightness"],
+                    "adventure_effects": {
+                        "spiritual_energy": -5,
+                        "karma_change": 1
+                    }
+                },
+                "misconception": {
+                    "world_change": "actor_qi_backlash",
+                    "new_signals": ["mind_chaos"],
+                    "adventure_effects": {
+                        "spiritual_energy": -10,
+                        "karma_change": 5
+                    }
                 }
             },
-            "misunderstanding": {
-                "world_change": "actor_tension_persists",
-                "new_signals": ["chest_tightness"],
-                "adventure_effects": {
-                    "spiritual_energy": -5,
-                    "karma_change": 1
-                }
-            },
-            "misconception": {
-                "world_change": "actor_qi_backlash",
-                "new_signals": ["mind_chaos"],
-                "adventure_effects": {
-                    "spiritual_energy": -10,
-                    "karma_change": 5
+            "natural": {
+                "understanding": {
+                    "world_change": "natural_energy_harmony",
+                    "new_signals": ["cold_resistance"],
+                    "adventure_effects": {
+                        "life_change": 0
+                    }
+                },
+                "misunderstanding": {
+                    "world_change": "chills_felt",
+                    "new_signals": ["mild_chills"],
+                    "adventure_effects": {
+                        "life_change": -5
+                    }
+                },
+                "misconception": {
+                    "world_change": "body_frozen",
+                    "new_signals": ["frostbite"],
+                    "adventure_effects": {
+                        "life_change": -20
+                    }
                 }
             }
         }

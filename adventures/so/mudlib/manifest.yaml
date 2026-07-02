@@ -29,3 +29,9 @@ default_executor: "reality_resolver"
 # 專屬服務（可選，引導時自動加載）
 extra_services:
   - "/services/karma_service.c"
+
+# 冒險專屬特殊功能節點路徑 (例如天劫、心魔)
+special_nodes:
+  tribulation: "/nodes/tribulation_cloud/node"
+  heart_demon: "/nodes/heart_demon_rift/node"
+

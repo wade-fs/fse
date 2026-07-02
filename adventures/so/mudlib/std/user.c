@@ -133,6 +133,26 @@ void heart_beat() {
     }
 }
 
+// ── WebSocket 實時推播介面 ──
+void send_json_event(string event_name, mapping data) {
+    mapping packet = ([
+        "type": event_name,
+        "from": "system",
+        "to": this_object()->query_name(),
+        "payload": json_encode(data)
+    ]);
+    tell_object(this_object(), "__JSON_MSG__" + json_encode(packet) + "\n");
+}
+
+void push_status_update() {
+    send_json_event("status_update", ([
+        "spiritual_energy": spiritual_energy,
+        "karma": karma,
+        "is_meditating": is_meditating,
+        "observations": keys(query_observations())
+    ]));
+}
+
 // ── 觀察 Evidence 介面（由陣列改為 Mapping，帶有時間標記支援 session/衰退）──
 mapping query_observations() {
     if (!observations) observations = ([]);
@@ -142,6 +162,7 @@ mapping query_observations() {
 void add_observation(string sig) {
     if (!observations) observations = ([]);
     observations[sig] = time();
+    push_status_update(); // 推播感知更新
 }
 
 int has_observation(string sig) {
@@ -152,10 +173,12 @@ int has_observation(string sig) {
 void clear_observation(string sig) {
     if (!observations) observations = ([]);
     map_delete(observations, sig);
+    push_status_update(); // 推播感知更新
 }
 
 void clear_observations() {
     observations = ([]);
+    push_status_update(); // 推播感知更新
 }
 
 // ── Vow（自心發願）介面 ──
