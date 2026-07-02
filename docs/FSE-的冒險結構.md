@@ -1,13 +1,17 @@
-# Flow State Engine (FSE) 2.0 全局系統架構說明書
+# FSE 2.0 冒險結構與平台開發說明書 (FSE Adventure Architecture Specification)
 
-Flow State Engine (FSE) 2.0 採用「引擎-故事」嚴格分離的三層宣告式架構。引擎本身（Runtime）不綁定任何特定冒險的世界觀、路徑與術語，由冒險模組（Adventure）在啟動時動態注入配置與服務。
+版本：1.0 正式版  
+適用範圍：所有 FSE Adventures（尋仙問道 SO、Formosa、及未來任何基於 FSE 引擎開發之冒險模組）
 
 ---
 
 ## 一、 核心原則：引擎與故事的清澈邊界
 
-FSE 2.0 平台開發必須嚴格遵守以下邊界守則：
-* **禁止污染 runtime/**：`runtime/` 目錄下的任何代碼（包括各類 Services 服務與 Executors 執行器）**絕對不得**出現任何特定冒險（如 `so` 或 `pc` 等）的具體房間、節點、NPC 或物品路徑。
+FSE 2.0 核心 Runtime 是平台引擎，負責底層虛擬物件編譯、多感官 Session 驅動與並行認識論解算。
+**引擎本身不綁定任何具體的世界觀與故事路徑。** 
+
+為此，平台開發必須嚴格遵守以下邊界守則：
+* **禁止污染 runtime/**：`runtime/` 目錄下的任何代碼（包括各類 Services 服務與 Executors 執行器）**絕對不得**出現 any 特定冒險（如 `so` 或 `pc`）的具體房間、節點、NPC 或物品路徑。
 * **冒險專屬服務**：特定冒險專屬的業務邏輯服務（如 `karma_service` 業力進程），必須放置在 `adventures/<adventure_id>/mudlib/services/` 下，透過 `manifest.yaml` 動態加載。
 * **特殊節點尋路**：天劫雷雲、心魔幻境等特殊地標，必須在 `manifest.yaml` 的 `special_nodes` 中以宣告式進行路徑配置，執行期由專屬服務動態讀取，禁止硬編碼。
 
@@ -15,7 +19,7 @@ FSE 2.0 平台開發必須嚴格遵守以下邊界守則：
 
 ## 二、 冒險解剖學 (Adventure Anatomy)
 
-一個完整的 FSE 冒險模組由以下七個層次組成，層次分明，各司其職：
+一個標準的 FSE 冒險模組由以下七個層次組成，層次分明，各司起職：
 
 ```
 Adventure
@@ -28,26 +32,11 @@ Adventure
 └── 7. Progression (進度線)     : 玩家的成長軌道與階段晉級條件。
 ```
 
-每個層次的具體職責對比如下：
-
-| 層次 | 是什麼 | 不是什麼 |
-|------|--------|---------|
-| **Identity** | Adventure 的名稱、語言、manifest 宣告 | 具體遊戲邏輯 |
-| **World** | 世界觀、時代、物理規則描述文件 | LPC 程式碼 |
-| **Reality Package** | 可被 Resolver 引用的 Law YAML | 故事劇情文字 |
-| **Region** | 地域的地理與文化分組 | 節點本身 |
-| **Site/Node** | 玩家可進入的一個地點及其互動 | 全域通用邏輯 |
-| **NPC/Presence** | 有名字、行為、對話的存在體 | 玩家角色本身 |
-| **Object/Item** | 可攜帶、使用、交換的實體物件 | 地標節點 |
-| **Knowledge Tree** | 可被 Challenge 引用的抽象知識概念定義 | 具體 NPC 的台詞 |
-| **Challenge** | 一次認識論（Reality Check）三態評估事件 | 寫死的一對一問答 |
-| **Progression** | 玩家的成長路徑與階梯晉級定義 | 單一挑戰節點 |
-
 ---
 
-## 三、 標準目錄結構 (Adventure File Hierarchy)
+## 三、 標準目錄結構
 
-雖然各冒險在宣告上保有高度自由度，但為了與平台工具鏈對接，每個冒險模組必須遵循以下標準目錄結構：
+每個冒險模組必須嚴格對齊以下目錄架構：
 
 ```
 adventures/<adventure_id>/
@@ -83,26 +72,7 @@ adventures/<adventure_id>/
 
 ---
 
-## 四、 平台自動化工具與引導鏈
-
-為加速世界構築，FSE 提供了強大的引導與編譯工具鏈：
-
-### 1. 一鍵 Bootstrap 冒險模組：`create-adventure.py`
-在全域根目錄下，創作者可以使用該平台工具快速生成全新且符合標準目錄架構的冒險模組：
-```bash
-python3 create-adventure.py --name <adventure_id> --title "<冒險中文名>"
-```
-* **職責**：自動創建完整的目錄樹（包含 `mudlib/web/static`），自動映射 `virtual_rules` 與 `master.c`，生成預設 `Makefile`、新手 `novice_map.yaml` 與單元測試，達成一鍵零設定綠燈啟動。
-
-### 2. 宣告式節點與挑戰編譯：`scaffold_node.py`
-在冒險目錄下運行，讀取 `novice_map.yaml` 進行批量或單一地標編譯，並自動注入 sensory_signals 感官信號、Presence 與 paths。
-
-### 3. 可視化地圖同步更新：`generate_map_viz.py`
-讀取地圖 YAML，自動生成與地圖同名的 Markdown 流程圖檔 (Mermaid) 與 SVG 向量結構地圖檔。
-
----
-
-## 五、 宣告式註冊規範 (`manifest.yaml`)
+## 四、 宣告式註冊規範 (`manifest.yaml`)
 
 `manifest.yaml` 是冒險專案的**單一真理來源**。一個標準的配置範例如下：
 
@@ -111,7 +81,7 @@ adventure_id: "so"
 name: "尋仙問道 - Shushan Odyssey"
 version: "1.0"
 
-# 注入核心服務的內容路徑 (對齊標準目錄結構)
+# 注入核心服務的內容路徑
 content_paths:
   nodes: "/content/nodes"
   realities: "/realities"
@@ -141,7 +111,7 @@ special_nodes:
 
 ---
 
-## 六、 運作原理與引用規範
+## 五、 運作原理與引用規範
 
 ### 1. 互動分發與解鎖
 * 節點的簡單交互由 `fse_room.c` 的 `resolve_interaction()` 處理。
