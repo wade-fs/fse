@@ -144,8 +144,15 @@ special_nodes:
 ## 六、 運作原理與引用規範
 
 ### 1. 互動分發與解鎖
-* 節點的簡單交互由 `fse_room.c` 的 `resolve_interaction()` 處理。
-* 需要認識論評估（Reality Check）或戰鬥、百工交互的行動，由全域服務 `ActionExecutor` 派發給對應的專屬執行器（如 `reality_resolver.c`），並從 `content/nodes/<node_id>/challenges/` 載入具體判定配置。
+* **統一入口閘門**：節點內的所有玩家輸入均由 `fse_room.c` 的 `resolve_interaction()` 統一攔截。
+* **串聯路由機制**：
+  ```
+  玩家輸入 ➔ fse_room.c resolve_interaction()
+               ├── 無 resolver 宣告 ➔ 直接判定（適用一級簡單交互，成敗寫死在節點）
+               └── 有 resolver 宣告 ➔ 派發至 ActionExecutor ➔ 載入專屬 Resolver 進行評估
+  ```
+* 任何涉及認識論（Reality Check）或複雜行為（對話、交易、戰鬥）的挑戰，均會自動轉交給對應的解算器（如 `reality_resolver.c`），並載入該節點 `challenges/` 底下的 YAML 設計。
+
 
 ### 2. 證據鏈評估 (Observations)
 * 挑戰可宣告多個並行 Reality 分支（如 `natural` 與 `spiritual`）。

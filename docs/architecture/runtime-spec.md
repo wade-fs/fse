@@ -16,9 +16,13 @@
         │
         ▼
      3. [Register Reality] 註冊 Content realities 目錄，對齊客觀物理/精神律則
-        │
+        │   優先度與覆蓋規則：
+        │   1. 全域 Law 庫：/runtime/realities/ (優先載入)
+        │   2. 冒險專屬 Law：adventures/<id>/realities/ (後載入，同名 id 將覆蓋全域)
+        │   * 建議專屬 Law 檔案採用前綴命名空間（如 `cultivation.realm.*`）以避免全域衝突。
         ▼
      4. [Load Knowledge] 載入全域共用或冒險專屬的 Knowledge Tree 知識樹
+
         │
         ▼
      5. [Load Content] 註冊 /nodes/ 及 /content/ 目錄 (語系對譯與發現物)
